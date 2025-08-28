@@ -1,0 +1,70 @@
+body {
+  @apply overscroll-none bg-transparent;
+}
+
+:root {
+  --font-sans: var(--font-inter);
+  --header-height: calc(var(--spacing) * 12 + 1px);
+
+  /* 🎨 Updated Color Tokens */
+  --color-site-a: oklch(0.72 0.2 50);
+  /* #ff7a00 - vibrant orange */
+  --color-site-a-light: oklch(0.8 0.18 50);
+  /* lighter orange */
+  --color-site-a-dark: oklch(0.65 0.22 50);
+  /* darker orange */
+
+  --color-site-b: oklch(0.35 0.15 300);
+  /* #1d097e - deep purple */
+  --color-site-b-light: oklch(0.45 0.12 300);
+  /* lighter purple */
+  --color-site-b-dark: oklch(0.25 0.18 300);
+  /* darker purple */
+
+  --color-black: oklch(0 0 0);
+  --color-white: oklch(1 0 0);
+  --color-blue-gray: oklch(0.55 0.08 240.3);
+}
+
+.theme-scaled {
+  @media (min-width: 1024px) {
+    --radius: 0.6rem;
+    --text-lg: 1.05rem;
+    --text-base: 0.85rem;
+    --text-sm: 0.8rem;
+    --spacing: 0.222222rem;
+  }
+
+  [data-slot="card"] {
+    --spacing: 0.16rem;
+  }
+
+  [data-slot="select-trigger"],
+  [data-slot="toggle-group-item"] {
+    --spacing: 0.222222rem;
+  }
+}
+
+.theme-default,
+.theme-default-scaled {
+  /* Updated Chart gradients */
+  --chart-1: 50 80% 72%;
+  /* orange */
+  --chart-2: 300 85% 35%;
+  /* purple */
+  --chart-3: 240 30% 45%;
+  /* blue-gray (kept same) */
+  --chart-4: 300 70% 45%;
+  /* light purple */
+  --chart-5: 50 90% 75%;
+  /* light orange */
+
+  /* Updated primary based on purple */
+  --primary: var(--color-site-b);
+  --primary-foreground: var(--color-white);
+
+  @variant dark {
+    --primary: var(--color-site-b-dark);
+    --primary-foreground: var(--color-white);
+  }
+}
