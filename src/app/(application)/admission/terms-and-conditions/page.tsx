@@ -59,7 +59,7 @@ const TermsAndConditionsPage: React.FC = () => {
                             Terms and Conditions
                         </h1>
                         <p className="text-xl text-blue-100 mb-6 max-w-3xl mx-auto">
-                            Nnnamdi Azikiwe University Business School - Awka, Anambra, Nigeria
+                            Nnnamdi Azikiwe University SANDWICH Program - Awka, Anambra, Nigeria
                         </p>
                         <div className="flex items-center justify-center space-x-2 text-blue-200">
                             <Calendar className="h-5 w-5" />
@@ -78,7 +78,7 @@ const TermsAndConditionsPage: React.FC = () => {
                         Agreement Overview
                     </h2>
                     <p className="text-gray-600 leading-relaxed text-lg">
-                        By enrolling in, attending, or utilizing any services provided by the Nnamdi Azikiwe University Business School,
+                        By enrolling in, attending, or utilizing any services provided by the Nnamdi Azikiwe University SANDWICH Program,
                         you acknowledge that you have read, understood, and agree to be bound by these Terms and Conditions.
                         These terms constitute a legally binding agreement governed by the laws of the Federal Republic of Nigeria.
                     </p>
@@ -256,7 +256,7 @@ const TermsAndConditionsPage: React.FC = () => {
                                 </div>
                                 <div className="flex items-center">
                                     <Mail className="h-4 w-4 text-blue-600 mr-3" />
-                                    <span>academics@unizikb.edu.ng</span>
+                                    <span>academics@unizik-sandwich.edu.ng</span>
                                 </div>
                             </div>
                         </div>
@@ -272,11 +272,11 @@ const TermsAndConditionsPage: React.FC = () => {
                                 </div>
                                 <div className="flex items-center">
                                     <Mail className="h-4 w-4 text-blue-600 mr-3" />
-                                    <span>support@unizikb.edu.ng</span>
+                                    <span>support@unizik-sandwich.edu.ng</span>
                                 </div>
                                 <div className="flex items-center">
                                     <GraduationCap className="h-4 w-4 text-blue-600 mr-3" />
-                                    <span>www.unizikb.edu.ng</span>
+                                    <span>www.unizik-sandwich.edu.ng</span>
                                 </div>
                             </div>
                         </div>
@@ -305,7 +305,7 @@ const TermsAndConditionsPage: React.FC = () => {
             <footer className="bg-gray-900 text-white py-8 mt-16">
                 <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
                     <p className="text-gray-400">
-                        © 2024 University of Excellence Business School. All rights reserved.
+                        © 2024 University of Excellence SANDWICH Program. All rights reserved.
                     </p>
                     <p className="text-gray-400 mt-2">
                         This document complies with Nigerian educational regulations and institutional best practices.

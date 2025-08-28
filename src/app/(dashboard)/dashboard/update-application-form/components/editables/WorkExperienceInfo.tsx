@@ -4,7 +4,7 @@ import { updateStudentApplicationData } from '@/app/actions/applications';
 import { WorkExoerienceInfoData } from '@/schemas/admission-schema';
 import { AlertCircle, BriefcaseBusiness, CheckCircle, Edit3, Save, X } from 'lucide-react';
 import React, { useState } from 'react'
-import { EditableField, EditableSelect } from '../../../../../../components/forms/EditableFormFields';
+import { EditableField, EditableSelect } from '@/components/forms/EditableFormFields';
 import { YEARS_OF_EXPERIENCE } from '@/components/forms/applicationFormConstants';
 import { useApplicationReview } from '@/contexts/ApplicationReviewContext';
 

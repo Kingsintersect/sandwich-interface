@@ -17,8 +17,7 @@ type SigninFormData = z.infer<typeof SigninSchema>;
 
 export default function AuthPage() {
     const searchParams = useSearchParams();
-    const referenceNumber = searchParams.get('email') || '';
-    // const referenceNumber = searchParams.get('transRef') || '';
+    const referenceNumber = searchParams.get('transRef') || '';
     const { initializeLogin, loading } = useAuth();
     const {
         register,

@@ -15,8 +15,6 @@ export type PaymentTableColumnType = {
   reference: string;
 };
 
-// const basePath = `${baseUrl}/dashboard/student/history/student-payments`;
-
 export const StudentsPaymentTable: ColumnDef<PaymentTableColumnType>[] = [
   DataTableCheckboxColumn<PaymentTableColumnType>(),
   {

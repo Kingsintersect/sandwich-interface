@@ -1,10 +1,14 @@
 import { Button } from '@/components/ui/button'
+import { IS_SANDWICH } from '@/config'
 import { ArrowRight, NotebookPen, Gauge } from 'lucide-react'
 import Link from 'next/link'
 import React from 'react'
 
 export const DashboardCard = ({ user }) => {
-    const canUpdateApplicationForm = user?.admission_status !== "ADMITTED" && user?.admission_status !== "NOT_ADMITTED";
+    let canUpdateApplicationForm: boolean = false;
+    if (!IS_SANDWICH) {
+        canUpdateApplicationForm = (user?.admission_status !== "ADMITTED" && user?.admission_status !== "NOT_ADMITTED");
+    }
 
     return (
         <div className="bg-white rounded-xl shadow-sm border p-8 mb-8">
@@ -32,7 +36,7 @@ export const DashboardCard = ({ user }) => {
                     className="bg-white text-purple-600 px-8 py-3 rounded-lg hover:bg-gray-50 transition-colors font-semibold text-lg inline-flex items-center shadow-lg"
                     asChild
                 >
-                    <Link href={`/dashboard/student`} className="flex items-center">
+                    <Link href={`/dashboard/student/enrolled-courses`} className="flex items-center">
                         <NotebookPen className="h-5 w-5 mr-3" />
                         Proceed to Dashboard
                         <ArrowRight className="h-5 w-5 ml-3" />

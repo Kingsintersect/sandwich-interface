@@ -100,7 +100,7 @@ export const NextOfKinInformationStep: React.FC<NextOfKinInformationStepProps> =
                     required
                     placeholder="e.g. 123 mykin's St, city, state, country... "
                 />
-                <div className="border border-gray-300 p-10 rounded-2xl space-y-5">
+                <div className="border border-gray-300 p-10 rounded-2xl">
                     <FormField
                         name="next_of_kin_phone_number"
                         control={control}

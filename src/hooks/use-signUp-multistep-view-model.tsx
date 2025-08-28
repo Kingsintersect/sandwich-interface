@@ -42,7 +42,7 @@ export const baseSignupSchema = z
 
         // Accademic session
         academic_session: z.string().min(1, 'Invalid value for academic session'),
-        academic_semester: z.string().min(1, 'Invalid value for academic semester'),
+        academic_semester: z.string().min(1, 'Invalid value for academic session'),
         start_year: z.string().min(1, 'Invalid value for start year'),
     })
 export const SignupSchema = baseSignupSchema.refine((data) => data.password === data.password_confirmation, {
@@ -160,9 +160,10 @@ export default function useSignInMultiStepViewModel() {
         mutationFn: CreateStudentAccount,
         onSuccess: (res) => {
             notify({ message: "Successfully Created Account", variant: "success", timeout: 5000 });
-            router.push(`${baseUrl}/auth/signin?email=${res.user_email}`);
-            // const transRef = res.response.success.data.credoReference;
-            // router.push(`${baseUrl}/auth/signin?transRef=${transRef}`);
+            // localStorage.setItem('application_data', JSON.stringify(res.success.data));
+            // router.push(res.success.data.authorizationUrl);
+            const transRef = res.success.data.credoReference;
+            router.push(`${baseUrl}/auth/signin?transRef=${transRef}`);
             // reset();
             // setCurrentStep(1);
         },

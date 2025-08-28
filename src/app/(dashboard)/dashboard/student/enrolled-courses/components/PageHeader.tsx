@@ -142,7 +142,7 @@ const PageHeader = ({ student }: { student: UserInterface | null }) => {
 
                      <div className="text-center mt-2">
                         <Button className="bg-gradient-to-r from-teal-500 to-orange-600 hover:from-teal-600 hover:to-orange-700 text-white transition-all w-full" asChild>
-                           <Link href="/dashboard/student">
+                           <Link href="/dashboard/student/enrolled-courses">
                               <BookOpen className="mr-2 h-4 w-4" />
                               Go to Student Dashboard
                            </Link>

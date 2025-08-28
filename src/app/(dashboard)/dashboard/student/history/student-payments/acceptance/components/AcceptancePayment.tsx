@@ -3,11 +3,11 @@ import React from 'react';
 import Image from 'next/image';
 import AppPayAcceptanceFeeModal from './AppPayAcceptancFeeModal'
 import { CheckCircle } from "lucide-react";
-import AdmissionDeniedBanner from '@/app/(dashboard)/dashboard/student/componenets/AdmissionDeniedBanner';
 import { useAuth } from '@/contexts/AuthContext';
 import { Card } from '@/components/ui/card';
 import { ACCEPTANCE_FEE } from "@/config"
 import { formatToCurrency } from '@/lib/utils';
+import AdmissionDeniedBanner from '../../../../componenets/AdmissionDeniedBanner';
 
 const AcceptancePayment = () => {
    const { user } = useAuth();

@@ -6,10 +6,12 @@ import { baseUrl } from '@/config'
 import { PaymentVerificationCard } from '../components/PaymentVerificationCard';
 import { toast } from 'sonner';
 import { usePaymentVerification } from '@/hooks/usePaymentVerification';
+import { useAuth } from '@/contexts/AuthContext';
 
 const VerifyApplicationPayment = () => {
    const searchParams = useSearchParams();
    const transRef = searchParams.get('transRef');
+   const [isReloading, setIsReloading] = useState(false);
    const [verificationResult, setVerificationResult] = useState<{
       status: string;
       message: string;
@@ -19,6 +21,7 @@ const VerifyApplicationPayment = () => {
 
    const router = useRouter();
    const { mutate: verifyPayment, isPending } = usePaymentVerification();
+   const { refreshUserData } = useAuth();
 
    useEffect(() => {
       if (!transRef) {
@@ -40,8 +43,10 @@ const VerifyApplicationPayment = () => {
          }
       );
    };
-   const handleRedirect = () => {
-      // router.push(`${baseUrl}/auth/signin?transRef=${transRef}`);
+   const handleRedirect = async () => {
+      setIsReloading(true);
+      await refreshUserData();
+      setIsReloading(false);
       router.push(`${baseUrl}/admission`);
       router.refresh();
    }
@@ -61,7 +66,7 @@ const VerifyApplicationPayment = () => {
       <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
          <PaymentVerificationCard
             paymentRef={transRef || ''}
-            isVerifying={isPending}
+            isVerifying={isPending || isReloading}
             verificationResult={verificationResult}
             onVerify={handleVerify}
             onProceed={handleRedirect}

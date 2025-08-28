@@ -71,9 +71,9 @@ export async function decrypt(session: string | undefined = "") {
  */
 export async function getFullSession() {
     const cookieStore = await cookies();
-    const cookie = cookieStore.get("coou_session")?.value;
+    const cookie = cookieStore.get("unizik_sandwich_session")?.value;
     if (!cookie) {
-        console.log("coou_session could not be found");
+        console.log("unizik_sandwich_session could not be found");
         return null;
     }
     return await decrypt(cookie);
@@ -115,7 +115,7 @@ export async function setSession(
     );
 
     const cookieStore = await cookies();
-    cookieStore.set("coou_session", sessionData, {
+    cookieStore.set("unizik_sandwich_session", sessionData, {
         httpOnly: true,
         secure: true,
         expires: expiresAt,
@@ -146,7 +146,7 @@ export async function updateSessionKey<T extends Record<string, any>>(key: strin
     const sessionData = await encrypt({ ...allSession, expiresAt: originalExpiry as number }, "1h");
 
     const cookieStore = await cookies();
-    cookieStore.set("coou_session", sessionData, {
+    cookieStore.set("unizik_sandwich_session", sessionData, {
         httpOnly: true,
         secure: true,
         expires: new Date(originalExpiry as number * 1000),
@@ -171,7 +171,7 @@ export async function deleteSessionKey(key: string) {
     const sessionData = await encrypt({ ...allSession, expiresAt }, "1h");
 
     const cookieStore = await cookies();
-    cookieStore.set("coou_session", sessionData, {
+    cookieStore.set("unizik_sandwich_session", sessionData, {
         httpOnly: true,
         secure: true,
         expires: new Date(expiresAt * 1000), // Convert Unix timestamp to Date
@@ -184,7 +184,7 @@ export async function deleteSession() {
     const cookieStore = await cookies();
 
     // Delete the session cookie by setting an expired date
-    cookieStore.set("coou_session", "", {
+    cookieStore.set("unizik_sandwich_session", "", {
         httpOnly: true,
         secure: true, //process.env.NODE_ENV === 'production'
         expires: new Date(0), // Expire immediately

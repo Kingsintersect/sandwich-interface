@@ -176,7 +176,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
                     ? `${baseUrl}/admission`
                     : user.role === Roles.TEACHER ? `${baseUrl}/dashboard/teacher`
                         : user.role === Roles.ADMIN ? `${baseUrl}/dashboard/admin`
-                            : `${baseUrl}/dashboard/student`;
+                            : `${baseUrl}/dashboard/student/enrolled-courses`;
 
                 if (user.role === Roles.STUDENT) {
                     redirectUrl = (!user.is_applied)

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import type { SessionData } from "@/types/auth";
-import { Roles } from "@/config";
+import { IS_SANDWICH, Roles } from "@/config";
 import { getSession } from "@/lib/session";
 import { loginSessionKey } from "@/lib/definitions";
 
@@ -15,7 +15,7 @@ const publicRoutes = [
 const protectedRoutes = [
 	"/dashboard",
 	"/dashboard/update-application-form",
-	"/admission",
+	// "/admission",
 	"/admission/program-requierments",
 	"/admission/payments/verify-acceptance",
 	"/admission/payments/verify-tuition",
@@ -43,21 +43,10 @@ export default async function middleware(req: NextRequest) {
 	// 1. Handle public routes
 	if (publicRoutes.includes(path)) {
 		if (user) {
-			if (path === ('/admission/form')) {
-				if (role === Roles.STUDENT && hasApplied) {
-					return NextResponse.redirect(new URL('/admission', req.url));
-				}
-				if (role !== Roles.STUDENT) {
-					return NextResponse.redirect(new URL(`/dashboard/${role.toLowerCase()}`, req.url));
-				}
-				return NextResponse.next();
+			if (role !== Roles.STUDENT) {
+				return NextResponse.redirect(new URL(`/dashboard/${role.toLowerCase()}`, req.url));
 			}
-			// const redirectPath = (role === Roles.STUDENT)
-			// 	? hasApplied
-			// 		? '/dashboard/student'
-			// 		: '/admission'
-			// 	: `/dashboard/${role.toLowerCase()}`;
-			// return NextResponse.redirect(new URL(redirectPath, req.url));
+			return NextResponse.next();
 		}
 		return NextResponse.next();
 	}
@@ -80,16 +69,6 @@ export default async function middleware(req: NextRequest) {
 			return NextResponse.next();
 		}
 
-		// if (!path.startsWith('/admission')) {
-		// 	if (hasApplied && role === Roles.STUDENT) {
-		// 		return NextResponse.redirect(new URL('/dashboard/student', req.url));
-		// 	}
-		// 	// if (role !== Roles.STUDENT) {
-		// 	// 	return NextResponse.redirect(new URL(`/dashboard/${role.toLowerCase()}`, req.url));
-		// 	// }
-		// 	return NextResponse.next();
-		// }
-
 		// Dashboard routes
 		if (path.startsWith('/dashboard')) {
 			const subPath = path.split('/')[2]?.toLowerCase();
@@ -102,9 +81,10 @@ export default async function middleware(req: NextRequest) {
 				}
 				return NextResponse.next();
 			}
-
-			if (role === Roles.STUDENT && !hasApplied) {
-				return NextResponse.redirect(new URL('/admission', req.url));
+			if (!IS_SANDWICH) {
+				if (role === Roles.STUDENT && !hasApplied) {
+					return NextResponse.redirect(new URL('/admission', req.url));
+				}
 			}
 
 			const currentUrl = new URL(req.url);

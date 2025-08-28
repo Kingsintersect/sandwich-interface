@@ -46,7 +46,7 @@ const ProgramRequirementsModal: React.FC<ProgramRequirementsModalProps> = ({
                                     Programme Requirements & Duration
                                 </h2>
                                 <p className="text-sm text-gray-500">
-                                    UNIZIK Business School
+                                    SANDWICH Program
                                 </p>
                             </div>
                         </div>

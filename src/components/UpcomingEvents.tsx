@@ -24,7 +24,7 @@ export default function UpcomingEvents() {
             title: "Alumni Networking Mixer",
             date: "May 5",
             time: "6:00 PM - 8:00 PM",
-            location: "Business School Atrium",
+            location: "SANDWICH Program Atrium",
         },
     ];
 

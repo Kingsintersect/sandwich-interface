@@ -1,11 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
 import { useMutation } from "@tanstack/react-query";
-import { StudentHeader } from "@/app/(dashboard)/dashboard/student/grade-report/components/StudentHeader";
-import { StudentInfo } from "@/app/(dashboard)/dashboard/student/grade-report/components/StudentInfo";
-import { CourseTable } from "@/app/(dashboard)/dashboard/student/grade-report/components/CourseTable";
-import { GradeDistribution } from "@/app/(dashboard)/dashboard/student/grade-report/components/GradeDistribution";
-import { AcademicStanding } from "@/app/(dashboard)/dashboard/student/grade-report/components/AcademicStanding";
 import { generateGPASummary, processGradeReport } from "@/lib/gpa.utils";
 import { Download } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -21,6 +16,11 @@ import { fetchStudentScores } from "@/app/actions/student.results";
 import { useAuth } from "@/contexts/AuthContext";
 import { ReportFooter } from "../../../grade-report/components/ReportFooter";
 import { generateResultPdf } from "@/lib/generateResultPdf";
+import { StudentHeader } from "../../../grade-report/components/StudentHeader";
+import { StudentInfo } from "../../../grade-report/components/StudentInfo";
+import { CourseTable } from "../../../grade-report/components/CourseTable";
+import { GradeDistribution } from "../../../grade-report/components/GradeDistribution";
+import { AcademicStanding } from "../../../grade-report/components/AcademicStanding";
 
 type UserInfo = {
   id: number;

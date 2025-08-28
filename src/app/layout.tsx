@@ -17,7 +17,7 @@ const META_THEME_COLORS = {
   light: "#ffffff",
   dark: "#09090b",
 }
-
+// 
 export const metadata: Metadata = {
   title: {
     template: `%s | ${SITE_NAME}`,

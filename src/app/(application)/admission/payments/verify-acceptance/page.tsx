@@ -176,6 +176,6 @@ export default VerifyAcceptance
 //    )
 // }
 // export default VerifyAcceptance;
-// // http://localhost:3003/admission/payments/verify-tuition?transAmount=75000.00&reference=1429z865hD1752948845&transRef=m0FQ00V9vn14fqjz29sa&errorMessage=Approved+by+Financial+Institution&redirectOnError=0&currency=NGN&gateway=&channelId=0&status=0
+// // http://localhost:3004/admission/payments/verify-tuition?transAmount=75000.00&reference=1429z865hD1752948845&transRef=m0FQ00V9vn14fqjz29sa&errorMessage=Approved+by+Financial+Institution&redirectOnError=0&currency=NGN&gateway=&channelId=0&status=0
 
 // // https://pay.credodemo.com/v4/fsEt001mmK14tip5297P

@@ -14,7 +14,6 @@ import {
 } from "lucide-react";
 import { ObjectType } from "@/types/generic.types";
 import { CreditLoad, Grade, Subject } from "./Types";
-import { ProgramNode } from "@/components/ProgramAccordion";
 
 export interface SidebarNavItem {
 	title: string;
@@ -154,11 +153,40 @@ export const StudentNavMain: SidebarNavConfig = {
 			title: "DASHBOARD",
 			url: "#",
 			icon: PieChart,
-			isActive: true,
+			isActive: false,
 			items: [
 				{
 					title: "Statistics",
 					url: "/dashboard/student",
+				},
+			],
+			display: false,
+		},
+		{
+			title: "MANAGE ACCOUNT",
+			url: "#",
+			icon: UserRoundPen,
+			isActive: true,
+			items: [
+				{
+					title: "Enrolled Courses",
+					url: "/dashboard/student/enrolled-courses",
+				},
+				{
+					title: "Profile",
+					url: "/dashboard/student/profile",
+				},
+			],
+			display: true,
+		},
+		{
+			title: "REPORTS",
+			url: "#",
+			icon: Flag,
+			items: [
+				{
+					title: "Grade Report",
+					url: "/dashboard/student/grade-report",
 				},
 			],
 			display: true,
@@ -191,34 +219,6 @@ export const StudentNavMain: SidebarNavConfig = {
 				{
 					title: "Result History",
 					url: "/dashboard/student/history/student-results",
-				},
-			],
-			display: true,
-		},
-		{
-			title: "MANAGE ACCOUNT",
-			url: "#",
-			icon: UserRoundPen,
-			items: [
-				{
-					title: "Enrolled Courses",
-					url: "/dashboard/student/enrolled-courses",
-				},
-				{
-					title: "Profile",
-					url: "/dashboard/student/profile",
-				},
-			],
-			display: true,
-		},
-		{
-			title: "REPORTS",
-			url: "#",
-			icon: Flag,
-			items: [
-				{
-					title: "Grade Report",
-					url: "/dashboard/student/grade-report",
 				},
 			],
 			display: true,
@@ -532,3 +532,4 @@ export const stateValues = [
 	"Zamfara",
 	"Federal Capital Territory",
 ];
+

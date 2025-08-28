@@ -28,8 +28,8 @@ export default function ProtectedRoute({ children, allowedRoles }: ProtectedRout
                     router.push('/dashboard/teacher');
                 }
             } else {
-                if (pathname !== '/dashboard/student') {
-                    router.push('/dashboard/student');
+                if (pathname !== '/dashboard/student/enrolled-courses') {
+                    router.push('/dashboard/student/enrolled-courses');
                 }
             }
 

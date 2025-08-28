@@ -55,9 +55,13 @@ export const CreateStudentAccount = async (
 		data: { ...data },
 	})) as GenericDataType;
 	if (response.error) {
+		// console.log('response.error', response.error)
+		// const message = response.error.message || "Failed to create student account";
+		// console.error(message);
 		throwFormattedError(response.error);
+		// throw response.error;
 	}
-	return { response, user_email: data.email };
+	return response;
 };
 
 export async function signOutAction(platform?: "client" | "server"): Promise<GenericDataType> {

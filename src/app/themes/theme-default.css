@@ -7,19 +7,19 @@ body {
   --header-height: calc(var(--spacing) * 12 + 1px);
 
   /* 🎨 Updated Color Tokens */
-  --color-site-a: oklch(0.72 0.2 50);
-  /* #ff7a00 - vibrant orange */
-  --color-site-a-light: oklch(0.8 0.18 50);
-  /* lighter orange */
-  --color-site-a-dark: oklch(0.65 0.22 50);
-  /* darker orange */
+  --color-site-a: oklch(0.47 0.14 33.7);
+  /* earthy brown-red */
+  --color-site-a-light: oklch(0.55 0.14 33.7);
+  /* lighter variant */
+  --color-site-a-dark: oklch(0.40 0.14 33.7);
+  /* darker variant */
 
-  --color-site-b: oklch(0.35 0.15 300);
-  /* #1d097e - deep purple */
-  --color-site-b-light: oklch(0.45 0.12 300);
-  /* lighter purple */
-  --color-site-b-dark: oklch(0.25 0.18 300);
-  /* darker purple */
+  --color-site-b: oklch(0.27 0.17 274.6);
+  /* deep indigo */
+  --color-site-b-light: oklch(0.35 0.17 274.6);
+  /* lighter indigo */
+  --color-site-b-dark: oklch(0.20 0.17 274.6);
+  /* darker indigo */
 
   --color-black: oklch(0 0 0);
   --color-white: oklch(1 0 0);
@@ -47,19 +47,19 @@ body {
 
 .theme-default,
 .theme-default-scaled {
-  /* Updated Chart gradients */
-  --chart-1: 50 80% 72%;
-  /* orange */
-  --chart-2: 300 85% 35%;
-  /* purple */
-  --chart-3: 240 30% 45%;
+  /* 🎨 Updated Chart gradients */
+  --chart-1: 33.7 60% 47%;
+  /* site-a */
+  --chart-2: 274.6 70% 27%;
+  /* site-b */
+  --chart-3: 240.3 30% 55%;
   /* blue-gray (kept same) */
-  --chart-4: 300 70% 45%;
-  /* light purple */
-  --chart-5: 50 90% 75%;
-  /* light orange */
+  --chart-4: 274.6 55% 35%;
+  /* lighter indigo */
+  --chart-5: 33.7 70% 55%;
+  /* lighter earthy red */
 
-  /* Updated primary based on purple */
+  /* Updated primary based on indigo */
   --primary: var(--color-site-b);
   --primary-foreground: var(--color-white);
 

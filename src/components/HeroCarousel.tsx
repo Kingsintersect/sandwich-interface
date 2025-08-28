@@ -18,7 +18,7 @@ const carouselImages: CarouselImage[] = [
     {
         url: "/slides/slide-1.jpg",
         alt: "University campus main building",
-        title: "Welcome to UNIZIK Business School LMS",
+        title: "Welcome to SANDWICH Program LMS",
         subtitle: "Discover a world of opportunities and excellence",
     },
     {

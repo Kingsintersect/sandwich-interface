@@ -87,7 +87,7 @@ const AcceptanceStatusCard = ({ student }: { student: UserInterface }) => {
 									</div>
 									<h3 className="text-xl font-medium text-cyan-700 dark:text-cyan-300 mb-5">You have not been admitted...</h3>
 									<Button variant={"default"} asChild className='animate-bounce'>
-										<Link href={`${baseUrl}/dashboard/student`} className='text-white'>
+										<Link href={`${baseUrl}/dashboard/student/enrolled-courses`} className='text-white'>
 											RETURN TO DASHBOARD
 										</Link>
 									</Button>

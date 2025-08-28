@@ -47,7 +47,7 @@ const EditInfoForm = ({ student }: StudentInfoProps) => {
       setIsSaving(true);
 
       // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      console.log('{ id: String(student.id), ...data }', { id: String(student.id), ...data })
       await updateStudentPersonalInfoData({ id: String(student.id), ...data });
 
       console.log("Updated Info:", data);

@@ -25,6 +25,19 @@ const StudentProfile = () => {
       );
    }
 
+   if (!user) {
+      return (
+         <div className="w-full max-w-7xl mx-auto my-8">
+            <div className="bg-red-100 text-red-800 p-4 rounded-lg shadow-md">
+               <h2 className="text-xl font-bold">Access Denied</h2>
+               <p className="mt-2">You must be logged in to view this page.</p>
+               <Link href="/auth/signin" className="mt-4 inline-block bg-red-400 hover:bg-red-500 text-white py-2 px-4 rounded-lg">
+                  Go to Login
+               </Link>
+            </div>
+         </div>
+      );
+   }
    return (
       <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800 py-12 px-4 sm:px-6">
          <div className="max-w-6xl mx-auto">

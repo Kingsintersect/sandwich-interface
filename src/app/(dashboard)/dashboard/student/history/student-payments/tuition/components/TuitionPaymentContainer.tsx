@@ -2,11 +2,11 @@
 
 import React from 'react';
 import { useAuth } from '@/contexts/AuthContext';
-import AdmissionDeniedBanner from '@/app/(dashboard)/dashboard/student/componenets/AdmissionDeniedBanner';
 import TuitionStatusCard from './TuitionStatusCard';
 import TuitionPaymentModal from './TuitionPaymentModal';
 import { HandCoins } from 'lucide-react';
 import ContentLoader from '@/components/ui/content-loader';
+import AdmissionDeniedBanner from '../../../../componenets/AdmissionDeniedBanner';
 
 const TuitionPaymentContainer = () => {
     const { user, loading } = useAuth();

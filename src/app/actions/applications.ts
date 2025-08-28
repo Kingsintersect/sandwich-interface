@@ -190,29 +190,29 @@ export const updateStudentPersonalInfoData = async (data: ApplicationChunk): Pro
     const requestData = { ...data };
     const loginSession = (await getSession(loginSessionKey)) as SessionData;
     const routeUrl = (loginSession.user.role === "STUDENT")
-        ? `/account/user-personal-updates`
+        ? `/account/user-personal-update`
         : (loginSession.user.role === "ADMIN")
             ? `/account/user-update`
             : "";
-    console.log('routeUrl', routeUrl)
-   try {
-     const response = await fetch(`${remoteApiUrl}${routeUrl}`, {
-         method: 'POST',
-         headers: {
-             'Content-Type': 'application/json',
-             Authorization: `Bearer ${loginSession.access_token}`,
-         },
-         body: JSON.stringify(requestData),
-     });
-       
-     if (!response.ok) {
-         const errorText = await response.text();
-         throw new Error(`Server error: ${response.status} ${errorText}`);
-     }
-     const result = await response.json();
-     return result;
-   } catch (error) {
+    console.log('routeUrl', routeUrl, `${remoteApiUrl}${routeUrl}`)
+    try {
+        const response = await fetch(`${remoteApiUrl}${routeUrl}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${loginSession.access_token}`,
+            },
+            body: JSON.stringify(requestData),
+        });
+
+        if (!response.ok) {
+            const errorText = await response.text();
+            throw new Error(`Server error: ${response.status} ${errorText}`);
+        }
+        const result = await response.json();
+        return result;
+    } catch (error) {
         console.error("Network or API error:", error);
         throw new Error("Failed to update personal information. Please try again later.");
-   }
+    }
 };

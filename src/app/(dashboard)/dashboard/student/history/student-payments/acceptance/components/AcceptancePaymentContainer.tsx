@@ -6,7 +6,7 @@ import { HandCoins } from 'lucide-react';
 import AcceptanceStatusCard from './AcceptanceStatusCard';
 import AcceptancePaymentModal from './AcceptancePaymentModal';
 import ContentLoader from '@/components/ui/content-loader';
-import AdmissionDeniedBanner from '@/app/(dashboard)/dashboard/student/componenets/AdmissionDeniedBanner';
+import AdmissionDeniedBanner from '../../../../componenets/AdmissionDeniedBanner';
 
 const AcceptancePaymentContainer = () => {
     const { user, loading } = useAuth();
