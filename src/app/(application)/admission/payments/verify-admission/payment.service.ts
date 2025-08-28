@@ -7,6 +7,7 @@ export class PaymentService {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
+                Authorization: `Bearer ${data.access_token}`,
             },
         });
 
@@ -14,7 +15,8 @@ export class PaymentService {
             throw new Error('Payment verification failed');
         }
 
-        return response.json();
+        const result = response.json();
+        return result;
     }
     static async verifyAcceptancePayment(data: PaymentVerificationRequest): Promise<PaymentVerificationResponse> {
         const response = await fetch(`${remoteApiUrl}/application/verify-acceptance?transRef=${data.transRef}`, {

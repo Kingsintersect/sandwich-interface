@@ -5,11 +5,12 @@ import { WelcomeCard } from './components/WelcomeCard';
 import { ApplicationPaymentCard } from './components/ApplicationPaymentCard';
 import { ApplicationFormCard } from './components/ApplicationFormCard';
 import { LoadingSpinner } from '@/components/ui/loading-spinner';
-import { DashboardCard } from './components/DashboardCard';
+// import { DashboardCard } from './components/DashboardCard';
 import { AdmissionProgressTrack } from './components/AdmissionProgressTrack';
 import { StudentStatusProvider } from '@/contexts/StudentStatusContext';
 import { IS_SANDWICH } from '@/config';
 import { TuitionPaymentProvider } from '@/contexts/TuitionPaymentContext';
+import { CourseList } from './components/CourseCard';
 
 export default function NewStudentLanding() {
     const { user, loading, refreshUserData, } = useAuth();
@@ -40,8 +41,8 @@ export default function NewStudentLanding() {
                                 {/* Application status */}
                                 {(!hasApplied && ApplicationPaymentStatus) && <ApplicationFormCard />}
 
-                                {(hasApplied) && <DashboardCard user={user} />}
-
+                                {/* {(hasApplied) && <DashboardCard user={user} />} */}
+                                {(hasApplied) && <CourseList studentId={String(user?.id)} studentData={user} />}
                                 {/* Admission Process Steps */}
                                 <AdmissionProgressTrack user={user} reloadUser={refreshUserData} loadingUser={loading} />
                             </>}

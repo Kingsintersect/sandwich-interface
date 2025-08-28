@@ -12,6 +12,7 @@ const VerifyApplicationPayment = () => {
    const searchParams = useSearchParams();
    const transRef = searchParams.get('transRef');
    const [isReloading, setIsReloading] = useState(false);
+   const { access_token } = useAuth();
    const [verificationResult, setVerificationResult] = useState<{
       status: string;
       message: string;
@@ -33,9 +34,10 @@ const VerifyApplicationPayment = () => {
 
    const handleVerify = () => {
       if (!transRef) return;
+      if (!access_token) return;
 
       verifyPayment(
-         { transRef },
+         { transRef, access_token: access_token },
          {
             onSuccess: (data) => {
                setVerificationResult(data);
