@@ -36,7 +36,7 @@ export default function NewStudentLanding() {
                                 <WelcomeCard user={user} />
 
                                 {/* Current Status */}
-                                {!ApplicationPaymentStatus && <ApplicationPaymentCard user={user} />}
+                                {!ApplicationPaymentStatus && <ApplicationPaymentCard access_token={access_token} />}
 
                                 {/* Application status */}
                                 {(!hasApplied && ApplicationPaymentStatus) && <ApplicationFormCard />}
