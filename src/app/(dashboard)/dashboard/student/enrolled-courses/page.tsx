@@ -5,6 +5,7 @@ import EnrolledCourseList from '../componenets/EnrolledCourseList';
 import AdmissionDeniedBanner from '../componenets/AdmissionDeniedBanner';
 import PageHeader from './components/PageHeader';
 import ContentLoader from '@/components/ui/content-loader';
+import { lmsRootUrl } from '@/config';
 
 const EnrolledCoursesPage = () => {
    const { user, loading } = useAuth();
@@ -24,7 +25,7 @@ const EnrolledCoursesPage = () => {
    }
 
    const lmsLink = user.reg_number
-      ? `https://moodletest.qverselearning.org/ssotester/index.php?sso_loggers=1&u=${user.reg_number}&password=1`
+      ? `${lmsRootUrl}/ssotester/index.php?sso_loggers=1&u=${user.reg_number}&password=1`
       : "#";
 
    return (

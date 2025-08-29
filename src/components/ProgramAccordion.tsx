@@ -7,7 +7,7 @@ import {
     AccordionTrigger,
 } from "@/components/ui/accordion";
 import { FieldErrors, Path, PathValue, UseFormGetValues, UseFormSetValue, UseFormWatch } from "react-hook-form";
-import { ProgramRequirementsLink } from "./requirements/ProgramRequirementsModal";
+// import { ProgramRequirementsLink } from "./requirements/ProgramRequirementsModal";
 
 
 type genericObjectType = Record<string, unknown>;
@@ -105,10 +105,10 @@ export const ProgramAccordionDisplay = <T extends genericObjectType>({
             {heading && <h1 className="text-2xl font-bold mb-0 text-site-b-dark">{heading}</h1>}
             {subHeading && <p className="italic text-blue-500 mb-4">{subHeading}</p>}
 
-            <ProgramRequirementsLink
+            {/* <ProgramRequirementsLink
                 className="ml-20 text-xs text-orange-600  animate-bounce"
                 downloadUrl="/documents/PROGRAMME_AND_REQUIREMENTS.docx"
-            />
+            /> */}
 
             <ProgramAccordion
                 nodes={programs}

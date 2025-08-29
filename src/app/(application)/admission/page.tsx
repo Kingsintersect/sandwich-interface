@@ -13,7 +13,7 @@ import { TuitionPaymentProvider } from '@/contexts/TuitionPaymentContext';
 import { CourseList } from './components/CourseCard';
 
 export default function NewStudentLanding() {
-    const { user, loading, refreshUserData, } = useAuth();
+    const { user, access_token, loading, refreshUserData, } = useAuth();
     const ApplicationPaymentStatus = user?.application_payment_status === "FULLY_PAID";
     let hasApplied = Boolean(user?.is_applied);
     if (IS_SANDWICH) hasApplied = IS_SANDWICH
@@ -23,7 +23,7 @@ export default function NewStudentLanding() {
             <StudentStatusProvider>
                 <div className="min-h-screen bg-gray-50 mt-20">
                     {/* Main Content */}
-                    <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+                    <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
                         {loading
                             ? (
                                 <div className='w-full h-screen/2 my-auto flex items-center justify-center'>
@@ -42,7 +42,7 @@ export default function NewStudentLanding() {
                                 {(!hasApplied && ApplicationPaymentStatus) && <ApplicationFormCard />}
 
                                 {/* {(hasApplied) && <DashboardCard user={user} />} */}
-                                {(hasApplied) && <CourseList studentId={String(user?.id)} studentData={user} />}
+                                {(hasApplied) && <CourseList student={user} access_token={access_token ?? ""} />}
                                 {/* Admission Process Steps */}
                                 <AdmissionProgressTrack user={user} reloadUser={refreshUserData} loadingUser={loading} />
                             </>}

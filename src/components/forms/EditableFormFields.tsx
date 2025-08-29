@@ -3,7 +3,7 @@ import { Upload, X, FileText, Eye, ZoomIn, ImageIcon } from 'lucide-react';
 import Image from 'next/image';
 import { ImagePreviewModal } from '@/components/application/ImagePreviewModal';
 import { DetachedProgramAccordionDisplay, ProgramNode } from './DetachedProgramAccordionDisplay';
-import { ProgramRequirementsLink } from '@/components/requirements/ProgramRequirementsModal';
+// import { ProgramRequirementsLink } from '@/components/requirements/ProgramRequirementsModal';
 
 // Reusable Input Component
 export const EditableField: React.FC<{
@@ -225,10 +225,10 @@ export const EditableProgramOptions: React.FC<EditableProgramOptionsProps> = ({
     return (
         <div className={className}>
             {/* <ProgramRequirementsLink className="text-xs" /> */}
-            <ProgramRequirementsLink
+            {/* <ProgramRequirementsLink
                 className="ml-20 text-xs text-orange-600  animate-bounce"
                 downloadUrl="/documents/PROGRAMME_AND_REQUIREMENTS.docx"
-            />
+            /> */}
             <label className="block text-sm font-medium text-gray-700 mb-1">
                 {label}
             </label>

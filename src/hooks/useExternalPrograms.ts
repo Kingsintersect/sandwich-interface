@@ -1,5 +1,6 @@
 
 import { GetListOfLocalGovInState } from '@/app/actions/server.admin';
+import { remoteApiUrl } from '@/config';
 import { useAuth } from '@/contexts/AuthContext';
 import { useQuery } from '@tanstack/react-query';
 
@@ -34,7 +35,7 @@ export type LMSProgramType = {
 };
 export async function getLmsPrograms(parent_id: string | number, access_token: string) {
 
-    const response = await fetch(`https://ubs-portal-api.qverselearning.org/api/v1/odl/our-programs?parent_id=${parent_id}`, {
+    const response = await fetch(`${remoteApiUrl}/odl/our-programs?parent_id=${parent_id}`, {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json',
@@ -47,5 +48,6 @@ export async function getLmsPrograms(parent_id: string | number, access_token: s
     }
 
     const data = await response.json();
+    console.log('data', data)
     return data;
 }

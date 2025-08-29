@@ -3,6 +3,7 @@ export const apiUrl = process.env.NEXT_PUBLIC_API_URL_SANDWHICH ?? "";
 export const credoPaymentBaseUrl = process.env.NEXT_PUBLIC_CREDO_PAYMENT_GATEWAY_URL ?? "https://pay.credodemo.com/v4";
 
 export const remoteApiUrl = process.env.NEXT_PUBLIC_REMOTE_API_URL_SANDWHICH ?? "";
+export const lmsRootUrl = process.env.NEXT_PUBLIC_LMS_ROOT_URL_SANDWHICH ?? "";
 export const lmsLoginUrl = process.env.NEXT_PUBLIC_LMS_LOGIN_URL_SANDWHICH ?? "";
 
 export const accessTokenSecret =
