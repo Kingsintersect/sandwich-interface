@@ -74,7 +74,7 @@ export interface UserInterface extends Record<string, unknown> {
 	level: string | null;
 	tuition_amount_paid: number | null;
 
-	academic_session: string;
+	academic_session: string | null;
 }
 export interface StudentApplicationType extends UserInterface {
 	religion: string;

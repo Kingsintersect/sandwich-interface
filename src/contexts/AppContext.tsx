@@ -73,6 +73,7 @@ export const AppProvider: React.FC<Props> = ({ children }) => {
          role: Roles.STUDENT,
          level: null,
          tuition_amount_paid: 0,
+         academic_session: null
       },
       isPageLoading: false,
       isAuthenticated: false,

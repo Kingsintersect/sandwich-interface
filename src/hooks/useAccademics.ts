@@ -1,4 +1,5 @@
 import { remoteApiUrl } from "@/config";
+import { handleApiError } from "@/lib/errorsHandler";
 import { useQuery } from "@tanstack/react-query";
 
 export type AccademicSessions = {
@@ -17,9 +18,12 @@ const academicsApi = {
     getAcademicSessions: async (): Promise<AccademicSessions[]> => {
         const response = await fetch(`${remoteApiUrl}/all-sessions`);
         if (!response.ok) {
-            throw new Error('Failed to fetch academic sessions');
+            console.log('erer', response.status, response.statusText);
+            await handleApiError(response);
+            // throw new Error('Failed to fetch academic sessions');
         }
         const data = await response.json();
+        console.log('data', data)
         return data.data
     },
     // getAcademicYears: async () => {
@@ -47,6 +51,8 @@ const academicsApi = {
     getCurrentSemester: async (): Promise<AccademicSemesters> => {
         const response = await fetch(`${remoteApiUrl}/academic-semester`);
         if (!response.ok) {
+            console.log('erer', response.status, response.statusText);
+            await handleApiError(response);
             throw new Error('Failed to fetch academic sessions');
         }
         const allSemester = await response.json();

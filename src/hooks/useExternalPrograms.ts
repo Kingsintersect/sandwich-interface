@@ -48,6 +48,5 @@ export async function getLmsPrograms(parent_id: string | number, access_token: s
     }
 
     const data = await response.json();
-    console.log('data', data)
     return data;
 }
