@@ -55,6 +55,8 @@ export const CreateStudentAccount = async (
 		data: { ...data },
 	})) as GenericDataType;
 	if (response.error) {
+
+		console.log('response.error', response.error)
 		throwFormattedError(response.error);
 	}
 	return { response, user_email: data.email };
