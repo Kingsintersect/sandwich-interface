@@ -191,13 +191,22 @@ export default function SignupPage() {
                                     error={errors.email}
                                 />
                                 <InputFormField<SignupFormData>
-                                    classList={"col-span-full"}
+                                    classList={""}
                                     type="text"
                                     id={'username'}
                                     label="Username"
                                     name="username"
                                     register={register}
                                     error={errors.username}
+                                />
+                                <InputFormField<SignupFormData>
+                                    classList={""}
+                                    type="text"
+                                    id={'reg_number'}
+                                    label="Registration Number"
+                                    name="reg_number"
+                                    register={register}
+                                    error={errors.reg_number}
                                 />
                                 <InputFormField<SignupFormData>
                                     type="password"

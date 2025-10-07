@@ -77,7 +77,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
                 data: data,
                 headers: {
                     Authorization: `Bearer ${authState.access_token}`,
-                    "Accept": "multipart/form-data",
+                    Accept: "application/json",
                     credentials: "omit",
                     cache: "no-store",
                 },
@@ -88,7 +88,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
                 if (!updatedUser) {
                     throw new Error("No user data found in response");
                 }
-
                 // Update state
                 setAuthState((prev) => ({
                     ...prev,

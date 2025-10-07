@@ -30,7 +30,6 @@ export const CourseCard: React.FC<CourseCardProps> = ({ course, student }) => {
         const colorIndex = courseCode.length % colors.length;
         return colors[colorIndex];
     };
-
     const lmsLink = student?.reg_number
         ? `${lmsRootUrl}/ssotester/index.php?sso_loggers=1&u=${student.reg_number}&password=1`
         : "#";
@@ -70,8 +69,6 @@ export const CourseCard: React.FC<CourseCardProps> = ({ course, student }) => {
 
 
 // components/CourseList.tsx
-
-
 interface CourseListProps {
     access_token: string;
     student: UserInterface | null
@@ -111,8 +108,6 @@ export const CourseList: React.FC<CourseListProps> = ({ access_token, student })
             </div>
         );
     }
-
-    console.log('courses2', courses)
 
     return (
         <div className="max-w-6xl mx-auto p-6">

@@ -27,7 +27,6 @@ export interface LMSCourse {
 
 export const courseService = {
     async getStudentLMSCourses(studentEmail: string, access_token: string): Promise<LMSCourse[]> {
-        console.log('studentEmail', studentEmail)
         try {
             const response = await fetch(
                 `${remoteApiUrl}/admin/course/grading?student_email=${studentEmail}`,

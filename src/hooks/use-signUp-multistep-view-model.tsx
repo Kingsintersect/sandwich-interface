@@ -29,6 +29,10 @@ export const baseSignupSchema = z
         hometown_address: z.string().min(1, { message: "Home Town is required" }),
         residential_address: z.string().min(1, { message: "Residential address isrequired" }),
         email: z.string().email({ message: "Please enter a valid email." }),
+        reg_number: z.string().min(8, `Reg Number must be at least 8 characters`)
+            // .max(15, `Reg Number must not exceed 15 characters`)
+            .regex(/^[A-Za-z0-9/]+$/, `Reg Number format is invalid`)
+            .optional(),
         password: z.string().min(6, { message: "Should be at least 6 characters long" }),
         password_confirmation: z.string(),
         // department_id: z.string().min(1, { message: "Required" }),
