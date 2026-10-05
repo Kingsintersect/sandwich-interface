@@ -3,8 +3,8 @@ import { cn } from "@/lib/utils";
 import { ReactNode, useRef, useState } from "react";
 import Image from 'next/image';
 import { Control, Controller, FieldError, Path, useFormContext, UseFormRegister } from "react-hook-form";
-import { Camera } from "lucide-react";
-import { Eye, EyeOff } from "lucide-react";
+import { Camera01Icon, ViewIcon, ViewOffIcon } from "@hugeicons/core-free-icons";
+import { Icon } from "@/components/ui/icon";
 import {
    Select,
    SelectContent,
@@ -31,7 +31,7 @@ export type ValidFieldNamesType<T> = Path<T>;
 
 export const FormFieldSet = ({ legend, classList, children }: { legend?: string, classList?: string, children: ReactNode }) => {
    return (
-      <fieldset className={cn(`w-full border border-solid border-gray-300 rounded-md px-4 py-7`, classList)}>
+      <fieldset className={cn(`w-full border border-solid border-input rounded-md px-4 py-7`, classList)}>
          {legend && <legend className="text-2xl text-site-b-light">{legend}</legend>}
          {children}
       </fieldset>
@@ -78,10 +78,10 @@ export const InputFormField = <T extends Record<string, any>>({
             placeholder={""}
             {...register(name, { ...validationRules, valueAsNumber })}
             value={value && value}
-            className={`block py-2.5 px-0 w-full text-base text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:border-site-b focus:outline-none focus:ring-0 peer ${error ? "border-red-500" : ""}`}
+            className={`block py-2.5 px-0 w-full text-base text-foreground bg-transparent border-0 border-b-2 border-input appearance-none focus:border-site-b focus:outline-none focus:ring-0 peer ${error ? "border-red-500" : ""}`}
          />
          {(type !== "hidden") &&
-            <label htmlFor={name} className={`peer-focus:font-medium absolute text-sm ${(error?.message) ? "text-red-400" : "text-gray-500"} duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-site-b peer-focus:dark:text-site-b peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6`}>
+            <label htmlFor={name} className={`peer-focus:font-medium absolute text-sm ${(error?.message) ? "text-destructive" : "text-muted-foreground"} duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-site-b peer-focus:dark:text-site-b peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6`}>
                {label}
                {(error?.message) && ` * ${error?.message}`}
             </label>
@@ -92,7 +92,7 @@ export const InputFormField = <T extends Record<string, any>>({
                className="absolute inset-y-0 right-3 flex items-center"
                onClick={() => setVisible((prev) => !prev)}
             >
-               {visible ? <EyeOff size={20} color="#ff6c37" /> : <Eye size={20} color="#701401" />}
+               {visible ? <Icon icon={ViewOffIcon} className="size-5 text-ember-600" /> : <Icon icon={ViewIcon} className="size-5 text-muted-foreground" />}
             </button>
          )}
          {/* {error && <span className="error-message text-red-400 text-xs">{error.message}</span>} */}
@@ -132,13 +132,13 @@ export const RadiobuttonFormField = <T extends Record<string, any>>({
             type="radio"
             value={value}
             {...register(name, { ...validationRules, valueAsNumber })}
-            className="peer/checkbox1 w-7 h-7 border-gray-300 focus:ring-2 focus:ring-site-a-light dark:focus:ring-site-a dark:focus:bg-site-a dark:bg-gray-700 dark:border-gray-600"
+            className="peer/checkbox1 w-7 h-7 border-input bg-background accent-[var(--color-site-a)] focus:ring-2 focus:ring-site-a-light"
             defaultChecked={defaultChecked}
             onChange={onChange}
          />
          <label
             htmlFor={`option-${value}`}
-            className={"peer-checked/checkbox1:text-site-a peer-checked/checkbox1:font-bold block ms-2 text-lg font-normal text-gray-900 dark:text-gray-300"}
+            className={"peer-checked/checkbox1:text-site-a peer-checked/checkbox1:font-bold block ms-2 text-lg font-normal text-foreground"}
          >
             {label}
          </label>
@@ -180,13 +180,13 @@ export const CheckBoxFormField = <T extends Record<string, any>>({
             type="checkbox"
             value={value}
             {...register(name, { ...validationRules })}
-            className="peer/checkbox1 w-7 h-7 border-gray-300 focus:ring-2 focus:ring-site-a-light dark:focus:ring-site-a dark:focus:bg-site-a dark:bg-gray-700 dark:border-gray-600"
+            className="peer/checkbox1 w-7 h-7 border-input bg-background accent-[var(--color-site-a)] focus:ring-2 focus:ring-site-a-light"
             defaultChecked={defaultChecked}
             onChange={onChange}
          />
          <label
             htmlFor={`boxcheck-${value}`}
-            className="peer-checked/checkbox1:text-site-a peer-checked/checkbox1:font-bold block ms-2 text-xl font-normal text-gray-900 dark:text-gray-300"
+            className="peer-checked/checkbox1:text-site-a peer-checked/checkbox1:font-bold block ms-2 text-xl font-normal text-foreground "
          >
             {label}
          </label>
@@ -223,7 +223,7 @@ export const SelectFormField = <T extends Record<string, any>>({
 }: SelectFormFieldProps<T>) => {
    return (
       <div className="w-full">
-         {(label || error?.message) && <label className={`mb-2 block text-sm font-medium text-gray-700 ${(error?.message) ? "text-red-400" : "text-gray-500"}`}>
+         {(label || error?.message) && <label className={`mb-2 block text-sm font-medium ${(error?.message) ? "text-destructive" : "text-muted-foreground"}`}>
             {label}
             {(error?.message) && ` * ${error?.message}`}
          </label>}
@@ -246,20 +246,20 @@ export const SelectFormField = <T extends Record<string, any>>({
                   defaultValue={defaultValue ?? String(field.value)}
                >
                   <SelectTrigger
-                     className="w-full h-10 px-3 border border-gray-300 rounded-md text-sm"
+                     className="w-full h-10 px-3 border border-input bg-background rounded-md text-sm"
                   >
                      <SelectValue placeholder={placeholder || "Select an option"}>
                         {field.value ? options.find((opt) => opt.value === field.value)?.label : ""}
                      </SelectValue>
                   </SelectTrigger>
                   <SelectContent
-                     className="w-full border border-gray-200 rounded-md shadow-sm bg-white text-gray-800 text-sm"
+                     className="w-full border border-border rounded-md shadow-sm bg-popover text-popover-foreground text-sm"
                   >
                      {options.map((option, index) => (
                         <SelectItem
                            key={`${String(option.value) ?? index}-${String(option.label) ?? index}`}
                            value={String(option.value)}
-                           className="cursor-pointer px-3 py-2 hover:bg-orange-100"
+                           className="cursor-pointer px-3 py-2 focus:bg-accent focus:text-accent-foreground"
                         >
                            {option.label}
                         </SelectItem>
@@ -268,7 +268,7 @@ export const SelectFormField = <T extends Record<string, any>>({
                </Select>
             )}
          />
-         {description && <p className="text-sm text-gray-500 mt-1">{description}</p>}
+         {description && <p className="text-sm text-muted-foreground mt-1">{description}</p>}
          {/* {error && <p className="text-xs text-red-500 mt-1">{error.message}</p>} */}
       </div>
    );
@@ -304,7 +304,7 @@ export const TextareaFormField = <T extends Record<string, any>>({
 }: TextareaFieldProps<T>) => (
    <div>
       <div className="col-span-full">
-         <label htmlFor={name} className={`block text-sm font-medium leading-6 ${(error?.message) ? "text-red-400" : "text-gray-400"} `}>
+         <label htmlFor={name} className={`block text-sm font-medium leading-6 ${(error?.message) ? "text-destructive" : "text-muted-foreground"} `}>
             {name}
             {(error?.message) && ` * ${error?.message}`}
          </label>
@@ -316,7 +316,7 @@ export const TextareaFormField = <T extends Record<string, any>>({
                name={name}
                rows={rows}
                cols={cols}
-               className={cn(`px-5 py-3 block w-full rounded-md border-0 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-1 focus:ring-inset focus:ring-site-b sm:text-sm sm:leading-6`, className)}></textarea>
+               className={cn(`px-5 py-3 block w-full rounded-md border-0 bg-background text-foreground shadow-sm ring-1 ring-inset ring-input placeholder:text-muted-foreground focus:ring-1 focus:ring-inset focus:ring-site-b sm:text-sm sm:leading-6`, className)}></textarea>
          </div>
       </div>
       {/* {error && <span className="error-message text-red-400 text-xs">{error.message}</span>} */}
@@ -365,8 +365,8 @@ export const FileInputFormField = <T extends Record<string, any>>({
 
    return (
       <div className={cn(`col-span-full`, className)}>
-         <label htmlFor="cover-photo" className="block text-sm font-medium leading-6 text-gray-900">{title}</label>
-         <div className="mt-2 flex min-h-[300px] justify-center rounded-lg border border-dashed border-gray-900/25 px-6 py-10">
+         <label htmlFor="cover-photo" className="block text-sm font-medium leading-6 text-foreground">{title}</label>
+         <div className="mt-2 flex min-h-[300px] justify-center rounded-lg border border-dashed border-border px-6 py-10">
             <div className="text-center">
                {pictureRef ?
                   <>
@@ -378,12 +378,12 @@ export const FileInputFormField = <T extends Record<string, any>>({
                         className="mx-auto"
                      />
                   </>
-                  : <Camera color="#dccece" width={80} className='mx-auto' />
+                  : <Icon icon={Camera01Icon} className="mx-auto size-20 text-muted-foreground" />
                }
-               <div className="mt-4 flex flex-col justify-center space-y-2 text-sm leading-6 text-gray-600">
+               <div className="mt-4 flex flex-col justify-center space-y-2 text-sm leading-6 text-muted-foreground">
                   {isLoading && <div className='my-4'><Spinner border='text-[#dccece]' fill='fill-blue-600' /></div>}
                   {customError && <p className='text-red-400 my-3'>{customError}</p>}
-                  <label ref={buttonRef} onClick={handleClick} htmlFor="file-upload" className="relative w-full cursor-pointer rounded-md bg-white font-semibold text-site-b focus-within:outline-none focus-within:ring-2 focus-within:ring-site-btext-site-b focus-within:ring-offset-2 hover:text-site-b-light p-2">
+                  <label ref={buttonRef} onClick={handleClick} htmlFor="file-upload" className="relative w-full cursor-pointer rounded-md bg-card font-semibold text-site-b focus-within:outline-none focus-within:ring-2 focus-within:ring-site-btext-site-b focus-within:ring-offset-2 hover:text-site-b-light p-2">
                      <span>{label ?? "Upload a file"}</span>
                      <input
                         id={id}
@@ -396,7 +396,7 @@ export const FileInputFormField = <T extends Record<string, any>>({
                   </label>
                   {/* <p className="pl-1">or drag and drop</p> */}
                </div>
-               <p className="text-xs leading-5 text-gray-600 mt-3">{!uploadableTypes && "PNG, JPG, GIF up to 50KB"}</p>
+               <p className="text-xs leading-5 text-muted-foreground mt-3">{!uploadableTypes && "PNG, JPG, GIF up to 50KB"}</p>
             </div>
          </div>
          {error && <span className="error-message text-red-400 text-xs">{error.message}</span>}
@@ -409,7 +409,7 @@ export const DateInput = ({ label, name, required = true }: { label: string, nam
 
    return (
       <div className="col-span-full">
-         <label htmlFor={name} className={`block text-sm font-medium leading-6 text-gray-900`}>{label}</label>
+         <label htmlFor={name} className={`block text-sm font-medium leading-6 text-foreground`}>{label}</label>
          <div className="mt-2">
             <input required={required} {...register(name)} type="date" name={name} id={name} />
          </div>
@@ -425,6 +425,6 @@ export const HR = ({ classList }: { classList?: string }) => {
 }
 
 {/* <div className="relative z-0 w-full mb-5 group">
-   <input type="tel" pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}" name="floating_phone" id="floating_phone" className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer" placeholder=" " required />
-   <label htmlFor="floating_phone" className="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Phone number (123-456-7890)</label>
+   <input type="tel" pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}" name="floating_phone" id="floating_phone" className="block py-2.5 px-0 w-full text-sm text-foreground bg-transparent border-0 border-b-2 border-input appearance-none dark:text-white  dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer" placeholder=" " required />
+   <label htmlFor="floating_phone" className="peer-focus:font-medium absolute text-sm text-muted-foreground dark:text-muted-foreground duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Phone number (123-456-7890)</label>
 </div> */}

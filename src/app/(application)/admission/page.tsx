@@ -11,17 +11,31 @@ import { StudentStatusProvider } from '@/contexts/StudentStatusContext';
 import { IS_SANDWICH } from '@/config';
 import { TuitionPaymentProvider } from '@/contexts/TuitionPaymentContext';
 import { CourseList } from './components/CourseCard';
+import { useSessionFee } from '@/hooks/useSessionFee';
+import { ReturningFeeCard } from './components/ReturningFeeCard';
 
 export default function NewStudentLanding() {
     const { user, access_token, loading, refreshUserData, } = useAuth();
     const ApplicationPaymentStatus = user?.application_payment_status === "FULLY_PAID";
+
+    // Two different flows. A first-year goes through the retry-purchase card;
+    // a returning student needs a programme on the request, so they get the
+    // programme picker instead. Only ever one of the two.
+    const {
+        isOwing: owesSessionFee,
+        isReturning,
+        session: feeSession,
+        label: feeLabel,
+    } = useSessionFee();
+    const showApplicationPayment = owesSessionFee && !isReturning;
+    const showReturningFee = owesSessionFee && isReturning;
     let hasApplied = Boolean(user?.is_applied);
     if (IS_SANDWICH) hasApplied = IS_SANDWICH
 
     return (
         <TuitionPaymentProvider>
             <StudentStatusProvider>
-                <div className="min-h-screen bg-gray-50 mt-20">
+                <div className="min-h-screen bg-background mt-20">
                     {/* Main Content */}
                     <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
                         {loading
@@ -36,7 +50,11 @@ export default function NewStudentLanding() {
                                 <WelcomeCard user={user} />
 
                                 {/* Current Status */}
-                                {!ApplicationPaymentStatus && <ApplicationPaymentCard access_token={access_token} />}
+                                {showApplicationPayment && <ApplicationPaymentCard access_token={access_token} feeLabel={feeLabel} />}
+
+                                {/* Returning students pay against a programme, so they get
+                                    the picker rather than the retry-purchase card. */}
+                                {showReturningFee && <ReturningFeeCard session={feeSession} />}
 
                                 {/* Application status */}
                                 {(!hasApplied && ApplicationPaymentStatus) && <ApplicationFormCard />}

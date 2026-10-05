@@ -10,7 +10,8 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { InputFormField } from '@/components/ui/inputs/FormFields';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
-import { Loader } from 'lucide-react';
+import { Loading03Icon } from "@hugeicons/core-free-icons";
+import { Icon } from "@/components/ui/icon";
 
 const StudentCreateAccount = ({ classList }: { classList?: string }) => {
    const { access_token } = useAuth();
@@ -135,7 +136,7 @@ const StudentCreateAccount = ({ classList }: { classList?: string }) => {
             <div className="flex justify-center">
                <Button type="submit" className='px-24 bg-cyan-700 text-white: hover:bg-orange-700'>
                   Create Account
-                  {isSubmitting && (<Loader className="animate-spin ml-2" size={16} />)}
+                  {isSubmitting && (<Icon icon={Loading03Icon} className="animate-spin ml-2" size={16} />)}
                </Button>
             </div>
          </div>

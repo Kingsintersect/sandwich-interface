@@ -1,13 +1,7 @@
 "use client";
 
-import {
-  MoreHorizontal,
-  Trash,
-  Settings,
-  Copy,
-  LucideIcon,
-  Eye,
-} from "lucide-react";
+import { Copy01Icon, Delete02Icon, MoreHorizontalIcon, Settings02Icon, ViewIcon } from "@hugeicons/core-free-icons";
+import { Icon, type IconSvgElement } from "@/components/ui/icon";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -35,7 +29,7 @@ import { remoteApiUrl } from "@/config";
 interface DropMenu {
   title: string;
   url?: string;
-  icon?: LucideIcon;
+  icon?: IconSvgElement;
 }
 
 interface ActionMenuProps<TData> {
@@ -111,13 +105,13 @@ export function ActionMenu<TData extends { id: string }>({
         <DropdownMenuTrigger asChild>
           <Button variant="ghost" className="h-8 w-8 p-0">
             <span className="sr-only">Open menu</span>
-            <MoreHorizontal className="h-4 w-4" />
+            <Icon icon={MoreHorizontalIcon} className="h-4 w-4" />
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent style={{ position: "relative" }} align="end">
           <DropdownMenuLabel>Actions</DropdownMenuLabel>
           <DropdownMenuItem onClick={() => onCopy?.(row.id)}>
-            <Copy />
+            <Icon icon={Copy01Icon} />
             Copy ID
           </DropdownMenuItem>
 
@@ -127,9 +121,9 @@ export function ActionMenu<TData extends { id: string }>({
               <DropdownMenuItem asChild>
                 <Link href={item.url ?? "#"} className="flex items-center">
                   {item.icon ? (
-                    <item.icon className="mr-2 h-4 w-4" />
+                    <Icon icon={item.icon} className="mr-2 h-4 w-4" />
                   ) : (
-                    <Settings className="mr-2 h-4 w-4" />
+                    <Icon icon={Settings02Icon} className="mr-2 h-4 w-4" />
                   )}
                   {item.title}
                 </Link>
@@ -144,7 +138,7 @@ export function ActionMenu<TData extends { id: string }>({
                 onClick={() => setIsModalOpen(true)}
                 className="text-red-500"
               >
-                <Trash className="mr-2 h-4 w-4" /> Delete
+                <Icon icon={Delete02Icon} className="mr-2 h-4 w-4" /> Delete
               </DropdownMenuItem>
             </>
           )}
@@ -179,7 +173,7 @@ export function ActionMenu<TData extends { id: string }>({
                 }}
                 className="cursor-pointer"
               >
-                <Eye className="h-4 w-4 mr-2" /> View Details
+                <Icon icon={ViewIcon} className="h-4 w-4 mr-2" /> View Details
               </DropdownMenuItem>
             </>
           )}

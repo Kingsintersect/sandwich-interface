@@ -34,6 +34,27 @@ export class PaymentService {
         return response.json();
     }
 
+    /**
+     * Returning fee, paid by a student enrolling into a new session.
+     * Note this one sits at the API root, not under /application, which is
+     * where the backend put it.
+     */
+    static async verifyReturnFeePayment(data: PaymentVerificationRequest): Promise<PaymentVerificationResponse> {
+        const response = await fetch(`${remoteApiUrl}/verify-return-fee-payment?transRef=${data.transRef}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${data.access_token}`,
+            },
+        });
+
+        if (!response.ok) {
+            throw new Error('Payment verification failed');
+        }
+
+        return response.json();
+    }
+
     static async verifyTuitionPayment(data: PaymentVerificationRequest): Promise<PaymentVerificationResponse> {
         const response = await fetch(`${remoteApiUrl}/application/verify-tuition?transRef=${data.transRef}`, {
             method: 'GET',

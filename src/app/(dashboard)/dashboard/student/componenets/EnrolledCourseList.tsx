@@ -1,125 +1,96 @@
-import { useAuth } from '@/contexts/AuthContext';
-import React, { useEffect, useState } from 'react';
-import { BookOpen, Loader2 } from 'lucide-react';
-import { getStudentGradeReport } from '../grade-report/api/studentGradeReport.api';
-import { AuthUser } from '@/types/user';
+"use client";
+
+import React from 'react';
+import { Book02Icon } from '@hugeicons/core-free-icons';
 import CourseCard from '@/components/ui/cards/CourseCard';
-import { processGradeReport } from '@/lib/gpa.utils';
-// import { GetStudentCourses } from '@/app/actions/server.admin';
+import { Icon } from '@/components/ui/icon';
+import { AuthUser } from '@/types/user';
+import { useStudentGradeReport } from '@/hooks/useStudentAcademics';
 
 interface EnrolledCourseListProps {
     student: AuthUser | null;
     url?: string;
 }
 
-const EnrolledCourseList: React.FC<EnrolledCourseListProps> = ({ student, url }) => {
-    const [enrolledCourses, setEnrolledCourses] = useState<any[]>([]);
-    const [isLoading, setIsLoading] = useState(true);
-    const [error, setError] = useState<string | null>(null);
-    const { access_token } = useAuth();
-    const shortCode = student?.level;
-
-    useEffect(() => {
-        if (!access_token || !shortCode) {
-            setIsLoading(false);
-            return;
-        }
-
-        const controller = new AbortController();
-        setIsLoading(true);
-        setError(null);
-
-        const fetchCourses = async () => {
-            try {
-                // const res = await GetStudentCourses(access_token, student.id, shortCode);
-                if (student.email) {
-                    const gradeReport = await getStudentGradeReport(student.email, access_token);
-                    const updatedSampleGradeReport = processGradeReport(gradeReport);
-                    if (!updatedSampleGradeReport) {
-                        setError("Unable to retrieve course data");
-                        return;
-                    }
-                    setEnrolledCourses(updatedSampleGradeReport.courses);
-                } else {
-                    setError("Student email is missing");
-                }
-            } catch (error) {
-                if ((error as Error).name !== "AbortError") {
-                    console.error("Error fetching courses:", error);
-                    setError("Failed to load your enrolled courses");
-                }
-            } finally {
-                setIsLoading(false);
-            }
-        };
-
-        fetchCourses();
-        return () => controller.abort();
-    }, [access_token, student, shortCode]);
-
-    if (isLoading) {
-        return (
-            <div className="w-full py-16 flex flex-col items-center justify-center text-gray-500">
-                <Loader2 className="h-10 w-10 animate-spin mb-4 text-blue-600" />
-                <p className="text-lg">Loading your enrolled courses...</p>
-            </div>
-        );
-    }
-
-    if (error) {
-        return (
-            <div className="w-full py-12 bg-red-50 dark:bg-red-900/20 rounded-xl flex flex-col items-center justify-center text-red-600 dark:text-red-400">
-                <p className="text-lg font-medium">{error}</p>
-                <p className="text-sm mt-2">Please try again later or contact support</p>
-            </div>
-        );
-    }
+/**
+ * Courses come from the same grade-report endpoint the dashboard uses, via
+ * react-query, so the two screens share one cache instead of each running
+ * their own fetch effect.
+ */
+const EnrolledCourseList: React.FC<EnrolledCourseListProps> = ({ url }) => {
+    const { data: report, isLoading, isError } = useStudentGradeReport();
+    const courses = report?.courses ?? [];
 
     return (
-        <div className="w-full max-w-7xl mx-auto mt-10 mb-16">
-            <div className="flex items-center justify-between mb-6 px-4">
-                <div className="flex items-center">
-                    <BookOpen className="h-6 w-6 mr-3 text-indigo-600 dark:text-indigo-400" />
-                    <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-200">
-                        Enrolled Courses
+        <section className="mt-8">
+            <div className="mb-6 flex items-center justify-between gap-4">
+                <div className="flex items-center gap-3">
+                    <span className="flex size-10 items-center justify-center rounded-xl bg-ocean-50 text-ocean-600 dark:bg-ocean-900/50 dark:text-ocean-300">
+                        <Icon icon={Book02Icon} className="size-5" />
+                    </span>
+                    <h2 className="text-xl font-bold text-ocean-900 dark:text-foreground">
+                        Enrolled courses
                     </h2>
                 </div>
-                <div className="text-sm px-3 py-1 bg-indigo-100 dark:bg-indigo-900/50 text-indigo-700 dark:text-indigo-300 rounded-full">
-                    {enrolledCourses.length} {enrolledCourses.length === 1 ? 'Course' : 'Courses'}
-                </div>
+
+                {!isLoading && !isError && courses.length > 0 && (
+                    <span className="rounded-full bg-muted px-3 py-1 text-xs font-semibold text-muted-foreground">
+                        {courses.length} {courses.length === 1 ? 'course' : 'courses'}
+                    </span>
+                )}
             </div>
 
-            {enrolledCourses.length > 0 ? (
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 px-4">
-                    {enrolledCourses.map((course, index) => (
+            {isLoading ? (
+                <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+                    {Array.from({ length: 4 }).map((_, i) => (
                         <div
-                            key={index}
-                            className="transition-all duration-300 transform hover:-translate-y-1 hover:shadow-lg"
-                        >
+                            key={i}
+                            className="h-52 animate-pulse rounded-2xl border border-border bg-muted/50"
+                        />
+                    ))}
+                </div>
+            ) : isError ? (
+                <div className="rounded-2xl border border-destructive/25 bg-destructive/5 px-6 py-12 text-center">
+                    <p className="font-medium text-destructive">
+                        Failed to load your enrolled courses
+                    </p>
+                    <p className="mt-2 text-sm text-muted-foreground">
+                        Please try again later, or contact the registry if this continues.
+                    </p>
+                </div>
+            ) : courses.length > 0 ? (
+                <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+                    {courses.map((course) => {
+                        const score = Number(course.finalgrade);
+                        return (
                             <CourseCard
+                                key={course.course_id}
                                 url={url}
-                                image_url={course.image_url ?? "/course/opreating-systems.png"}
                                 title={course.course_name}
                                 code={course.course_code}
                                 credit={course.credit_load}
-                                instructor={course.instructor ?? null}
+                                instructor={null}
+                                score={Number.isFinite(score) ? score : null}
+                                grade={course.grade}
                             />
-                        </div>
-                    ))}
+                        );
+                    })}
                 </div>
             ) : (
-                <div className="py-16 px-4 bg-gray-50 dark:bg-gray-800/50 rounded-xl text-center">
-                    <div className="inline-flex justify-center items-center w-16 h-16 bg-gray-100 dark:bg-gray-700 rounded-full mb-4">
-                        <BookOpen className="h-8 w-8 text-gray-500 dark:text-gray-400" />
-                    </div>
-                    <h3 className="text-xl font-medium text-gray-700 dark:text-gray-300 mb-2">No Courses Enrolled</h3>
-                    <p className="text-gray-500 dark:text-gray-400 max-w-md mx-auto">
-                        You are not currently enrolled in any courses for this study level.
-                        Please contact your academic advisor for assistance.
+                <div className="rounded-2xl border border-border bg-card px-6 py-16 text-center shadow-soft">
+                    <span className="mx-auto flex size-14 items-center justify-center rounded-2xl bg-muted text-muted-foreground">
+                        <Icon icon={Book02Icon} className="size-6" />
+                    </span>
+                    <h3 className="mt-5 text-lg font-semibold text-ocean-900 dark:text-foreground">
+                        No courses registered
+                    </h3>
+                    <p className="mx-auto mt-2 max-w-md text-sm leading-relaxed text-muted-foreground">
+                        You are not registered for any courses at this level yet. Contact
+                        your academic adviser or the registry for help.
                     </p>
                 </div>
             )}
-        </div>
+        </section>
     );
 };
 

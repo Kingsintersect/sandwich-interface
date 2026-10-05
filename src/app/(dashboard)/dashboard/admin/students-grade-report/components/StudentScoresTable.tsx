@@ -17,14 +17,30 @@ import {
 } from "@/components/ui/table";
 import { Users } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-import { StudentScore } from "../page";
+export type StudentActivity = {
+    activity_name: string;
+    type: "assign" | "quiz" | "exam" | string;
+    grade: string;
+    max_grade: string;
+};
+
+export type StudentScore = {
+    student_id: number;
+    student_email: string;
+    student_username: string;
+    final_grade: number;
+    letter_grade: string;
+    credit_load: number;
+    quality_points: number;
+    activities: StudentActivity[];
+};
 
 const gradeColorMap = {
-    A: "bg-blue-500",
-    B: "bg-green-500",
-    C: "bg-yellow-500",
-    D: "bg-red-500",
-    F: "bg-gray-500",
+    A: "bg-emerald-500",
+    B: "bg-ocean-500",
+    C: "bg-ocean-400",
+    D: "bg-ember-500",
+    F: "bg-muted-foreground",
 };
 // export const getScoreGrade = (score, maxScore) => {
 //     const percentage = (score / maxScore) * 100;

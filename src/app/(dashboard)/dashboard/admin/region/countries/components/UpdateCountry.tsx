@@ -3,7 +3,8 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import React, { useEffect } from 'react';
 import { SubmitHandler, useForm } from "react-hook-form";
 import { z } from 'zod';
-import { ArrowRightIcon } from "lucide-react";
+import { ArrowRight01Icon } from "@hugeicons/core-free-icons";
+import { Icon } from "@/components/ui/icon";
 import { UpdateSingleCountry } from '@/app/actions/server.admin';
 import { notify } from '@/contexts/ToastProvider';
 import { baseUrl } from '@/config';
@@ -65,7 +66,7 @@ const UpdateCountry = ({ country, access_token }: { country: Country, access_tok
             <div className="flex justify-center w-full">
                <Button type='submit'>
                   Update Country
-                  <ArrowRightIcon className="ml-2 h-5 w-5" />
+                  <Icon icon={ArrowRight01Icon} className="ml-2 h-5 w-5" />
                </Button>
             </div>
          </div>

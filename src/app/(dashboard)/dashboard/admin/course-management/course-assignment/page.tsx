@@ -2,7 +2,8 @@
 import { GetAllCourseAssignment } from '@/app/actions/server.admin';
 import Search from '@/components/ui/inputs/Search';
 import { baseUrl } from '@/config';
-import { PlusIcon } from 'lucide-react';
+import { PlusSignIcon } from "@hugeicons/core-free-icons";
+import { Icon } from "@/components/ui/icon";
 import Link from 'next/link';
 import React, { useEffect, useMemo, useState } from 'react'
 import { Button } from "@/components/ui/button"
@@ -113,7 +114,7 @@ const CourseAssignmentPage = () => {
                   <div className="">
                      <Link href={`${basePath}/create`} >
                         <Button variant={'secondary'}>
-                           <PlusIcon className="h-5 md:ml-4" />
+                           <Icon icon={PlusSignIcon} className="h-5 md:ml-4" />
                            Create New Course Assignments
                         </Button>
                      </Link>

@@ -1,36 +1,121 @@
 "use client";
-import { Card, CardContent } from '@/components/ui/card';
 import Link from 'next/link';
-import { CheckCircle, CircleAlert, Loader, XCircle } from "lucide-react";
+import {
+   Alert02Icon,
+   ArrowRight01Icon,
+   CheckmarkCircle02Icon,
+   Loading03Icon,
+   CancelCircleIcon,
+} from "@hugeicons/core-free-icons";
+import { Icon, type IconSvgElement } from '@/components/ui/icon';
 import { AdmissionStatusType, StatusType } from '@/config/Types';
+import { cn } from '@/lib/utils';
+
+type Tone = "positive" | "caution" | "negative" | "info";
+
+// The state reads from the icon tile and the value text; no coloured rail.
+const toneStyles: Record<Tone, { icon: string; value: string }> = {
+   positive: {
+      icon: "bg-emerald-50 text-emerald-600 dark:bg-emerald-950/50 dark:text-emerald-300",
+      value: "text-ocean-900 dark:text-foreground",
+   },
+   caution: {
+      icon: "bg-ember-50 text-ember-600 dark:bg-ember-900/40 dark:text-ember-300",
+      value: "text-ocean-900 dark:text-foreground",
+   },
+   negative: {
+      icon: "bg-red-50 text-red-600 dark:bg-red-950/50 dark:text-red-300",
+      value: "text-ocean-900 dark:text-foreground",
+   },
+   info: {
+      icon: "bg-ocean-50 text-ocean-600 dark:bg-ocean-900/50 dark:text-ocean-300",
+      value: "text-ocean-900 dark:text-foreground",
+   },
+};
+
+/**
+ * Shares StatCard's layout - label and value on the left, icon tile on the
+ * right - so the status cards and the academic stats read as one set.
+ */
+function StatusTile({
+   label,
+   message,
+   tone,
+   icon,
+   href,
+   cta,
+}: {
+   label: string;
+   message: string;
+   tone: Tone;
+   icon: IconSvgElement;
+   href?: string;
+   cta?: string;
+}) {
+   const styles = toneStyles[tone];
+
+   const body = (
+      <>
+         <div className="flex items-start justify-between gap-4">
+            <div className="min-w-0">
+               <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">
+                  {label}
+               </p>
+               <h3 className={cn("mt-2 text-2xl font-bold", styles.value)}>
+                  {message}
+               </h3>
+
+               {href && cta && (
+                  <span className="mt-2 inline-flex items-center gap-1 text-xs font-semibold text-ember-600">
+                     {cta}
+                     <Icon
+                        icon={ArrowRight01Icon}
+                        className="size-3.5 transition-transform group-hover:translate-x-0.5"
+                     />
+                  </span>
+               )}
+            </div>
+
+            <span className={cn("flex size-12 shrink-0 items-center justify-center rounded-xl", styles.icon)}>
+               <Icon icon={icon} className="size-5.5" />
+            </span>
+         </div>
+      </>
+   );
+
+   const shell = "group relative flex h-full flex-col overflow-hidden rounded-2xl border border-border bg-card p-6 shadow-soft";
+
+   if (href) {
+      return (
+         <Link href={href} className={cn(shell, "lift")}>
+            {body}
+         </Link>
+      );
+   }
+   return <div className={shell}>{body}</div>;
+}
 
 export function AdmissionStatus({ admissionStatus }: { admissionStatus: AdmissionStatusType }) {
    const status = admissionStatusConfig[admissionStatus];
 
-   if (!status || !status.icon) {
+   if (!status) {
       return (
-         <Card className="bg-gray-100">
-            <CardContent>
-               <div className="text-lg text-red-500 font-bold">Invalid Admission Status: {admissionStatus}</div>
-            </CardContent>
-         </Card>
+         <StatusTile
+            label="Admission status"
+            message="Unknown"
+            tone="negative"
+            icon={Alert02Icon}
+         />
       );
    }
 
-   const Icon = status.icon;
-
    return (
-      <Card className={status.backgroundColor}>
-         <CardContent>
-            <div className="grid grid-cols-1">
-               <div className="text-lg mb-5 text-slate-500 font-bold">ADMISSION STATUS</div>
-               <div className="flex items-center gap-3">
-                  <Icon className={`h-14 w-14 ${status.iconColor}`} />
-                  <span className={`${status.textColor} text-2xl`}>{status.message}</span>
-               </div>
-            </div>
-         </CardContent>
-      </Card>
+      <StatusTile
+         label="Admission status"
+         message={status.message}
+         tone={status.tone}
+         icon={status.icon}
+      />
    );
 }
 
@@ -39,102 +124,80 @@ export function StatusCheckCard({
    admission,
    title,
    url = "#",
-   // flag,
 }: {
    dataStatus: StatusType;
    admission: AdmissionStatusType;
    title: string;
    url?: string;
-   // flag?: string;
 }) {
-   const statusKey = dataStatus as StatusType;
+   const status = statusConfig[dataStatus as StatusType];
 
-   const status = statusConfig[statusKey];
-
-   if (status === undefined) {
+   if (!status) {
       return (
-         <Card className="bg-gray-100">
-            <CardContent>
-               <div className="p-4 text-center text-red-600 font-semibold">
-                  Unknown status: {dataStatus}
-               </div>
-            </CardContent>
-         </Card>
+         <StatusTile
+            label={title}
+            message="Unknown"
+            tone="negative"
+            icon={Alert02Icon}
+         />
       );
    }
 
-   const Icon = status.icon;
-   const isLinkActive = admission === AdmissionStatusType.ADMITTED && statusKey !== StatusType.FULLY_PAID;
+   const isLinkActive =
+      admission === AdmissionStatusType.ADMITTED && dataStatus !== StatusType.FULLY_PAID;
 
    return (
-      <Card className={status.backgroundColor}>
-         <CardContent>
-            <Link href={isLinkActive ? url : "#"}>
-               <div className="grid grid-cols-1">
-                  <div className="text-lg mb-5 text-slate-500 font-bold">{title}</div>
-                  <div className="flex items-center gap-3">
-                     <Icon className={`h-14 w-14 ${status.iconColor}`} />
-                     <span className={`${status.textColor} text-2xl`}>{status.message}</span>
-                  </div>
-               </div>
-            </Link>
-         </CardContent>
-      </Card>
+      <StatusTile
+         label={title}
+         message={status.message}
+         tone={status.tone}
+         icon={status.icon}
+         href={isLinkActive ? url : undefined}
+         cta={isLinkActive ? "Make payment" : undefined}
+      />
    );
 }
 
-
-const statusConfig = {
+const statusConfig: Record<StatusType, { tone: Tone; message: string; icon: IconSvgElement }> = {
    [StatusType.FULLY_PAID]: {
-      iconColor: "text-green-400 dark:text-green-200",
-      textColor: "text-green-500",
-      backgroundColor: "bg-[#e1fff4]",
+      tone: "positive",
       message: "Paid",
-      icon: CheckCircle,
+      icon: CheckmarkCircle02Icon,
    },
    [StatusType.PART_PAID]: {
-      iconColor: "text-lime-400 dark:text-lime-200",
-      textColor: "text-lime-500",
-      backgroundColor: "bg-lime-50",
-      message: "PART PAID",
-      icon: CheckCircle,
+      tone: "caution",
+      message: "Part paid",
+      icon: Alert02Icon,
    },
    [StatusType.UNPAID]: {
-      iconColor: "text-red-400 dark:text-red-200",
-      textColor: "text-red-500",
-      backgroundColor: "bg-[#fff4f4]",
-      message: "Not Paid",
-      icon: XCircle
+      tone: "negative",
+      message: "Not paid",
+      icon: CancelCircleIcon,
    },
-}
+};
 
-const admissionStatusConfig = {
+const admissionStatusConfig: Record<
+   AdmissionStatusType,
+   { tone: Tone; message: string; icon: IconSvgElement }
+> = {
    [AdmissionStatusType.ADMITTED]: {
-      iconColor: "text-green-400 dark:text-green-200",
-      textColor: "text-green-500",
-      backgroundColor: "bg-[#e1fff4]",
-      message: "GRANTED",
-      icon: CheckCircle,
+      tone: "positive",
+      message: "Granted",
+      icon: CheckmarkCircle02Icon,
    },
    [AdmissionStatusType.PENDING]: {
-      iconColor: "text-cyan-400 dark:text-cyan-200",
-      textColor: "text-cyan-500",
-      backgroundColor: "bg-[#e6f6f8]",
-      message: "PENDING",
-      icon: CircleAlert
+      tone: "info",
+      message: "Pending",
+      icon: Alert02Icon,
    },
    [AdmissionStatusType.NOT_ADMITTED]: {
-      iconColor: "text-red-400 dark:text-red-200",
-      textColor: "text-red-500",
-      backgroundColor: "bg-[#fff4f4]",
-      message: "DENAIED",
-      icon: XCircle
+      tone: "negative",
+      message: "Denied",
+      icon: CancelCircleIcon,
    },
    [AdmissionStatusType.INPROGRESS]: {
-      iconColor: "text-blue-400 dark:text-blue-200",
-      textColor: "text-blue-500",
-      backgroundColor: "bg-blue-100",
-      message: "INPROGRESS",
-      icon: Loader
-   }
+      tone: "info",
+      message: "In progress",
+      icon: Loading03Icon,
+   },
 };

@@ -1,74 +1,93 @@
 "use client";
 
 import React, { useState } from 'react';
-import { Users, GraduationCap } from 'lucide-react';
+import { useQuery } from '@tanstack/react-query';
+import { GraduationScrollIcon, UserGroupIcon } from '@hugeicons/core-free-icons';
 import { ApplicantsDataTable } from './components/ApplicantsDataTable';
-import { SITE_NAME } from '@/config';
-import { Badge } from '@/components/ui/badge';
 import { AdmittedStudentDataTable } from './components/AdmittedStudentDataTable';
+import { GetAppliedStudentList } from '@/app/actions/admin';
+import { useAuth } from '@/contexts/AuthContext';
+import { Icon, type IconSvgElement } from '@/components/ui/icon';
+import { SITE_NAME } from '@/config';
+import { extractTotal } from '@/lib/admin.analytics';
+import { cn } from '@/lib/utils';
+
+type Tab = { id: string; label: string; icon: IconSvgElement };
+
+const tabs: Tab[] = [
+    { id: 'applicants', label: 'Admission applicants', icon: UserGroupIcon },
+    { id: 'students', label: 'Student listing', icon: GraduationScrollIcon },
+];
 
 const StudentApplicationsPage = () => {
     const [activeTab, setActiveTab] = useState('applicants');
-    const tabs = [
-        { id: 'applicants', label: 'Admission Applicants', icon: Users },
-        { id: 'students', label: `Student Listing`, icon: GraduationCap },
-    ];
+    const { access_token } = useAuth();
+
+    // The pending count was hard-coded to 16; read it from the same endpoint
+    // the applicants table uses.
+    const { data: pendingCount } = useQuery({
+        queryKey: ['applied-students-count', access_token],
+        queryFn: async () => {
+            const res = await GetAppliedStudentList(access_token ?? "");
+            return extractTotal(res?.success);
+        },
+        enabled: !!access_token,
+        staleTime: 60 * 1000,
+    });
 
     return (
-        <div className="min-h-screen bg-gray-50">
+        <div className="pb-10">
             {/* Header */}
-            <div className="bg-white shadow-sm border-b mb-10">
-                <div className="max-w-7xl mx-auto px-4 py-4">
-                    <div className="flex items-center justify-between">
-                        <div>
-                            <h1 className="text-2xl font-bold text-site-b-dark">Admission Officer</h1>
-                            <p className="text-gray-500">{SITE_NAME} - Application Review</p>
-                        </div>
-                        <div className="flex items-center space-x-4">
-                            <div className="text-sm text-gray-500">
-                                <Badge className="font-medium rounded-xl" variant={"destructive"}>{16}</Badge> Pending Review
-                            </div>
-                            <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center">
-                                <span className="text-white font-medium">AO</span>
-                            </div>
-                        </div>
+            <div className="border-b border-border pb-6">
+                <div className="flex flex-wrap items-center justify-between gap-4">
+                    <div>
+                        <h1 className="text-2xl font-bold tracking-tight text-ocean-900 dark:text-foreground">
+                            Manage admissions
+                        </h1>
+                        <p className="mt-1.5 text-sm text-muted-foreground">
+                            {SITE_NAME} &middot; application review
+                        </p>
                     </div>
+
+                    {typeof pendingCount === 'number' && (
+                        <div className="flex items-center gap-2.5 rounded-full border border-border bg-card px-4 py-2 shadow-soft">
+                            <span className="ember-surface flex size-6 items-center justify-center rounded-full text-[11px] font-bold tabular-nums text-white">
+                                {pendingCount}
+                            </span>
+                            <span className="text-sm font-medium text-muted-foreground">
+                                pending review
+                            </span>
+                        </div>
+                    )}
                 </div>
             </div>
 
             {/* Tabs */}
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div className="border-b border-gray-200">
-                    <nav className="-mb-px flex space-x-8">
-                        {tabs.map(tab => {
-                            const Icon = tab.icon;
-                            return (
-                                <button
-                                    key={tab.id}
-                                    onClick={() => setActiveTab(tab.id)}
-                                    className={`py-4 px-1 border-b-2 font-medium text-sm flex items-center space-x-2 ${activeTab === tab.id
-                                        ? 'border-blue-500 text-blue-600'
-                                        : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-                                        }`}
-                                >
-                                    <Icon className="w-4 h-4" />
-                                    <span>{tab.label}</span>
-                                </button>
-                            );
-                        })}
-                    </nav>
-                </div>
+            <div className="border-b border-border">
+                <nav className="-mb-px flex gap-6">
+                    {tabs.map(tab => (
+                        <button
+                            key={tab.id}
+                            onClick={() => setActiveTab(tab.id)}
+                            aria-current={activeTab === tab.id ? 'page' : undefined}
+                            className={cn(
+                                "flex items-center gap-2 border-b-2 px-1 py-4 text-sm font-semibold transition-colors",
+                                activeTab === tab.id
+                                    ? "border-ember-500 text-ocean-900 dark:text-foreground"
+                                    : "border-transparent text-muted-foreground hover:border-border hover:text-ocean-700"
+                            )}
+                        >
+                            <Icon icon={tab.icon} className="size-4.5" />
+                            {tab.label}
+                        </button>
+                    ))}
+                </nav>
             </div>
 
-            {/* Tab Content */}
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-                {activeTab === 'applicants' && (
-                    <ApplicantsDataTable />
-                )}
-
-                {activeTab === 'students' && (
-                    <AdmittedStudentDataTable />
-                )}
+            {/* Tab content */}
+            <div className="pt-8">
+                {activeTab === 'applicants' && <ApplicantsDataTable />}
+                {activeTab === 'students' && <AdmittedStudentDataTable />}
             </div>
         </div>
     );

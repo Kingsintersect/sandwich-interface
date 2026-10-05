@@ -1,17 +1,16 @@
 "use client";
-import { ClipboardCopy } from "lucide-react";
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import { ArrowRight01Icon, Copy01Icon, Tick02Icon } from "@hugeicons/core-free-icons";
 import AdmissionDeniedBanner from "./AdmissionDeniedBanner";
 import { baseUrl } from "@/config";
-import { useRouter } from "next/navigation";
 import Typewriter from "@/components/TypeWritter";
 import { Button } from "@/components/ui/button";
+import { Icon } from "@/components/ui/icon";
 import { UserInterface } from "@/config/Types";
 
 const navigation = {
    applicationFormUrl: `${baseUrl}/admission/form`,
-   acceptanceFeeUrl: `${baseUrl}/dashboard/history/student-payments/acceptance`,
-   tuitionFeeUrl: `${baseUrl}/dashboard/history/student-payments/tuition`,
 }
 
 const StudentBanner = ({ student }: { student: UserInterface }) => {
@@ -27,15 +26,9 @@ const StudentBanner = ({ student }: { student: UserInterface }) => {
    useEffect(() => {
       if (!student) return;
 
+      // Only the application fee exists, so the form is the single next step.
       if (student.is_applied === 0) {
          setGoto(navigation.applicationFormUrl);
-         return;
-      } else if (student.acceptance_fee_payment_status === "UNPAID") {
-         setGoto(navigation.acceptanceFeeUrl);
-         return;
-      } else if (student.tuition_payment_status === "UNPAID") {
-         setGoto(navigation.tuitionFeeUrl);
-         return;
       }
    }, [student]);
 
@@ -52,65 +45,89 @@ const StudentBanner = ({ student }: { student: UserInterface }) => {
    const handleGoTo = () => {
       router.push(goto);
    }
+
+   if (student.admission_status === "NOT_ADMITTED") {
+      return <AdmissionDeniedBanner statement={student.reason_for_denial as string} />;
+   }
+
    return (
-      <>
-         {student.admission_status === "NOT_ADMITTED" ?
-            <AdmissionDeniedBanner statement={student.reason_for_denial as string} />
-            :
-            <Banner>
-               <div className="flex w-full flex-col justify-between border-b border-white bg-[#fffffb] p-4 dark:border-gray-600 dark:bg-gray-700 md:flex-row px-5 py-5 mb-5 rounded-md">
-                  <div className="mb-4 md:mb-0 md:mr-4 max-w-xl">
-                     <h2 className="text-2xl font-semibold text-gray-90 mb-3">Welcome <span className="text-cyan-600 inline-block ml-2">{student.first_name}</span></h2>
-                     <h3 className="mb-1 text-xl font-semibold text-gray-90 text-[#23628d]">Education, Talent, And Career Opportunities. <br />
-                        <Typewriter
-                           className="text-[#d35401] mt-2 text-lg"
-                           phrases={[
-                              'All in one place...',
-                              'Empowering Learning Through Technology.',
-                              'Built for Modern Education.',
-                              'Join the Future of Learning.',
-                           ]}
-                        />
-                     </h3>
-                     <p className="flex items-center font-normal text-gray-500">
-                        Ready yourself with direct and knowledge rich online courses and make your career dreams a reality
+      <section className="crest-surface ring-gradient relative overflow-hidden rounded-3xl p-7 shadow-lift sm:p-9">
+         {/* Brand light sources, matching the marketing pages */}
+         <span className="pointer-events-none absolute -right-24 -top-24 size-80 rounded-full bg-ember-500/25 blur-[110px]" />
+         <span className="pointer-events-none absolute -bottom-32 -left-16 size-80 rounded-full bg-ocean-400/20 blur-[110px]" />
+
+         <div className="relative flex flex-col justify-between gap-8 lg:flex-row lg:items-center">
+            <div className="max-w-xl">
+               <span className="text-[11px] font-semibold uppercase tracking-[0.2em] text-ember-400">
+                  Sandwich Programme
+               </span>
+
+               <h2 className="mt-3 text-3xl font-bold leading-tight text-white sm:text-4xl">
+                  Welcome back,{" "}
+                  <span className="text-ember-400">{student.first_name}</span>
+               </h2>
+
+               <Typewriter
+                  className="mt-4 block text-lg font-medium text-white/80"
+                  phrases={[
+                     'Education, talent and career opportunities.',
+                     'All in one place...',
+                     'Empowering learning through technology.',
+                     'Built for modern education.',
+                  ]}
+               />
+
+               <p className="mt-4 max-w-md text-sm leading-relaxed text-white/60">
+                  Track your application, register courses and check results - all
+                  from this dashboard.
+               </p>
+            </div>
+
+            {/* Registration number card */}
+            <div className="w-full shrink-0 rounded-2xl border border-white/15 bg-white/10 p-6 backdrop-blur-md lg:w-72">
+               {student.reg_number ? (
+                  <>
+                     <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-white/50">
+                        Registration number
                      </p>
-
-                  </div>
-
-                  <div className="flex shrink-0 items-center">
-                     <div className="mr-3 inline-flex items-center justify-center rounded-lg border border-gray-200 bg-white px-3 py-2 text-xs font-medium text-gray-900 hover:bg-gray-100 hover:text-cyan-700 focus:z-10 focus:outline-none focus:ring-4 focus:ring-gray-200 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white dark:focus:ring-gray-700">
-                        <div className="group min-h-20 min-w-40 grid grid-cols-1 gap-3 content-between p-5">
-                           {(student.reg_number) ?
-                              <>
-                                 <div className="">
-                                    <div className="text-center text-xl text-orange-800 font-bold">REG-NUMBER</div>
-                                    <div className="text-center text-xl mt-3 mb-4 px-7 group-hover:text-orange-600">{student.reg_number}</div>
-                                 </div>
-                                 <Button onClick={handleCopy} size={"sm"}>
-                                    <ClipboardCopy className="mr-2 h-4 w-4" /> {copied ? "copied" : "click to copy"}
-                                 </Button>
-                              </> :
-                              <>
-                                 <div className="text-xl">NO REG-NUMBER</div>
-                                 <Button className="cursor-pointer" onClick={handleGoTo} size={"sm"}>
-                                    click to continue registration
-                                 </Button>
-                              </>
-                           }
-                        </div>
-                     </div>
-                  </div>
-               </div>
-            </Banner>
-         }
-      </>
-
+                     <p className="mt-3 break-all font-mono text-xl font-bold text-white">
+                        {student.reg_number}
+                     </p>
+                     <Button
+                        onClick={handleCopy}
+                        size="sm"
+                        className="mt-5 w-full rounded-full border border-white/20 bg-white/10 text-white hover:bg-white/20"
+                     >
+                        <Icon icon={copied ? Tick02Icon : Copy01Icon} className="size-4" />
+                        {copied ? "Copied" : "Copy number"}
+                     </Button>
+                  </>
+               ) : (
+                  <>
+                     <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-white/50">
+                        Registration number
+                     </p>
+                     <p className="mt-3 text-sm leading-relaxed text-white/70">
+                        You do not have one yet. Finish your registration to be
+                        assigned a number.
+                     </p>
+                     <Button
+                        onClick={handleGoTo}
+                        size="sm"
+                        className="ember-surface group mt-5 w-full rounded-full text-white shadow-ember hover:bg-none hover:bg-ember-700"
+                     >
+                        Continue registration
+                        <Icon
+                           icon={ArrowRight01Icon}
+                           className="size-4 transition-transform group-hover:translate-x-0.5"
+                        />
+                     </Button>
+                  </>
+               )}
+            </div>
+         </div>
+      </section>
    );
 }
-export default StudentBanner
 
-// #f9f9ee
-const Banner: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-   return <div>{children}</div>;
-}
+export default StudentBanner

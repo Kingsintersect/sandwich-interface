@@ -1,7 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from 'react';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import React, { useMemo, useState } from 'react';
 import {
     Select,
     SelectContent,
@@ -9,276 +8,184 @@ import {
     SelectTrigger,
     SelectValue
 } from '@/components/ui/select';
-
-import {
-    Card,
-    CardContent,
-    CardDescription,
-    CardHeader,
-    CardTitle,
-} from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { CheckCircle2Icon, Loader2, Upload } from 'lucide-react';
-import { ScoreAnalytics } from './components/ScoreAnalytics';
-import { StudentScoresTable } from './components/StudentScoresTable';
-import { fetchLmsCourses, fetchStudentScores, publishScores } from '@/app/actions/admin';
-import { useAuth } from '@/contexts/AuthContext';
-import { Semesters, StudyLevels } from '@/config';
-import { usePrograms } from '@/hooks/usePrograms';
-// import { NoAccessTokenBlock } from '@/components/ui/blocks/NoAccessTokenBlock';
+import { Search01Icon } from '@hugeicons/core-free-icons';
+import { Icon } from '@/components/ui/icon';
+import { ResultsTable } from './components/ResultsTable';
+import { summariseResults, useResults, type ResultFilters } from '@/hooks/useResults';
+import { useDebounce } from '@/hooks/useDebounce';
 
-export type ActivityType = "assign" | "quiz" | "exam" | string;
-export type StudentActivity = {
-    activity_name: string;
-    type: ActivityType;
-    grade: string;
-    max_grade: string;
-};
-export type StudentScore = {
-    student_id: number;
-    student_email: string;
-    student_username: string;
-    final_grade: number;
-    letter_grade: string;
-    credit_load: number;
-    quality_points: number;
-    activities: StudentActivity[];
-};
-const AdminScoresInterface = () => {
-    const [selectedCourseId, setSelectedCourseId] = useState('');
-    const [selectedFaculty, setSelectedFaculty] = useState('');
-    const [selecteDepartment, setSelecteDepartment] = useState('');
-    const [seletedLevel, setSeletedLevel] = useState('');
-    const [selectedSemester, setSelectedSemester] = useState('');
-    const [shortCode, setShortCode] = useState('');
-    const [scores, setScores] = useState([]);
-    const queryClient = useQueryClient();
-    const { access_token } = useAuth();
-    const {
-        parentPrograms,
-        childPrograms,
-        isProgramsLoading,
-        handleProgramChange,
-    } = usePrograms();
+const ALL = "ALL";
 
-    const {
-        data: courses = [],
-        isLoading: departmentsLoading,
-    } = useQuery({
-        queryKey: ['courses', shortCode],
-        queryFn: () => fetchLmsCourses(access_token!, shortCode!),
-        enabled: false, // disable automatic fetch
-    });
+function FilterSelect({
+    label,
+    value,
+    options,
+    placeholder,
+    onChange,
+}: {
+    label: string;
+    value: string;
+    options: string[];
+    placeholder: string;
+    onChange: (value: string) => void;
+}) {
+    return (
+        <div>
+            <label className="mb-2 block text-[11px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">
+                {label}
+            </label>
+            <Select value={value} onValueChange={onChange}>
+                <SelectTrigger className="w-full">
+                    <SelectValue placeholder={placeholder} />
+                </SelectTrigger>
+                <SelectContent>
+                    <SelectItem value={ALL}>{placeholder}</SelectItem>
+                    {options.map((option) => (
+                        <SelectItem key={option} value={option}>
+                            {option}
+                        </SelectItem>
+                    ))}
+                </SelectContent>
+            </Select>
+        </div>
+    );
+}
 
-    const {
-        data: studentscores = [],
-        isLoading: scoresLoading,
-        error: scoresError
-    } = useQuery({
-        queryKey: ['studentScores', selectedCourseId],
-        queryFn: () => fetchStudentScores(selectedCourseId, access_token!),
-        enabled: !!selectedCourseId && (!!access_token && access_token.trim() !== "")
-    });
+const AdminResultsPage = () => {
+    const [session, setSession] = useState(ALL);
+    const [level, setLevel] = useState(ALL);
+    const [course, setCourse] = useState(ALL);
+    const [status, setStatus] = useState(ALL);
+    const [searchInput, setSearchInput] = useState('');
+    const search = useDebounce(searchInput, 400);
 
-    // Mutations
-    const publishMutation = useMutation({
-        mutationFn: ({ courseId, access_token }: { courseId: string | number; access_token: string }) =>
-            publishScores(courseId, access_token),
+    // Only the narrowing filters go to the API; search is debounced separately.
+    const filters: ResultFilters = useMemo(
+        () => ({ session, level, course_code: course, status, search }),
+        [session, level, course, status, search]
+    );
 
-        onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ['studentScores', selectedCourseId] });
-        },
-    });
+    const { filtered, options, isLoading, isError } = useResults(filters);
+    const summary = useMemo(() => summariseResults(filtered), [filtered]);
 
-    const handlePublishScores = () => {
-        if (typeof access_token === "string" && access_token.trim() !== "") {
-            publishMutation.mutate({ courseId: selectedCourseId, access_token });
-        } else {
-            console.warn("Access token is missing or invalid.");
-        }
+    const hasFilters =
+        session !== ALL || level !== ALL || course !== ALL || status !== ALL || !!searchInput;
+
+    const clearFilters = () => {
+        setSession(ALL);
+        setLevel(ALL);
+        setCourse(ALL);
+        setStatus(ALL);
+        setSearchInput('');
     };
 
-    useEffect(() => {
-        if (studentscores) setScores(studentscores.students);
-    }, [studentscores]);
-
-    useEffect(() => {
-        if (access_token && selectedSemester && selectedFaculty && selecteDepartment && seletedLevel) {
-            // const generatedShortCode = `${selectedFaculty}-${selecteDepartment}-${seletedLevel}-${selectedSemester}`;
-            const generatedShortCode = `SOC-ECO-100-1SM`;
-            setShortCode(generatedShortCode);
-
-            // manually call fetch function instead of relying on refetch()
-            fetchLmsCourses(access_token, generatedShortCode).then((data) => {
-                queryClient.setQueryData(['courses', generatedShortCode], data);
-            });
-        }
-    }, [selectedSemester, access_token, selecteDepartment, selectedFaculty, seletedLevel, queryClient]);
-
-
-    // if (!access_token) return (
-    //     <NoAccessTokenBlock />
-    // );
-
     return (
-        <div className="container mx-auto p-6 space-y-6">
-            <div className="flex justify-between items-center">
-                <div>
-                    <h1 className="text-3xl font-bold">Student Scores Management</h1>
-                    <p className="text-muted-foreground">Review and publish student performance data</p>
-                </div>
-
-                {selectedCourseId && (
-                    <Button
-                        onClick={handlePublishScores}
-                        // disabled={unpublishedCount === 0 || publishMutation.isPending}
-                        disabled={publishMutation.isPending}
-                        className="gap-2"
-                    >
-                        {publishMutation.isPending ? (
-                            <Loader2 className="h-4 w-4 animate-spin" />
-                        ) : (
-                            <Upload className="h-4 w-4" />
-                        )}
-                        Publish Scores 0...
-                        {/* Publish Scores ({unpublishedCount}) */}
-                    </Button>
-                )}
+        <div className="space-y-6 pb-10">
+            <div>
+                <h1 className="text-2xl font-bold tracking-tight text-ocean-900 dark:text-foreground">
+                    Results
+                </h1>
+                <p className="mt-1.5 text-sm text-muted-foreground">
+                    Every published and pending result across the programme.
+                </p>
             </div>
 
-            {publishMutation.isSuccess && (
-                <Alert className="border-green-500 bg-green-50 text-green-800">
-                    <CheckCircle2Icon className="h-5 w-5 text-green-600" />
-                    <AlertTitle>Success! Your changes have been saved</AlertTitle>
-                    <AlertDescription className='text-site-a'>
-                        Successfully published {scores.length} student scores!
-                        {/* Successfully published {publishMutation.data.publishedCount} student scores! */}
-                    </AlertDescription>
-                </Alert>
-            )}
+            {/* Summary of whatever the filters currently select */}
+            <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+                {[
+                    { label: "Results", value: summary.count },
+                    { label: "Students", value: summary.students },
+                    { label: "Average score", value: isLoading ? "—" : `${summary.averageScore}` },
+                    { label: "Pass rate", value: isLoading ? "—" : `${summary.passRate}%` },
+                ].map((stat) => (
+                    <div
+                        key={stat.label}
+                        className="rounded-2xl border border-border bg-card p-6 shadow-soft"
+                    >
+                        <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">
+                            {stat.label}
+                        </p>
+                        <p className="mt-2 text-3xl font-bold tabular-nums text-ocean-900 dark:text-foreground">
+                            {isLoading ? "—" : stat.value}
+                        </p>
+                    </div>
+                ))}
+            </div>
 
-            <Card>
-                <CardHeader>
-                    <CardTitle>Department Selection</CardTitle>
-                    <CardDescription>Choose a department to view student scores</CardDescription>
-                </CardHeader>
-                <CardContent className="grid h-32 grid-cols-2 place-items-center gap-4">
-                    <Select
-                        disabled={isProgramsLoading}
-                        onValueChange={(value) => {
-                            handleProgramChange(value);
-                            setSelectedFaculty(value)
-                        }}
-                    >
-                        <SelectTrigger className="w-full max-w-md ">
-                            <SelectValue placeholder="Select faculty" />
-                        </SelectTrigger>
-                        <SelectContent>
-                            {parentPrograms.map((item) => (
-                                <SelectItem key={item.value} value={item.value}>
-                                    {item.label}
-                                </SelectItem>
-                            ))}
-                        </SelectContent>
-                    </Select>
-                    <Select
-                        disabled={!selectedFaculty}
-                        onValueChange={(value) => {
-                            setSelecteDepartment(value)
-                        }}
-                    >
-                        <SelectTrigger className="w-full max-w-md ">
-                            <SelectValue placeholder="Select a department" />
-                        </SelectTrigger>
-                        <SelectContent>
-                            {childPrograms.map((item, i) => (
-                                <SelectItem key={i} value={item.value}>
-                                    {item.label}
-                                </SelectItem>
-                            ))}
-                        </SelectContent>
-                    </Select>
-                    <Select
-                        disabled={!selecteDepartment}
-                        onValueChange={(value) => {
-                            setSeletedLevel(value)
-                        }}
-                    >
-                        <SelectTrigger className="w-full max-w-md ">
-                            <SelectValue placeholder="Select academic level" />
-                        </SelectTrigger>
-                        <SelectContent>
-                            {StudyLevels.map((level) => (
-                                <SelectItem key={level.value} value={level.value}>
-                                    {level.label}
-                                </SelectItem>
-                            ))}
-                        </SelectContent>
-                    </Select>
-                    <Select
-                        disabled={!seletedLevel}
-                        onValueChange={(value) => {
-                            setSelectedSemester(value)
-                        }}
-                    >
-                        <SelectTrigger className="w-full max-w-md ">
-                            <SelectValue placeholder="Select the semester" />
-                        </SelectTrigger>
-                        <SelectContent>
-                            {Semesters.map((level) => (
-                                <SelectItem key={level.value} value={level.value}>
-                                    {level.label}
-                                </SelectItem>
-                            ))}
-                        </SelectContent>
-                    </Select>
-
-                    {/* GAME CHANGER */}
-                    <Select
-                        value={selectedCourseId}
-                        onValueChange={setSelectedCourseId}
-                        disabled={departmentsLoading}
-                    >
-                        <SelectTrigger className="w-full max-w-md ">
-                            <SelectValue placeholder="Select a department" />
-                        </SelectTrigger>
-                        <SelectContent>
-                            {courses.map((course) => (
-                                <SelectItem key={course.course_id} value={course.course_id}>
-                                    {course.course_name}
-                                </SelectItem>
-                            ))}
-                        </SelectContent>
-                    </Select>
-                </CardContent>
-            </Card>
-
-            {selectedCourseId && (
-                <>
-                    {scoresLoading ? (
-                        <Card>
-                            <CardContent className="flex items-center justify-center py-8">
-                                <Loader2 className="h-8 w-8 animate-spin" />
-                                <span className="ml-2">Loading student scores...</span>
-                            </CardContent>
-                        </Card>
-                    ) : scoresError ? (
-                        <Alert variant={"destructive"}>
-                            <AlertDescription>
-                                Error loading student scores. Please try again.
-                            </AlertDescription>
-                        </Alert>
-                    ) : (
-                        <>
-                            <ScoreAnalytics scores={scores} />
-                            <StudentScoresTable scores={scores} />
-                        </>
+            {/* Filters */}
+            <section className="overflow-hidden rounded-2xl border border-border bg-card shadow-soft">
+                <div className="flex items-center justify-between gap-3 border-b border-border px-6 py-5">
+                    <div>
+                        <h2 className="font-semibold text-ocean-900 dark:text-foreground">Filters</h2>
+                        <p className="mt-1 text-xs text-muted-foreground">
+                            Options come from the results on record.
+                        </p>
+                    </div>
+                    {hasFilters && (
+                        <Button variant="ghost" size="sm" className="rounded-full" onClick={clearFilters}>
+                            Clear all
+                        </Button>
                     )}
-                </>
-            )}
+                </div>
+
+                <div className="grid gap-4 p-6 sm:grid-cols-2 lg:grid-cols-5">
+                    <FilterSelect
+                        label="Session"
+                        value={session}
+                        options={options.sessions}
+                        placeholder="All sessions"
+                        onChange={setSession}
+                    />
+                    <FilterSelect
+                        label="Level"
+                        value={level}
+                        options={options.levels}
+                        placeholder="All levels"
+                        onChange={setLevel}
+                    />
+                    <FilterSelect
+                        label="Course"
+                        value={course}
+                        options={options.courses}
+                        placeholder="All courses"
+                        onChange={setCourse}
+                    />
+                    <FilterSelect
+                        label="Status"
+                        value={status}
+                        options={options.statuses}
+                        placeholder="All statuses"
+                        onChange={setStatus}
+                    />
+
+                    <div>
+                        <label
+                            htmlFor="results-search"
+                            className="mb-2 block text-[11px] font-semibold uppercase tracking-[0.14em] text-muted-foreground"
+                        >
+                            Search
+                        </label>
+                        <div className="relative">
+                            <Icon
+                                icon={Search01Icon}
+                                className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground"
+                            />
+                            <input
+                                id="results-search"
+                                value={searchInput}
+                                onChange={(e) => setSearchInput(e.target.value)}
+                                placeholder="Name, reg number, course"
+                                className="h-9 w-full rounded-md border border-input bg-background pl-9 pr-3 text-sm text-foreground placeholder:text-muted-foreground focus:border-ocean-500 focus:outline-none focus:ring-2 focus:ring-ocean-500/30"
+                            />
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <ResultsTable rows={filtered} isLoading={isLoading} isError={isError} />
         </div>
     );
 };
 
-export default AdminScoresInterface;
+export default AdminResultsPage;

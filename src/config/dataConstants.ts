@@ -1,24 +1,25 @@
 import {
-	BookOpen,
-	DollarSign,
-	Flag,
-	GraduationCap,
-	MapPinHouse,
-	PieChart,
-	UserRoundPen,
-	CalendarCheck,
-	School2,
-	MessageSquare,
-	Settings2,
-	LucideIcon
-} from "lucide-react";
+	BookOpen01Icon,
+	Calendar03Icon,
+	DollarCircleIcon,
+	Flag02Icon,
+	GraduationScrollIcon,
+	Location01Icon,
+	Message01Icon,
+	PieChartIcon,
+	SchoolIcon,
+	Settings02Icon,
+	Time04Icon,
+	UserEdit01Icon,
+} from "@hugeicons/core-free-icons";
+import type { IconSvgElement } from "@/components/ui/icon";
 import { ObjectType } from "@/types/generic.types";
 import { CreditLoad, Grade, Subject } from "./Types";
 
 export interface SidebarNavItem {
 	title: string;
 	url: string;
-	icon?: LucideIcon;
+	icon?: IconSvgElement;
 	isActive?: boolean;
 	items?: { title: string; url: string }[];
 	display: boolean;
@@ -29,7 +30,7 @@ export interface SidebarNavConfig {
 	flat?: {
 		title: string;
 		url: string;
-		icon: LucideIcon;
+		icon: IconSvgElement;
 		display: boolean;
 	}[];
 }
@@ -39,7 +40,7 @@ export const AdminNavMain: SidebarNavConfig = {
 		{
 			title: "DASHBOARD",
 			url: "#",
-			icon: PieChart,
+			icon: PieChartIcon,
 			isActive: true,
 			items: [
 				{
@@ -52,7 +53,7 @@ export const AdminNavMain: SidebarNavConfig = {
 		{
 			title: "USERS",
 			url: "#",
-			icon: GraduationCap,
+			icon: GraduationScrollIcon,
 			items: [
 				{
 					title: "Manage Admission",
@@ -74,9 +75,9 @@ export const AdminNavMain: SidebarNavConfig = {
 			display: true,
 		},
 		{
-			title: "SESSION MIGRTION",
+			title: "SESSION MIGRATION",
 			url: "#",
-			icon: BookOpen,
+			icon: BookOpen01Icon,
 			items: [
 				{
 					title: "Migrate Students",
@@ -88,7 +89,7 @@ export const AdminNavMain: SidebarNavConfig = {
 		{
 			title: "STUDENT GRADES",
 			url: "#",
-			icon: BookOpen,
+			icon: BookOpen01Icon,
 			items: [
 				{
 					title: "Veiw Student Report",
@@ -100,7 +101,7 @@ export const AdminNavMain: SidebarNavConfig = {
 		{
 			title: "COURSE MANAGEMENT",
 			url: "#",
-			icon: BookOpen,
+			icon: BookOpen01Icon,
 			items: [
 				{
 					title: "Faculties",
@@ -128,7 +129,7 @@ export const AdminNavMain: SidebarNavConfig = {
 		{
 			title: "REGION MANAGEMENT",
 			url: "#",
-			icon: MapPinHouse,
+			icon: Location01Icon,
 			items: [
 				{
 					title: "Countries",
@@ -152,20 +153,20 @@ export const StudentNavMain: SidebarNavConfig = {
 		{
 			title: "DASHBOARD",
 			url: "#",
-			icon: PieChart,
-			isActive: false,
+			icon: PieChartIcon,
+			isActive: true,
 			items: [
 				{
-					title: "Statistics",
+					title: "Overview",
 					url: "/dashboard/student",
 				},
 			],
-			display: false,
+			display: true,
 		},
 		{
 			title: "MANAGE ACCOUNT",
 			url: "#",
-			icon: UserRoundPen,
+			icon: UserEdit01Icon,
 			isActive: true,
 			items: [
 				{
@@ -182,7 +183,7 @@ export const StudentNavMain: SidebarNavConfig = {
 		{
 			title: "REPORTS",
 			url: "#",
-			icon: Flag,
+			icon: Flag02Icon,
 			items: [
 				{
 					title: "Grade Report",
@@ -192,25 +193,9 @@ export const StudentNavMain: SidebarNavConfig = {
 			display: true,
 		},
 		{
-			title: "PAYMENTS",
-			url: "#",
-			icon: DollarSign,
-			items: [
-				{
-					title: "Pay Acceptance Fee",
-					url: "/dashboard/history/student-payments/acceptance",
-				},
-				{
-					title: "Pay Tuition Fee",
-					url: "/dashboard/history/student-payments/tuition",
-				},
-			],
-			display: false,
-		},
-		{
 			title: "HISTORY",
 			url: "#",
-			icon: DollarSign,
+			icon: Time04Icon,
 			items: [
 				{
 					title: "Payment History",
@@ -230,7 +215,7 @@ export const TeacherNavMain: SidebarNavConfig = {
 		{
 			title: "DASHBOARD",
 			url: "#",
-			icon: PieChart,
+			icon: PieChartIcon,
 			isActive: true,
 			items: [
 				{
@@ -245,31 +230,31 @@ export const TeacherNavMain: SidebarNavConfig = {
 		{
 			title: "My COURSES",
 			url: "/dashboard/teacher/enrolled-courses",
-			icon: GraduationCap,
+			icon: GraduationScrollIcon,
 			display: true,
 		},
 		{
 			title: "ASSIGNMENTS",
 			url: "/dashboard/teacher/assignments",
-			icon: School2,
+			icon: SchoolIcon,
 			display: true,
 		},
 		{
 			title: "CALENDER",
 			url: "/dashboard/teacher/calender",
-			icon: CalendarCheck,
+			icon: Calendar03Icon,
 			display: true,
 		},
 		{
 			title: "DISCUSSIONS",
 			url: "/dashboard/teacher/discussions",
-			icon: MessageSquare,
+			icon: Message01Icon,
 			display: true,
 		},
 		{
 			title: "SETTINGS",
 			url: "/dashboard/teacher/settings",
-			icon: Settings2,
+			icon: Settings02Icon,
 			display: false,
 		},
 	],

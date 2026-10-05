@@ -1,6 +1,7 @@
 "use client";
 
-import { Download } from "lucide-react";
+import { Download01Icon } from "@hugeicons/core-free-icons";
+import { Icon } from "@/components/ui/icon";
 import { Button } from "@/components/ui/button";
 import * as XLSX from "xlsx";
 
@@ -49,7 +50,7 @@ export default function TemplateDownloadButton() {
             className="flex items-center gap-2"
             onClick={downloadSampleTemplate}
         >
-            <Download size={16} />
+            <Icon icon={Download01Icon} size={16} />
             <span>Get Template</span>
         </Button>
     );

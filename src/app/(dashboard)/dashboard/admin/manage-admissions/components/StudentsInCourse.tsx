@@ -10,7 +10,8 @@ import {
 } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { CheckCircle2Icon, FileArchive, FileAxis3D, Loader2, Upload } from 'lucide-react';
+import { Analytics01Icon, CheckmarkCircle02Icon, FileZipIcon, Loading03Icon, Upload01Icon } from "@hugeicons/core-free-icons";
+import { Icon } from "@/components/ui/icon";
 import { fetchStudentScores, publishScores } from '@/app/actions/admin';
 import { useAuth } from '@/contexts/AuthContext';
 import { ScoreAnalytics } from '@/app/(dashboard)/dashboard/admin/students-grade-report/components/ScoreAnalytics';
@@ -157,11 +158,11 @@ const StudentsInCourse = () => {
                     <div className="flex justify-between items-center">
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <Button onClick={exportToCSV} className="gap-2  bg-cyan-500 hover:bg-cyan-700 text-white">
-                                <FileArchive className="h-4 w-4" />
+                                <Icon icon={FileZipIcon} className="h-4 w-4" />
                                 Export Results (CSV)
                             </Button>
                             <Button onClick={exportToExcel} className="gap-2 bg-pink-500 hover:bg-pink-700 text-white">
-                                <FileAxis3D className="h-4 w-4" />
+                                <Icon icon={Analytics01Icon} className="h-4 w-4" />
                                 Export Results (Excel)
                             </Button>
                         </div>
@@ -176,9 +177,9 @@ const StudentsInCourse = () => {
                         className="gap-2"
                     >
                         {publishMutation.isPending ? (
-                            <Loader2 className="h-4 w-4 animate-spin" />
+                            <Icon icon={Loading03Icon} className="h-4 w-4 animate-spin" />
                         ) : (
-                            <Upload className="h-4 w-4" />
+                            <Icon icon={Upload01Icon} className="h-4 w-4" />
                         )}
                         Publish Scores 0...
                         {/* Publish Scores ({unpublishedCount}) */}
@@ -190,7 +191,7 @@ const StudentsInCourse = () => {
 
             {publishMutation.isSuccess && (
                 <Alert className="border-green-500 bg-green-50 text-green-800">
-                    <CheckCircle2Icon className="h-5 w-5 text-green-600" />
+                    <Icon icon={CheckmarkCircle02Icon} className="h-5 w-5 text-green-600" />
                     <AlertTitle>Success! Your changes have been saved</AlertTitle>
                     <AlertDescription className='text-site-a'>
                         Successfully published {rawScores.length} student scores!
@@ -204,7 +205,7 @@ const StudentsInCourse = () => {
                     {scoresLoading ? (
                         <Card>
                             <CardContent className="flex items-center justify-center py-8">
-                                <Loader2 className="h-8 w-8 animate-spin" />
+                                <Icon icon={Loading03Icon} className="h-8 w-8 animate-spin" />
                                 <span className="ml-2">Loading student scores...</span>
                             </CardContent>
                         </Card>

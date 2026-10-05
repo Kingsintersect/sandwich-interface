@@ -5,7 +5,8 @@ import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import styled from "styled-components";
-import { Loader2 } from "lucide-react";
+import { Loading03Icon } from "@hugeicons/core-free-icons";
+import { Icon } from "@/components/ui/icon";
 import { useRouter } from "next/navigation";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { notify } from "@/contexts/ToastProvider";
@@ -352,7 +353,7 @@ const TutorEnrollmentTabs: React.FC<TutorEnrollmentProps> = ({ userId }) => {
         }
     };
 
-    if (!isDataLoaded) return <p className="flex items-center justify-center"><Loader2 className="animate-spin" color="#d35401" /></p>;
+    if (!isDataLoaded) return <p className="flex items-center justify-center"><Icon icon={Loading03Icon} className="animate-spin" color="#d35401" /></p>;
 
     return (
         <div className="space-y-7" data-selectedSemester={selectedSemester}>
@@ -545,7 +546,7 @@ const TutorEnrollmentTabs: React.FC<TutorEnrollmentProps> = ({ userId }) => {
                                                 ? (
                                                     <>
                                                         {"Enrolling"}
-                                                        <Loader2 className="animate-spin" />
+                                                        <Icon icon={Loading03Icon} className="animate-spin" />
                                                     </>
                                                 )
                                                 : ("Enroll To Course")

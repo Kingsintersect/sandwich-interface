@@ -6,7 +6,8 @@ import { Label } from "@/components/ui/label"
 import { Button } from "@/components/ui/button"
 import { toast } from "sonner";
 import { Switch } from "@/components/ui/switch"
-import { Loader2, Save, CheckCircle, AlertCircle } from "lucide-react"
+import { Alert02Icon, CheckmarkCircle02Icon, FloppyDiskIcon, Loading03Icon } from "@hugeicons/core-free-icons";
+import { Icon } from "@/components/ui/icon";
 import { cn } from "@/lib/utils"
 import { notify } from '@/contexts/ToastProvider';
 import { updateStudentStatusField } from "@/app/actions/admin"
@@ -204,7 +205,7 @@ export function FeeToggleCard({
 
                         {mutation.isError && errorMessage && (
                             <div className="bg-red-50 p-3 rounded-md flex items-start gap-2 text-sm text-red-800 text-wrap overflow-x-hidden max-h-52">
-                                <AlertCircle className="h-5 w-5 flex-shrink-0 text-red-600" />
+                                <Icon icon={Alert02Icon} className="h-5 w-5 flex-shrink-0 text-red-600" />
                                 <p>{errorMessage || 'An error occurred while updating the fee status.'}</p>
                             </div>
                         )}
@@ -225,17 +226,17 @@ export function FeeToggleCard({
                 >
                     {mutation.isPending ? (
                         <>
-                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                            <Icon icon={Loading03Icon} className="mr-2 h-4 w-4 animate-spin" />
                             Updating...
                         </>
                     ) : mutation.isSuccess ? (
                         <>
-                            <CheckCircle className="mr-2 h-4 w-4" />
+                            <Icon icon={CheckmarkCircle02Icon} className="mr-2 h-4 w-4" />
                             Updated
                         </>
                     ) : (
                         <>
-                            <Save className="mr-2 h-4 w-4" />
+                            <Icon icon={FloppyDiskIcon} className="mr-2 h-4 w-4" />
                             Save Changes
                         </>
                     )}

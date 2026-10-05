@@ -5,7 +5,8 @@ import { SubmitHandler, useForm } from 'react-hook-form';
 import { useRouter } from 'next/navigation';
 import { z } from 'zod';
 import { notify } from '@/contexts/ToastProvider';
-import { Loader2 } from "lucide-react";
+import { Loading03Icon } from "@hugeicons/core-free-icons";
+import { Icon } from "@/components/ui/icon";
 import { DeleteSingleAssignment, GetCoursesAssignedToACategory, UpdateSingleCourseAssignment } from '@/app/actions/server.admin';
 import { Button } from '@/components/ui/button';
 import { SelectFormField } from '@/components/ui/inputs/FormFields';
@@ -364,7 +365,7 @@ const UpdateCourseAssignment = ({
                      ? (
                         <>
                            <span>{"Saving data "}</span>
-                           <Loader2 fontSize={20} size={40} className="animate-spin text-lg" />
+                           <Icon icon={Loading03Icon} fontSize={20} size={40} className="animate-spin text-lg" />
                         </>
                      )
                      : <span>{"Save Course Assignment"}</span>

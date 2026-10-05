@@ -1,7 +1,8 @@
 "use client";
 import Stepper from "@/components/Stepper";
 import { FormFieldSet, InputFormField, SelectFormField } from '@/components/ui/inputs/FormFields';
-import { AlertCircleIcon, Loader2, SaveAll } from "lucide-react";
+import { Alert02Icon, FloppyDiskIcon, Loading03Icon } from "@hugeicons/core-free-icons";
+import { Icon } from "@/components/ui/icon";
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
 import useSignInMultiStepViewModel, { SignupFormData } from "@/hooks/use-signUp-multistep-view-model";
@@ -46,7 +47,7 @@ export default function SignupPage() {
     const { data: programs, isLoading, isError } = useExternalPrograms();
 
     return (
-        <div className="block w-full space-y-1 text-left">
+        <div className="block w-full space-y-8 text-left">
             <Stepper steps={steps} currentStep={currentStep} />
             <FormErrorList allErrors={allErrors} />
             <form
@@ -56,14 +57,14 @@ export default function SignupPage() {
                         e.preventDefault();
                     }
                 }}
-                className={`block max-h-[450px] overflow-y-scroll overflow-x-hidden pr-5`}>
+                className={`block`}>
                 {currentStep == 1 && (
                     <motion.div
                         initial={{ x: delta >= 1 ? '80%' : '-80%', opacity: 0 }}
                         animate={{ x: 0, opacity: 1 }}
                         transition={{ duration: 0.5, ease: "easeInOut" }}
                     >
-                        <FormFieldSet classList={`bg-white border-0 py-2`} >
+                        <FormFieldSet classList={`border-0 bg-transparent p-0 py-2`} >
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-x-4 my-4 gap-y-4">
                                 <InputFormField<SignupFormData>
                                     type="text"
@@ -146,14 +147,14 @@ export default function SignupPage() {
                         transition={{ duration: 0.5, ease: "easeInOut" }}
                     >
                         {(isLoading) && (
-                            <div className='w-full flex items-center justify-center'>
+                            <div className="flex w-full items-center justify-center gap-2 py-10 text-sm text-muted-foreground">
                                 <LoadingSpinner size="md" className="mr-2" />
                                 Loading Programs...
                             </div>
                         )}
                         {(isError || !programs) && (
                             <Alert variant="destructive">
-                                <AlertCircleIcon />
+                                <Icon icon={Alert02Icon} />
                                 <AlertTitle>Failed to load programs.</AlertTitle>
                                 <AlertDescription>
                                     <p>Please check your network connection and try again.</p>
@@ -178,7 +179,7 @@ export default function SignupPage() {
                         animate={{ x: 0, opacity: 1 }}
                         transition={{ duration: 0.5, ease: "easeInOut" }}
                     >
-                        <FormFieldSet classList={`bg-white border-0`} >
+                        <FormFieldSet classList={`border-0 bg-transparent p-0`} >
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-4">
 
                                 <InputFormField<SignupFormData>
@@ -234,7 +235,7 @@ export default function SignupPage() {
                         animate={{ x: 0, opacity: 1 }}
                         transition={{ duration: 0.5, ease: "easeInOut" }}
                     >
-                        <FormFieldSet classList={`bg-white border-0`} >
+                        <FormFieldSet classList={`border-0 bg-transparent p-0`} >
                             <div className="flex items-center justify-center">
                                 <Card className="w-full max-w-md">
                                     <CardHeader className="text-center">
@@ -268,9 +269,9 @@ export default function SignupPage() {
                         type="button"
                         onClick={prevStep}
                         disabled={currentStep === 1}
-                        className={`px-4 py-1 bg-gray-300 rounded-md ${currentStep === 1 ? "hidden" : "block"}`}
+                        className={`h-11 rounded-full border border-border px-6 text-sm font-semibold text-muted-foreground transition-colors hover:border-ocean-300 hover:bg-accent hover:text-ocean-700 ${currentStep === 1 ? "hidden" : "block"}`}
                     >
-                        ← Previous
+                        Previous
                     </button>
                     <Button
                         type={isLastStep ? "submit" : "button"}
@@ -280,22 +281,22 @@ export default function SignupPage() {
                                 await nextStep();
                             }
                         }}
-                        className={`px-4 py-1 bg-site-b hover:bg-site-b-light text-white rounded-md ml-auto cursor-pointer ${isLastStep ? "w-[50%] text-lg font-bold" : ""}`}
+                        className={`ml-auto h-11 cursor-pointer rounded-full px-7 text-sm font-semibold ${isLastStep ? "ember-surface text-white shadow-ember hover:bg-none hover:bg-ember-700 sm:min-w-56" : ""}`}
                         disabled={isSubmitting}
                     >
                         {isLastStep ? (
                             <>
                                 {isSubmitting ? (
                                     <>
-                                        <span>{"Processing"}</span>
-                                        <Loader2 fontSize={20} size={20} className="animate-spin text-lg" />
+                                        <span>Submitting</span>
+                                        <Icon icon={Loading03Icon} className="size-4.5 animate-spin" />
                                     </>
                                 ) : (
-                                    <span className="flex items-center gap-3">{"Submit"} <SaveAll size={36} strokeWidth={2.75} /></span>
+                                    <span className="flex items-center gap-2.5">Submit application <Icon icon={FloppyDiskIcon} className="size-4.5" /></span>
                                 )}
                             </>
                         ) : (
-                            "Continue →"
+                            "Continue"
                         )}
                     </Button>
                 </div>

@@ -1,6 +1,7 @@
 "use client";
 
-import { Filter, Search } from 'lucide-react'
+import { FilterHorizontalIcon, Search01Icon } from "@hugeicons/core-free-icons";
+import { Icon } from "@/components/ui/icon";
 // import React, { useState } from 'react'
 
 export default function StudentTableSearchBlock({ searchTerm, setSearchTerm, filterStatus, setFilterStatus }) {
@@ -10,7 +11,7 @@ export default function StudentTableSearchBlock({ searchTerm, setSearchTerm, fil
             <div className="flex flex-col sm:flex-row gap-4">
                 <div className="flex-1">
                     <div className="relative">
-                        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+                        <Icon icon={Search01Icon} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
                         <input
                             type="text"
                             placeholder="Search students..."
@@ -21,7 +22,7 @@ export default function StudentTableSearchBlock({ searchTerm, setSearchTerm, fil
                     </div>
                 </div>
                 <div className="flex items-center gap-2">
-                    <Filter className="w-5 h-5 text-gray-400" />
+                    <Icon icon={FilterHorizontalIcon} className="w-5 h-5 text-gray-400" />
                     <select
                         value={filterStatus}
                         onChange={(e) => setFilterStatus(e.target.value)}

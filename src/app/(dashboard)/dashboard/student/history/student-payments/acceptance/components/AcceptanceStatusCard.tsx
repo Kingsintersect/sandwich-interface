@@ -2,10 +2,10 @@
 
 import React from 'react';
 import Image from 'next/image';
-import { CheckCircle, CreditCard } from "lucide-react";
+import { CheckmarkCircle02Icon, CreditCardIcon, Coins01Icon } from "@hugeicons/core-free-icons";
+import { Icon } from "@/components/ui/icon";
 import { motion } from 'framer-motion';
 import { useAcceptancePayment } from '@/contexts/AcceptancePaymentContext';
-import { HandCoins } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { baseUrl } from '@/config';
@@ -34,9 +34,9 @@ const AcceptanceStatusCard = ({ student }: { student: UserInterface }) => {
 						{isPaid ? 'Acceptance Fee Paid' : 'Acceptance Fee'}
 					</h2>
 					{isPaid ? (
-						<CheckCircle className="h-10 w-10 text-white" />
+						<Icon icon={CheckmarkCircle02Icon} className="h-10 w-10 text-white" />
 					) : (
-						<CreditCard className="h-10 w-10 text-white" />
+						<Icon icon={CreditCardIcon} className="h-10 w-10 text-white" />
 					)}
 				</div>
 
@@ -66,7 +66,7 @@ const AcceptanceStatusCard = ({ student }: { student: UserInterface }) => {
 							<div className='absolute z-20 inset-0 w-full h-full flex items-center justify-center'>
 								<div className="py-7 px-4 bg-red-50 dark:bg-red-800/50 rounded-xl text-center">
 									<div className="inline-flex justify-center items-center w-16 h-16 bg-red-100 dark:bg-red-700 rounded-full mb-2">
-										<HandCoins className="h-8 w-8 text-red-500 dark:text-red-400" />
+										<Icon icon={Coins01Icon} className="h-8 w-8 text-red-500 dark:text-red-400" />
 									</div>
 									<h3 className="text-xl font-medium text-red-700 dark:text-red-300 mb-2">Application Yet To Be completed...</h3>
 									<Button variant={"destructive"} asChild className='animate-bounce'>
@@ -83,7 +83,7 @@ const AcceptanceStatusCard = ({ student }: { student: UserInterface }) => {
 							<div className='absolute z-20 inset-0 w-full h-full flex items-center justify-center'>
 								<div className="py-7 px-4 bg-cyan-50 dark:bg-cyan-800/50 rounded-xl text-center">
 									<div className="inline-flex justify-center items-center w-16 h-16 bg-cyan-100 dark:bg-cyan-700 rounded-full mb-2">
-										<HandCoins className="h-8 w-8 text-cyan-500 dark:text-cyan-400" />
+										<Icon icon={Coins01Icon} className="h-8 w-8 text-cyan-500 dark:text-cyan-400" />
 									</div>
 									<h3 className="text-xl font-medium text-cyan-700 dark:text-cyan-300 mb-5">You have not been admitted...</h3>
 									<Button variant={"default"} asChild className='animate-bounce'>

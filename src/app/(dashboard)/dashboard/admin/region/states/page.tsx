@@ -1,7 +1,8 @@
 "use client";
 import Search from '@/components/ui/inputs/Search'
 import { baseUrl } from '@/config'
-import { PlusIcon } from 'lucide-react'
+import { PlusSignIcon } from "@hugeicons/core-free-icons";
+import { Icon } from "@/components/ui/icon";
 import { Button } from "@/components/ui/button"
 import Link from 'next/link'
 import React, { useEffect, useMemo, useState } from 'react'
@@ -113,7 +114,7 @@ const StatesPage = () => {
                   <div className="">
                      <Link href={`${basePath}/create`} >
                         <Button variant={'secondary'}>
-                           <PlusIcon className="h-5 md:ml-4" />
+                           <Icon icon={PlusSignIcon} className="h-5 md:ml-4" />
                            Create New State
                         </Button>
                      </Link>

@@ -22,7 +22,8 @@ import {
 import React from "react";
 import { DataTablePagination } from "@/components/ui/datatable/DataTablePagination";
 import { DataTableViewOptions } from "@/components/ui/datatable/DataTableViewOptions";
-import { Loader2 } from "lucide-react";
+import { Loading03Icon } from "@hugeicons/core-free-icons";
+import { Icon } from "@/components/ui/icon";
 
 interface DataTableProps<TData, TValue> {
     columns: ColumnDef<TData, TValue>[]
@@ -85,7 +86,7 @@ export function DataTable<TData, TValue>({
                             <TableRow>
                                 <TableCell colSpan={columns.length} className="h-24">
                                     <div className="flex justify-center items-center">
-                                        <Loader2 className="h-8 w-8 animate-spin text-gray-500" />
+                                        <Icon icon={Loading03Icon} className="h-8 w-8 animate-spin text-gray-500" />
                                         <span className="ml-2 text-gray-500">Loading data...</span>
                                     </div>
                                 </TableCell>

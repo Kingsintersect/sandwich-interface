@@ -1,6 +1,7 @@
 "use client";
 
-import { CheckCircle, AlertCircle } from "lucide-react";
+import { Alert02Icon, CheckmarkCircle02Icon } from "@hugeicons/core-free-icons";
+import { Icon } from "@/components/ui/icon";
 import { SpinLoader } from "@/components/ui/content-loader";
 import { UploadState } from "@/hooks/useCreateUsers";
 
@@ -38,7 +39,7 @@ export default function UploadStatusIndicator({ state }: UploadStatusIndicatorPr
     if (state.status === 'success') {
         return (
             <div className="bg-green-50 border border-green-200 rounded-lg p-4 flex items-center">
-                <CheckCircle className="h-5 w-5 text-green-500 mr-2" />
+                <Icon icon={CheckmarkCircle02Icon} className="h-5 w-5 text-green-500 mr-2" />
                 <p className="text-green-700">{state.message}</p>
             </div>
         );
@@ -47,7 +48,7 @@ export default function UploadStatusIndicator({ state }: UploadStatusIndicatorPr
     if (state.status === 'error') {
         return (
             <div className="bg-red-50 border border-red-200 rounded-lg p-4 flex items-center">
-                <AlertCircle className="h-5 w-5 text-red-500 mr-2" />
+                <Icon icon={Alert02Icon} className="h-5 w-5 text-red-500 mr-2" />
                 <p className="text-red-700">{state.message}</p>
             </div>
         );

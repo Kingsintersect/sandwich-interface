@@ -12,15 +12,19 @@ import { generateGPASummary, processGradeReport } from '@/lib/gpa.utils';
 
 const StudentGradeReport = async () => {
     const session = await verifySession(loginSessionKey);
-    const gradeReport = await getStudentGradeReport(session.user.email, session.access_token);
+    const gradeReport = await getStudentGradeReport(
+        session.user.email,
+        session.access_token,
+        session.user?.academic_session
+    );
     const processedGradeReport = processGradeReport(gradeReport);
 
     const summary = generateGPASummary(processedGradeReport.courses);
     const { gpa, totalCredits, totalQualityPoints, degreeClass, academicStanding } = summary;
 
     return (
-        <div className="min-h-screen bg-gray-100 py-8">
-            <div className="max-w-6xl mx-auto bg-white rounded-lg shadow-md overflow-hidden">
+        <div className="pb-10">
+            <div className="mx-auto max-w-6xl overflow-hidden rounded-3xl border border-border bg-card shadow-soft">
                 <StudentHeader
                     gradeReport={processedGradeReport}
                     gpa={gpa}
@@ -31,9 +35,11 @@ const StudentGradeReport = async () => {
                 <StudentInfo />
                 <CourseTable courses={processedGradeReport.courses} />
 
-                <div className="p-6 bg-gray-50 border-t">
-                    <h3 className="text-lg font-semibold mb-4">Performance Summary</h3>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="border-t border-border bg-muted/30 px-7 py-6">
+                    <h3 className="text-[11px] font-semibold uppercase tracking-[0.18em] text-ember-600">
+                        Performance summary
+                    </h3>
+                    <div className="mt-4 grid grid-cols-1 gap-5 md:grid-cols-2">
                         <GradeDistribution courses={processedGradeReport.courses} />
                         <AcademicStanding
                             gpa={gpa}
@@ -43,10 +49,7 @@ const StudentGradeReport = async () => {
                     </div>
                 </div>
 
-                <ReportFooter
-                    semester={processedGradeReport.semester}
-                    academicYear={processedGradeReport.academicYear}
-                />
+                <ReportFooter academicYear={processedGradeReport.academicYear} />
             </div>
         </div>
     );

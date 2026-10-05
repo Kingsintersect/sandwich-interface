@@ -3,7 +3,8 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import React, { useEffect, useState } from 'react';
 import { SubmitHandler, useForm } from "react-hook-form";
 import { z } from 'zod';
-import { ArrowRightIcon, Loader2 } from "lucide-react";
+import { ArrowRight01Icon, Loading03Icon } from "@hugeicons/core-free-icons";
+import { Icon } from "@/components/ui/icon";
 import { UpdateSingleDepartment } from '@/app/actions/server.admin';
 import { notify } from '@/contexts/ToastProvider';
 import { baseUrl } from '@/config';
@@ -89,8 +90,8 @@ const UpdateDeparment = ({ faculties, department, access_token }: { faculties: F
                   Edit Department
                   {
                      (isLoading)
-                        ? (<Loader2 className="animate-spin" />)
-                        : (<ArrowRightIcon className="ml-2 h-5 w-5" />)
+                        ? (<Icon icon={Loading03Icon} className="animate-spin" />)
+                        : (<Icon icon={ArrowRight01Icon} className="ml-2 h-5 w-5" />)
                   }
                </Button>
             </div>

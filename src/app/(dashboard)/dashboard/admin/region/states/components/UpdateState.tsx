@@ -3,7 +3,8 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import React, { useEffect } from 'react';
 import { SubmitHandler, useForm } from "react-hook-form";
 import { z } from 'zod';
-import { Loader2 } from "lucide-react";
+import { Loading03Icon } from "@hugeicons/core-free-icons";
+import { Icon } from "@/components/ui/icon";
 import { UpdateSingleState } from '@/app/actions/server.admin';
 import { notify } from '@/contexts/ToastProvider';
 import { baseUrl } from '@/config';
@@ -76,7 +77,7 @@ const UpdateState = ({ access_token, state, }: { access_token: string, state: St
                      ? (
                         <>
                            <span>{"Updating data "}</span>
-                           <Loader2 fontSize={20} size={40} className="animate-spin text-lg" />
+                           <Icon icon={Loading03Icon} fontSize={20} size={40} className="animate-spin text-lg" />
                         </>
                      )
                      : <span>{"Update State"}</span>

@@ -4,7 +4,8 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import React, { useEffect } from 'react';
 import { SubmitHandler, useForm, } from "react-hook-form";
 import { z } from 'zod';
-import { Loader2 } from "lucide-react";
+import { Loading03Icon } from "@hugeicons/core-free-icons";
+import { Icon } from "@/components/ui/icon";
 import { UpdateSingleLocalGov } from '@/app/actions/server.admin';
 import { notify } from '@/contexts/ToastProvider';
 import { baseUrl } from '@/config';
@@ -85,7 +86,7 @@ const UpdateLocalGov = ({ access_token, localGov, states, }: { access_token: str
                      ? (
                         <>
                            <span>{"Updating data "}</span>
-                           <Loader2 fontSize={20} size={40} className="animate-spin text-lg" />
+                           <Icon icon={Loading03Icon} fontSize={20} size={40} className="animate-spin text-lg" />
                         </>
                      )
                      : <span>{"Update Local Gov"}</span>

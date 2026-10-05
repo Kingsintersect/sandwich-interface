@@ -1,13 +1,14 @@
 "use client"
 
 import {
-  BadgeCheck,
-  Bell,
-  ChevronsUpDown,
-  CreditCard,
-  LogOut,
-  Settings2,
-} from "lucide-react"
+  CheckmarkBadge01Icon,
+  Logout01Icon,
+  Notification03Icon,
+  Settings02Icon,
+  UnfoldMoreIcon,
+  UserIcon,
+} from "@hugeicons/core-free-icons"
+import { Icon } from "@/components/ui/icon"
 
 import {
   Avatar,
@@ -57,13 +58,13 @@ export function NavUser({
             >
               <Avatar className="h-8 w-8 rounded-lg">
                 <AvatarImage src={user.avatar} alt={user.name} />
-                <AvatarFallback className="rounded-lg"><Settings2 /></AvatarFallback>
+                <AvatarFallback className="rounded-lg"><Icon icon={Settings02Icon} className="size-4" /></AvatarFallback>
               </Avatar>
               <div className="grid flex-1 text-left text-sm leading-tight">
                 <span className="truncate font-medium">{user.name}</span>
                 <span className="truncate text-xs">{user.email}</span>
               </div>
-              <ChevronsUpDown className="ml-auto size-4" />
+              <Icon icon={UnfoldMoreIcon} className="ml-auto size-4" />
             </SidebarMenuButton>
           </DropdownMenuTrigger>
           <DropdownMenuContent
@@ -76,7 +77,7 @@ export function NavUser({
               <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
                 <Avatar className="h-8 w-8 rounded-lg">
                   <AvatarImage src={user.avatar} alt={user.name} />
-                  <AvatarFallback className="rounded-lg"><Settings2 /></AvatarFallback>
+                  <AvatarFallback className="rounded-lg"><Icon icon={Settings02Icon} className="size-4" /></AvatarFallback>
                 </Avatar>
                 <div className="grid flex-1 text-left text-sm leading-tight">
                   <span className="truncate font-medium">{user.name}</span>
@@ -87,7 +88,7 @@ export function NavUser({
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
               <DropdownMenuItem>
-                <Bell />
+                <Icon icon={Notification03Icon} className="size-4" />
                 Notifications
               </DropdownMenuItem>
             </DropdownMenuGroup>
@@ -96,13 +97,13 @@ export function NavUser({
               <DropdownMenuGroup>
                 <DropdownMenuItem asChild>
                   <Link href="/dashboard/student/study-account">
-                    <BadgeCheck />
+                    <Icon icon={CheckmarkBadge01Icon} className="size-4" />
                     Account
                   </Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild>
                   <Link href="/dashboard/student/profile">
-                    <CreditCard />
+                    <Icon icon={UserIcon} className="size-4" />
                     Profile
                   </Link>
                 </DropdownMenuItem>
@@ -110,7 +111,7 @@ export function NavUser({
             )}
             <DropdownMenuSeparator />
             <DropdownMenuItem onClick={initializeLogout}>
-              <LogOut />
+              <Icon icon={Logout01Icon} className="size-4" />
               Log out
             </DropdownMenuItem>
           </DropdownMenuContent>

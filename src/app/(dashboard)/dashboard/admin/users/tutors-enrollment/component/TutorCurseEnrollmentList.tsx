@@ -2,7 +2,8 @@
 
 import { useEffect, useState } from "react";
 import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from '@/components/ui/table';
-import { Loader2, Trash } from 'lucide-react';
+import { Delete02Icon, Loading03Icon } from "@hugeicons/core-free-icons";
+import { Icon } from "@/components/ui/icon";
 import { useAuth } from '@/contexts/AuthContext';
 import { notify } from "@/contexts/ToastProvider";
 import { extractErrorMessages } from "@/lib/errorsHandler";
@@ -71,7 +72,7 @@ const TutorCourseEnrollmentList = ({ tutorId }: { tutorId: string }) => {
     }, [tutorId, access_token]);
 
     if (loading) {
-        return <p className="flex items-center justify-center"><Loader2 className="animate-spin" /></p>;
+        return <p className="flex items-center justify-center"><Icon icon={Loading03Icon} className="animate-spin" /></p>;
     }
 
     return (
@@ -108,8 +109,8 @@ const TutorCourseEnrollmentList = ({ tutorId }: { tutorId: string }) => {
                                             Drop
                                             {
                                                 (deleting)
-                                                    ? (<Loader2 className="animate-spin" />)
-                                                    : (<Trash className="mr-2 h-4 w-4" />)
+                                                    ? (<Icon icon={Loading03Icon} className="animate-spin" />)
+                                                    : (<Icon icon={Delete02Icon} className="mr-2 h-4 w-4" />)
                                             }
                                         </Button>
                                     </TableCell>

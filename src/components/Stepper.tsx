@@ -1,5 +1,9 @@
 "use client";
 
+import { CheckmarkCircle02Icon } from "@hugeicons/core-free-icons";
+import { Icon } from "@/components/ui/icon";
+import { cn } from "@/lib/utils";
+
 interface Step {
     id: number;
     label: string;
@@ -11,39 +15,45 @@ interface StepperProps {
 
 export default function Stepper({ steps, currentStep }: StepperProps) {
     return (
-        <div className="flex w-full border border-gray-300 rounded-md p-4 text-start">
-            {steps.map((step, index) => (
-                <div key={step.id} className="flex flex-col items-center w-full mr-5 last:mr-0">
-                    {/* Step Connector Line */}
-                    {index >= 0 && (
-                        <div
-                            className={`h-1 w-full mb-3 bg-[#23628d] ${currentStep == step.id ? "bg-[#23628d]" : "bg-gray-300"
-                                }`}
-                        />
-                    )}
+        <ol className="flex w-full gap-3">
+            {steps.map((step) => {
+                const done = currentStep > step.id;
+                const active = currentStep === step.id;
 
-                    {/* Step Text */}
-                    <div className="flex flex-col w-full">
-                        {/* <span
-                            className={`text-sm font-medium ${currentStep >= step.id ? "text-[#23628d]" : "text-gray-500"
-                                }`}
-                        >
-                            Step {step.id}
-                        </span> */}
+                return (
+                    <li key={step.id} className="flex w-full flex-col gap-2.5">
+                        {/* The rail carries the state; ember for done, blue for current */}
                         <span
-                            className={`text-base font-bold ${currentStep === step.id
-                                ? "text-site-b-dark"
-                                : currentStep > step.id
-                                    ? "text-site-b-dark"
-                                    : "text-gray-400"
-                                }`}
-                            aria-current={currentStep === step.id ? "step" : undefined}
-                        >
-                            {step.label}
+                            className={cn(
+                                "h-1 w-full rounded-full transition-colors duration-500",
+                                done && "bg-ember-500",
+                                active && "bg-ocean-600",
+                                !done && !active && "bg-border"
+                            )}
+                        />
+
+                        <span className="flex items-center gap-1.5">
+                            {done && (
+                                <Icon
+                                    icon={CheckmarkCircle02Icon}
+                                    className="size-3.5 text-ember-600"
+                                />
+                            )}
+                            <span
+                                className={cn(
+                                    "text-xs font-semibold uppercase tracking-[0.1em] transition-colors",
+                                    done && "text-ember-600",
+                                    active && "text-ocean-700 dark:text-ocean-300",
+                                    !done && !active && "text-muted-foreground/60"
+                                )}
+                                aria-current={active ? "step" : undefined}
+                            >
+                                {step.label}
+                            </span>
                         </span>
-                    </div>
-                </div>
-            ))}
-        </div>
+                    </li>
+                );
+            })}
+        </ol>
     );
 }

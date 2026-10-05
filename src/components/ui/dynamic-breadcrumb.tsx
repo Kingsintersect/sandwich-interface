@@ -3,7 +3,8 @@
 import { useState, useEffect } from "react";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
-import { ChevronDown, Slash, Home } from "lucide-react";
+import { ArrowDown01Icon, Home01Icon, SlashIcon } from "@hugeicons/core-free-icons";
+import { Icon } from "@/components/ui/icon";
 import {
     Breadcrumb,
     BreadcrumbItem,
@@ -102,7 +103,7 @@ export function DynamicBreadcrumb({
                     <div key={index} className="flex items-center">
                         {index > 0 && (
                             <BreadcrumbSeparator>
-                                <Slash size={16} />
+                                <Icon icon={SlashIcon} size={16} />
                             </BreadcrumbSeparator>
                         )}
                         <BreadcrumbItem>
@@ -112,7 +113,7 @@ export function DynamicBreadcrumb({
                                 <DropdownMenu>
                                     <DropdownMenuTrigger className="flex items-center gap-1 text-blue-600 hover:underline">
                                         {crumb.label}
-                                        <ChevronDown size={14} />
+                                        <Icon icon={ArrowDown01Icon} size={14} />
                                     </DropdownMenuTrigger>
                                     <DropdownMenuContent align="start">
                                         {crumb.dropdown.map((item, idx) => (
@@ -128,7 +129,7 @@ export function DynamicBreadcrumb({
                                 <BreadcrumbLink href={crumb.href}>
                                     {index === 0 ? (
                                         <span className="flex items-center gap-1">
-                                            <Home size={16} />
+                                            <Icon icon={Home01Icon} size={16} />
                                             <span className="sr-only md:not-sr-only">
                                                 {crumb.label}
                                             </span>

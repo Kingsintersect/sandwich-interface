@@ -71,7 +71,11 @@ export interface UserInterface extends Record<string, unknown> {
 	updated_at: Date | string | null;
 	deleted_at: Date | string | null;
 	role: Roles;
+	/** LMS short code, e.g. "SOC-ECO-100-1SM". Not the study level. */
 	level: string | null;
+	/** Study level (100-600). The API sends it as a number or a string, and
+	 *  this is the field that moves when a student changes session. */
+	academic_level: number | string | null;
 	tuition_amount_paid: number | null;
 
 	academic_session: string | null;

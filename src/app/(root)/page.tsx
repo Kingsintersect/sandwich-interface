@@ -1,3 +1,5 @@
+import AdmissionCta from "@/components/AdmissionCta";
+import AdmissionSteps from "@/components/AdmissionSteps";
 import Announcements from "@/components/Announcements";
 import CampusHighlights from "@/components/CampusHighlights";
 import FeaturedPrograms from "@/components/FeaturedPrograms";
@@ -6,20 +8,26 @@ import UpcomingEvents from "@/components/UpcomingEvents";
 
 export default function Home() {
 	return (
-		<main className="min-h-screen">
+		<main className="min-h-screen bg-background">
 			<HeroCarousel />
-			<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-				<FeaturedPrograms />
-				<div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mt-16">
+
+			<FeaturedPrograms />
+
+			<AdmissionSteps />
+
+			{/* Registry feed: announcements lead, calendar sits alongside */}
+			<section className="py-16 sm:py-24">
+				<div className="shell grid grid-cols-1 items-start gap-6 lg:grid-cols-3">
 					<div className="lg:col-span-2">
 						<Announcements />
 					</div>
-					<div>
-						<UpcomingEvents />
-					</div>
+					<UpcomingEvents />
 				</div>
-				<CampusHighlights />
-			</div>
+			</section>
+
+			<CampusHighlights />
+
+			<AdmissionCta />
 		</main>
 	);
 }

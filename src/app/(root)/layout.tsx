@@ -4,15 +4,14 @@ import React, { ReactNode } from 'react'
 
 const Layout = ({ children }: { children: ReactNode }) => {
     return (
-        <main className='root'>
-            <div className="root-container">
-                <div className="wrapper">
-                    <Header />
-                    {children}
-                    <Footer />
-                </div>
+        // The header floats over the hero, so the page starts flush at the top.
+        <div className='root flex min-h-screen flex-col bg-background'>
+            <Header />
+            <div className="flex-1">
+                {children}
             </div>
-        </main>
+            <Footer />
+        </div>
     )
 }
 

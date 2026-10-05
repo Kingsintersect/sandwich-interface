@@ -4,6 +4,7 @@ import { remoteApiUrl } from "@/config";
 import { UserInterface } from "@/config/Types";
 import { UseDataTableOptions } from "@/hooks/useDataTable";
 import { apiCall } from "@/lib/apiCaller";
+import { extractRows, extractTotal } from "@/lib/admin.analytics";
 import { loginSessionKey } from "@/lib/definitions";
 import { getSession } from "@/lib/session";
 import { ApplicationChunk, ApplicationDetailsType } from "@/schemas/admission-schema";
@@ -32,22 +33,34 @@ export async function getAdmissionApplicants(options?: UseDataTableOptions): Pro
         ...filters,
     });
 
-    const response = await apiCall<undefined, ApiResponseArray<UserInterface>>({
-        // url: `/admin/all-applications?academicSession=2024/2025&${query.toString()}`,
-        url: `/admin/all-applications?${query.toString()}`,
+    const response = await apiCall<undefined, unknown>({
+        url: `/admin/applied-students?${query.toString()}`,
         method: "GET",
         accessToken: loginSession.access_token
     });
 
-    if (response?.status && response.data.data) {
-        return {
-            data: response.data.data,
-            total: response.data.total,
-        };
-    } else {
-        console.error("Failed to fetch categories");
-        return { data: [], total: 0 };
+    // This endpoint is not guaranteed to paginate: it may return the rows
+    // wrapped in a paginator, or a bare array of every applicant. Unwrap both,
+    // then page locally when the server clearly did not.
+    const payload = (response as { data?: unknown } | null)?.data ?? response;
+    const rows = extractRows(payload) as unknown as UserInterface[];
+    const total = extractTotal(payload);
+
+    const serverPaginated = rows.length <= pageSize && total >= rows.length;
+    if (serverPaginated) {
+        return { data: rows, total };
     }
+
+    const term = search.trim().toLowerCase();
+    const matched = term
+        ? rows.filter((row) =>
+            [row.first_name, row.last_name, row.email, row.reg_number]
+                .some((field) => String(field ?? "").toLowerCase().includes(term))
+        )
+        : rows;
+
+    const start = pageIndex * pageSize;
+    return { data: matched.slice(start, start + pageSize), total: matched.length };
 }
 
 export async function getAdmittedApplicants(options?: UseDataTableOptions): Promise<{ data: UserInterface[]; total: number }> {

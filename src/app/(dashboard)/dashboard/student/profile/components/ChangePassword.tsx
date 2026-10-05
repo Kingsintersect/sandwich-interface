@@ -9,7 +9,8 @@ import { notify } from "@/contexts/ToastProvider";
 import { useRouter } from "next/navigation";
 import { extractErrorMessages } from "@/lib/errorsHandler";
 import { useAuth } from "@/contexts/AuthContext";
-import { X, Lock, Eye, EyeOff, CheckCircle, AlertCircle } from "lucide-react";
+import { Alert02Icon, Cancel01Icon, CheckmarkCircle02Icon, LockPasswordIcon, ViewIcon, ViewOffIcon } from "@hugeicons/core-free-icons";
+import { Icon } from "@/components/ui/icon";
 
 interface ChangePasswordProps {
    isOpen: boolean;
@@ -129,7 +130,7 @@ export const ChangePasswordForm = ({ isOpen, onClose }: ChangePasswordProps) => 
          </label>
          <div className="relative">
             <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-500 dark:text-gray-400">
-               <Lock className="h-5 w-5" />
+               <Icon icon={LockPasswordIcon} className="h-5 w-5" />
             </div>
             <input
                type={show ? "text" : "password"}
@@ -145,7 +146,7 @@ export const ChangePasswordForm = ({ isOpen, onClose }: ChangePasswordProps) => 
                onClick={toggleShow}
                className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
             >
-               {show ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+               {show ? <Icon icon={ViewOffIcon} className="h-5 w-5" /> : <Icon icon={ViewIcon} className="h-5 w-5" />}
             </button>
          </div>
          {error && <p className="mt-1 text-sm text-red-600 dark:text-red-400">{error.message}</p>}
@@ -165,11 +166,11 @@ export const ChangePasswordForm = ({ isOpen, onClose }: ChangePasswordProps) => 
                   onClick={handleClose}
                   className="absolute top-4 right-4 text-white/70 hover:text-white p-1 rounded-full hover:bg-white/20 transition-all"
                >
-                  <X className="h-6 w-6" />
+                  <Icon icon={Cancel01Icon} className="h-6 w-6" />
                </button>
                <div className="flex items-center">
                   <div className="bg-white/20 p-2 rounded-lg mr-4">
-                     <Lock className="h-6 w-6" />
+                     <Icon icon={LockPasswordIcon} className="h-6 w-6" />
                   </div>
                   <div>
                      <h2 className="text-xl font-bold">Change Password</h2>
@@ -181,14 +182,14 @@ export const ChangePasswordForm = ({ isOpen, onClose }: ChangePasswordProps) => 
             {/* Status Message */}
             {status === 'success' && (
                <div className="p-4 bg-green-50 dark:bg-green-900/30 border-l-4 border-green-500 mx-6 mt-6 rounded-lg flex items-center gap-3">
-                  <CheckCircle className="h-5 w-5 text-green-500" />
+                  <Icon icon={CheckmarkCircle02Icon} className="h-5 w-5 text-green-500" />
                   <span className="text-green-700 dark:text-green-400 font-medium">Password changed successfully!</span>
                </div>
             )}
 
             {status === 'error' && (
                <div className="p-4 bg-red-50 dark:bg-red-900/30 border-l-4 border-red-500 mx-6 mt-6 rounded-lg flex items-center gap-3">
-                  <AlertCircle className="h-5 w-5 text-red-500" />
+                  <Icon icon={Alert02Icon} className="h-5 w-5 text-red-500" />
                   <span className="text-red-700 dark:text-red-400 font-medium">{errorMessage}</span>
                </div>
             )}

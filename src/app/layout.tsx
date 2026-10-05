@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from "next";
+import { Outfit } from "next/font/google";
 import { ThemeProvider } from "@/components/providers/theme-provider";
 import { ActiveThemeProvider } from "@/components/active-theme";
 import { cookies } from "next/headers";
@@ -13,9 +14,18 @@ import { ToastProvider } from "@/contexts/ToastProvider";
 import { Toaster } from "@/components/ui/sonner";
 import { SITE_NAME } from "@/config";
 
+// Outfit carries the whole interface - geometric, warm, and a close match
+// for the lettering in the crest wordmark.
+const outfit = Outfit({
+  subsets: ["latin"],
+  display: "swap",
+  variable: "--font-outfit",
+  weight: ["300", "400", "500", "600", "700", "800"],
+});
+
 const META_THEME_COLORS = {
   light: "#ffffff",
-  dark: "#09090b",
+  dark: "#0b1a24",
 }
 // 
 export const metadata: Metadata = {
@@ -52,7 +62,8 @@ export default async function RootLayout({
       </head>
       <body
         className={cn(
-          `bg-background overscroll-none antialiased`,
+          outfit.variable,
+          `bg-background font-sans overscroll-none antialiased`,
           activeThemeValue ? `theme-${activeThemeValue}` : "",
           isScaled ? "theme-scaled" : "",
         )}

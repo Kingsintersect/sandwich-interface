@@ -3,7 +3,8 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import React from 'react';
 import { SubmitHandler, useForm } from "react-hook-form";
 import { z } from 'zod';
-import { Loader2 } from "lucide-react";
+import { Loading03Icon } from "@hugeicons/core-free-icons";
+import { Icon } from "@/components/ui/icon";
 import { CreateNewState } from '@/app/actions/server.admin';
 import { notify } from '@/contexts/ToastProvider';
 import { baseUrl } from '@/config';
@@ -67,7 +68,7 @@ const CreateState = ({ access_token }: { access_token: string, country: Country[
                      ? (
                         <>
                            <span>{"Saving data "}</span>
-                           <Loader2 fontSize={20} size={40} className="animate-spin text-lg" />
+                           <Icon icon={Loading03Icon} fontSize={20} size={40} className="animate-spin text-lg" />
                         </>
                      )
                      : <span>{"Save New State"}</span>

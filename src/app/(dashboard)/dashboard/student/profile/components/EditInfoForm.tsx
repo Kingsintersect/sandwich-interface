@@ -4,7 +4,8 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import { User, Mail, Phone, Save } from "lucide-react";
+import { Call02Icon, FloppyDiskIcon, Mail01Icon, UserIcon } from "@hugeicons/core-free-icons";
+import { Icon } from "@/components/ui/icon";
 import { UserInterface } from "@/config/Types";
 import { updateStudentPersonalInfoData } from "@/app/actions/applications";
 
@@ -115,7 +116,7 @@ const EditInfoForm = ({ student }: StudentInfoProps) => {
             <InputField
                name="first_name"
                label="First Name"
-               icon={<User className="h-5 w-5" />}
+               icon={<Icon icon={UserIcon} className="h-5 w-5" />}
                placeholder="Enter your first name"
                required
             />
@@ -123,7 +124,7 @@ const EditInfoForm = ({ student }: StudentInfoProps) => {
             <InputField
                name="last_name"
                label="Last Name"
-               icon={<User className="h-5 w-5" />}
+               icon={<Icon icon={UserIcon} className="h-5 w-5" />}
                placeholder="Enter your last name"
                required
             />
@@ -131,7 +132,7 @@ const EditInfoForm = ({ student }: StudentInfoProps) => {
          <InputField
             name="other_name"
             label="Other Name"
-            icon={<User className="h-5 w-5" />}
+            icon={<Icon icon={UserIcon} className="h-5 w-5" />}
             placeholder="Enter your last name"
             required
          />
@@ -140,7 +141,7 @@ const EditInfoForm = ({ student }: StudentInfoProps) => {
             name="email"
             label="Email Address"
             type="email"
-            icon={<Mail className="h-5 w-5" />}
+            icon={<Icon icon={Mail01Icon} className="h-5 w-5" />}
             placeholder="your.email@university.edu"
             required
          />
@@ -149,7 +150,7 @@ const EditInfoForm = ({ student }: StudentInfoProps) => {
             name="phone_number"
             label="Phone Number"
             type="tel"
-            icon={<Phone className="h-5 w-5" />}
+            icon={<Icon icon={Call02Icon} className="h-5 w-5" />}
             placeholder="+1 (234) 567-8910"
             required
          />
@@ -174,7 +175,7 @@ const EditInfoForm = ({ student }: StudentInfoProps) => {
                   </>
                ) : (
                   <>
-                     <Save className="h-5 w-5" />
+                     <Icon icon={FloppyDiskIcon} className="h-5 w-5" />
                      Save Changes
                   </>
                )}

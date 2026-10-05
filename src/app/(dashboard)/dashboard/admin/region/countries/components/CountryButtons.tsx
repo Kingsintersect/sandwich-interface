@@ -2,7 +2,8 @@
 
 import { DeleteSingleCountry } from "@/app/actions/server.admin";
 import { notify } from "@/contexts/ToastProvider";
-import { TrashIcon } from "lucide-react";
+import { Delete02Icon } from "@hugeicons/core-free-icons";
+import { Icon } from "@/components/ui/icon";
 import { useRouter } from "next/navigation";
 import { DropdownMenuItem } from "@/components/ui/dropdown-menu";
 import { extractErrorMessages } from "@/lib/errorsHandler";
@@ -28,7 +29,7 @@ export const DeleteCountry = ({ access_token, id }: { access_token: string, id: 
       <>
          <span className="" onClick={() => handleCountryDelete(id)}>
             <DropdownMenuItem>
-               <TrashIcon className="w-5" />
+               <Icon icon={Delete02Icon} className="w-5" />
                <span className="inline-block">Delete</span>
             </DropdownMenuItem>
          </span>

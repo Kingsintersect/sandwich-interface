@@ -1,7 +1,8 @@
 "use client";
 
 import React from 'react';
-import { HashIcon, ClipboardCheck } from "lucide-react";
+import { CheckmarkBadge01Icon, HashIcon } from "@hugeicons/core-free-icons";
+import { Icon } from "@/components/ui/icon";
 import { useAcceptancePayment } from '@/contexts/AcceptancePaymentContext';
 
 import {
@@ -47,7 +48,7 @@ const AcceptancePaymentModal = () => {
 				>
 					<TabsList className="w-full justify-center space-x-4 mb-6">
 						<TabsTrigger value="full" className="flex items-center gap-2">
-							<HashIcon width={20} height={20} /> Full Payment
+							<Icon icon={HashIcon} width={20} height={20} /> Full Payment
 						</TabsTrigger>
 					</TabsList>
 
@@ -62,7 +63,7 @@ const AcceptancePaymentModal = () => {
 
 							<div className="bg-green-50 p-4 rounded-lg mb-6">
 								<div className="flex items-start">
-									<ClipboardCheck className="text-green-600 mt-1 flex-shrink-0 h-5 w-5" />
+									<Icon icon={CheckmarkBadge01Icon} className="text-green-600 mt-1 flex-shrink-0 h-5 w-5" />
 									<div className="ml-3">
 										<h4 className="text-green-700 font-medium">Full Payment Benefits</h4>
 										<ul className="mt-2 space-y-1 text-sm text-green-700">

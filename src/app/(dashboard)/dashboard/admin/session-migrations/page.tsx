@@ -1,162 +1,273 @@
 "use client";
 
 import React, { useState } from 'react';
-import { Calendar, RefreshCw } from 'lucide-react';
-import { useCurrentSession, useMigration, useMigrationState, useNextSemester, useNextSession } from '@/hooks/useSessionMigration';
-import { SessionMigrationTab } from './componenets/SessionMigrationTab';
-import { SemesterMigrationTab } from './componenets/SemesterMigrationTab';
-import { MigrationProgress } from './componenets/MigrationProgress';
+import {
+    Alert02Icon,
+    CheckmarkCircle02Icon,
+    Loading03Icon,
+    PlusSignIcon,
+} from '@hugeicons/core-free-icons';
+import {
+    useAcademicSessions,
+    useActivateSession,
+    useCreateSession,
+    useMigrationState,
+} from '@/hooks/useSessionMigration';
 import { MigrationLog } from './componenets/MigrationLog';
 import { ConfirmationDialog } from './componenets/ConfirmationDialog';
+import { Icon } from '@/components/ui/icon';
+import { Button } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
+
+/** Sessions are written as YYYY/YYYY with consecutive years, e.g. 2026/2027. */
+const SESSION_PATTERN = /^(\d{4})\/(\d{4})$/;
+
+const validateSessionName = (value: string): string | null => {
+    const trimmed = value.trim();
+    if (!trimmed) return "Enter a session, for example 2026/2027";
+
+    const match = trimmed.match(SESSION_PATTERN);
+    if (!match) return "Use the format YYYY/YYYY, for example 2026/2027";
+
+    const [, start, end] = match;
+    if (Number(end) !== Number(start) + 1) {
+        return "The second year should follow the first, for example 2026/2027";
+    }
+    return null;
+};
 
 const AdminMigrationInterface = () => {
-    const [activeTab, setActiveTab] = useState('session');
+    const { data: sessions = [], isLoading, isError } = useAcademicSessions();
+    const createSession = useCreateSession();
+    const activateSession = useActivateSession();
+    const { migrationLogs, confirmDialog, addLog, openConfirmDialog, closeConfirmDialog } =
+        useMigrationState();
 
-    // Data fetching with React Query
-    const { data: currentSession, isLoading: isCurrentLoading } = useCurrentSession();
-    const { data: nextSession, isLoading: isNextLoading } = useNextSession();
-    const { data: nextSemester, isLoading: isSemesterLoading } = useNextSemester(currentSession);
+    const [newSession, setNewSession] = useState('');
+    const [formError, setFormError] = useState<string | null>(null);
 
-    // Migration mutation
-    const migrationMutation = useMigration();
+    const active = sessions.find((s) => s.status === "ACTIVE");
+    const activeIndex = sessions.findIndex((s) => s.status === "ACTIVE");
+    const next = activeIndex >= 0 ? sessions[activeIndex + 1] : undefined;
 
-    // Local state management
-    const {
-        migrationProgress,
-        migrationLogs,
-        confirmDialog,
-        addLog,
-        updateProgress,
-        resetMigration,
-        openConfirmDialog,
-        closeConfirmDialog
-    } = useMigrationState();
+    // Suggest the year after the newest session on record.
+    const suggestion = (() => {
+        const latest = sessions[sessions.length - 1]?.name;
+        const match = latest?.match(SESSION_PATTERN);
+        if (!match) return "2026/2027";
+        const start = Number(match[2]);
+        return `${start}/${start + 1}`;
+    })();
 
-    const handleMigrationConfirm = async () => {
-        const { type } = confirmDialog;
-        closeConfirmDialog();
+    const handleCreate = async (e: React.FormEvent) => {
+        e.preventDefault();
+        const problem = validateSessionName(newSession);
+        setFormError(problem);
+        if (problem) return;
 
-        const migrationData = {
-            type,
-            fromSession: currentSession,
-            toSession: type === 'Academic Year' ? nextSession : nextSemester,
-            onProgress: (progress, logEntry) => {
-                updateProgress(progress);
-                addLog(logEntry);
-            }
-        };
-
+        const name = newSession.trim();
         try {
-            await migrationMutation.mutateAsync(migrationData);
+            await createSession.mutateAsync(name);
+            addLog(`Created session ${name}`, 'success');
+            setNewSession('');
         } catch (error) {
-            addLog({
-                id: Date.now(),
-                message: `Migration failed: ${error instanceof Error ? error.message : String(error)}`,
-                type: 'error',
-                timestamp: new Date().toLocaleTimeString()
-            });
+            const message = error instanceof Error ? error.message : String(error);
+            addLog(`Could not create ${name}: ${message}`, 'error');
+            setFormError(message);
         }
     };
 
-    const isLoading = isCurrentLoading || isNextLoading || isSemesterLoading;
-    const isMigrating = migrationMutation.isPending;
+    const handleActivateConfirm = async () => {
+        const { id, to } = confirmDialog.details;
+        closeConfirmDialog();
+        if (typeof id !== "number") return;
+
+        try {
+            await activateSession.mutateAsync(id);
+            addLog(`${to} is now the active session`, 'success');
+        } catch (error) {
+            addLog(
+                `Could not activate ${to}: ${error instanceof Error ? error.message : String(error)}`,
+                'error'
+            );
+        }
+    };
 
     return (
-        <div className="min-h-screen bg-gray-50 p-6">
-            <div className="max-w-6xl mx-auto">
-                {/* Header */}
-                <div className="bg-white rounded-lg shadow-sm border p-6 mb-6">
-                    <div className="flex items-center justify-between">
-                        <div>
-                            <h1 className="text-2xl font-bold text-gray-900">Academic Session Migration</h1>
-                            <p className="text-gray-600 mt-1">Manage student academic session and semester transitions</p>
-                        </div>
-                        <div className="flex items-center space-x-4">
-                            <div className="text-right">
-                                <p className="text-sm text-gray-500">Current Session</p>
-                                <p className="font-semibold">{currentSession?.academicYear || 'Loading...'}</p>
-                                <p className="text-sm text-blue-600">{currentSession?.semester || ''}</p>
-                            </div>
-                            <div className="h-12 w-px bg-gray-300"></div>
-                            <div className="text-right">
-                                <p className="text-sm text-gray-500">Active Students</p>
-                                <p className="text-2xl font-bold text-green-600">
-                                    {currentSession?.activeStudents || '...'}
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                {/* Navigation Tabs */}
-                <div className="bg-white rounded-lg shadow-sm border mb-6">
-                    <div className="border-b border-gray-200">
-                        <nav className="flex space-x-8 px-6">
-                            <button
-                                onClick={() => setActiveTab('session')}
-                                className={`py-4 px-2 border-b-2 font-medium text-sm ${activeTab === 'session'
-                                    ? 'border-blue-500 text-blue-600'
-                                    : 'border-transparent text-gray-500 hover:text-gray-700'
-                                    }`}
-                            >
-                                <Calendar className="inline w-4 h-4 mr-2" />
-                                Academic Year Migration
-                            </button>
-                            <button
-                                onClick={() => setActiveTab('semester')}
-                                className={`py-4 px-2 border-b-2 font-medium text-sm ${activeTab === 'semester'
-                                    ? 'border-blue-500 text-blue-600'
-                                    : 'border-transparent text-gray-500 hover:text-gray-700'
-                                    }`}
-                            >
-                                <RefreshCw className="inline w-4 h-4 mr-2" />
-                                Semester Migration
-                            </button>
-                        </nav>
-                    </div>
-
-                    <div className="p-6">
-                        {activeTab === 'session' && (
-                            <SessionMigrationTab
-                                currentSession={currentSession}
-                                nextSession={nextSession}
-                                onMigrate={openConfirmDialog}
-                                isLoading={isLoading || isMigrating}
-                            />
-                        )}
-
-                        {activeTab === 'semester' && (
-                            <SemesterMigrationTab
-                                currentSession={currentSession}
-                                nextSemester={nextSemester}
-                                onMigrate={openConfirmDialog}
-                                isLoading={isLoading || isMigrating}
-                            />
-                        )}
-                    </div>
-                </div>
-
-                {/* Migration Progress */}
-                {(isMigrating || migrationMutation.isSuccess) && (
-                    <MigrationProgress
-                        progress={migrationProgress}
-                        status={migrationMutation.isSuccess ? 'success' : 'running'}
-                        onReset={resetMigration}
-                    />
-                )}
-
-                {/* Migration Log */}
-                <MigrationLog logs={migrationLogs} />
-
-                {/* Confirmation Dialog */}
-                <ConfirmationDialog
-                    isOpen={confirmDialog.open}
-                    onClose={closeConfirmDialog}
-                    onConfirm={handleMigrationConfirm}
-                    migrationDetails={confirmDialog}
-                    activeStudents={currentSession?.activeStudents}
-                />
+        <div className="space-y-6 pb-10">
+            <div>
+                <h1 className="text-2xl font-bold tracking-tight text-ocean-900 dark:text-foreground">
+                    Academic sessions
+                </h1>
+                <p className="mt-1.5 text-sm text-muted-foreground">
+                    Add a session and choose which one the programme currently runs on.
+                </p>
             </div>
+
+            {/* Summary */}
+            <div className="grid gap-5 sm:grid-cols-2">
+                <div className="rounded-2xl border border-border bg-card p-6 shadow-soft">
+                    <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">
+                        Active session
+                    </p>
+                    <p className="mt-2 text-2xl font-bold text-ocean-900 dark:text-foreground">
+                        {isLoading ? "—" : active?.name ?? "None set"}
+                    </p>
+                </div>
+                <div className="rounded-2xl border border-border bg-card p-6 shadow-soft">
+                    <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">
+                        Next session
+                    </p>
+                    <p className="mt-2 text-2xl font-bold text-ocean-900 dark:text-foreground">
+                        {isLoading ? "—" : next?.name ?? "None recorded"}
+                    </p>
+                </div>
+            </div>
+
+            {/* Add a session */}
+            <section className="overflow-hidden rounded-2xl border border-border bg-card shadow-soft">
+                <div className="border-b border-border px-6 py-5">
+                    <h2 className="font-semibold text-ocean-900 dark:text-foreground">
+                        Add a session
+                    </h2>
+                    <p className="mt-1 text-xs text-muted-foreground">
+                        Creating a session does not activate it &mdash; you choose when to switch.
+                    </p>
+                </div>
+
+                <form onSubmit={handleCreate} className="flex flex-col gap-3 p-6 sm:flex-row sm:items-start">
+                    <div className="flex-1">
+                        <label htmlFor="session-name" className="sr-only">Session</label>
+                        <input
+                            id="session-name"
+                            value={newSession}
+                            onChange={(e) => {
+                                setNewSession(e.target.value);
+                                if (formError) setFormError(null);
+                            }}
+                            placeholder={suggestion}
+                            aria-invalid={!!formError}
+                            className={cn(
+                                "h-11 w-full rounded-full border bg-background px-5 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2",
+                                formError
+                                    ? "border-destructive focus:ring-destructive/30"
+                                    : "border-input focus:border-ocean-500 focus:ring-ocean-500/30"
+                            )}
+                        />
+                        {formError && (
+                            <p className="mt-2 pl-1 text-xs text-destructive">{formError}</p>
+                        )}
+                    </div>
+
+                    <Button
+                        type="submit"
+                        disabled={createSession.isPending}
+                        className="ember-surface h-11 shrink-0 rounded-full px-6 text-white shadow-ember hover:bg-none hover:bg-ember-700"
+                    >
+                        <Icon
+                            icon={createSession.isPending ? Loading03Icon : PlusSignIcon}
+                            className={cn("size-4", createSession.isPending && "animate-spin")}
+                        />
+                        {createSession.isPending ? "Adding..." : "Add session"}
+                    </Button>
+                </form>
+            </section>
+
+            {/* All sessions */}
+            <section className="overflow-hidden rounded-2xl border border-border bg-card shadow-soft">
+                <div className="border-b border-border px-6 py-5">
+                    <h2 className="font-semibold text-ocean-900 dark:text-foreground">
+                        All sessions
+                    </h2>
+                </div>
+
+                {isLoading ? (
+                    <ul className="divide-y divide-border">
+                        {Array.from({ length: 2 }).map((_, i) => (
+                            <li key={i} className="px-6 py-5">
+                                <div className="h-4 w-32 animate-pulse rounded bg-muted" />
+                            </li>
+                        ))}
+                    </ul>
+                ) : isError ? (
+                    <p className="px-6 py-12 text-center text-sm text-muted-foreground">
+                        Could not load academic sessions.
+                    </p>
+                ) : sessions.length === 0 ? (
+                    <p className="px-6 py-12 text-center text-sm text-muted-foreground">
+                        No sessions recorded yet. Add one above to get started.
+                    </p>
+                ) : (
+                    <ul className="divide-y divide-border">
+                        {sessions.map((session) => {
+                            const isActive = session.status === "ACTIVE";
+                            return (
+                                <li
+                                    key={session.id}
+                                    className="flex flex-wrap items-center justify-between gap-4 px-6 py-5"
+                                >
+                                    <div className="flex items-center gap-3">
+                                        <span
+                                            className={cn(
+                                                "flex size-9 items-center justify-center rounded-xl",
+                                                isActive
+                                                    ? "bg-emerald-50 text-emerald-600 dark:bg-emerald-950/50 dark:text-emerald-300"
+                                                    : "bg-muted text-muted-foreground"
+                                            )}
+                                        >
+                                            <Icon
+                                                icon={isActive ? CheckmarkCircle02Icon : Alert02Icon}
+                                                className="size-4.5"
+                                            />
+                                        </span>
+                                        <div>
+                                            <p className="font-semibold tabular-nums text-ocean-900 dark:text-foreground">
+                                                {session.name}
+                                            </p>
+                                            <p className="text-xs text-muted-foreground">
+                                                {isActive ? "Currently active" : "Inactive"}
+                                            </p>
+                                        </div>
+                                    </div>
+
+                                    {isActive ? (
+                                        <span className="rounded-full bg-emerald-50 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.1em] text-emerald-700 dark:bg-emerald-950/50 dark:text-emerald-300">
+                                            Active
+                                        </span>
+                                    ) : (
+                                        <Button
+                                            variant="outline"
+                                            size="sm"
+                                            className="rounded-full"
+                                            disabled={activateSession.isPending}
+                                            onClick={() =>
+                                                openConfirmDialog("Session", {
+                                                    from: active?.name,
+                                                    to: session.name,
+                                                    id: session.id,
+                                                })
+                                            }
+                                        >
+                                            Make active
+                                        </Button>
+                                    )}
+                                </li>
+                            );
+                        })}
+                    </ul>
+                )}
+            </section>
+
+            <MigrationLog logs={migrationLogs} />
+
+            <ConfirmationDialog
+                isOpen={confirmDialog.open}
+                onClose={closeConfirmDialog}
+                onConfirm={handleActivateConfirm}
+                from={confirmDialog.details.from}
+                to={confirmDialog.details.to}
+                isPending={activateSession.isPending}
+            />
         </div>
     );
 };

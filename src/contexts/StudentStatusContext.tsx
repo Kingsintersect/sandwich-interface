@@ -8,8 +8,6 @@ export interface StudentStatus {
     updated_at: string;
     payments: {
         application_payment_status: 'FULLY_PAID' | 'PART_PAID' | 'UNPAID';
-        acceptance_fee_payment_status: 'FULLY_PAID' | 'PART_PAID' | 'UNPAID';
-        tuition_payment_status: 'FULLY_PAID' | 'PART_PAID' | 'UNPAID';
     }
     application: Partial<AdmissionFormData> | null;
 }
@@ -27,6 +25,7 @@ import { useAuth } from './AuthContext';
 import { baseUrl, remoteApiUrl } from '@/config';
 import { AdmissionFormData } from '@/schemas/admission-schema';
 import { UniversalformatFieldName } from '@/lib/utils';
+import { useSessionFee } from "@/hooks/useSessionFee";
 
 // API service
 const fetchStudentStatus = async (studentId: string, access_token: string): Promise<StudentStatus> => {
@@ -59,9 +58,9 @@ const fetchStudentStatus = async (studentId: string, access_token: string): Prom
             created_at: profileData.created_at,
             updated_at: profileData.updated_at,
             payments: {
+                // Acceptance and tuition fees do not apply to the Sandwich
+                // programme - only the application fee is charged.
                 application_payment_status: profileData.application_payment_status,
-                acceptance_fee_payment_status: profileData.acceptance_fee_payment_status,
-                tuition_payment_status: profileData.tuition_payment_status,
             },
             application: applicationFeild,
         };
@@ -195,35 +194,29 @@ export const useAdmissionStatus = () => {
     };
 };
 
+/**
+ * The one fee this programme charges, for the session the student is on.
+ *
+ * Deferred to the session-aware hook rather than read straight off
+ * `application_payment_status`: that flag stays FULLY_PAID from the student's
+ * first session, so a returning student who owes for a new session was shown
+ * nothing here. It also names the fee correctly ("Returning fee" past year one)
+ * and links to a page that exists - `/admission/application/payment` never did.
+ */
 export const useStudentPaymentStatus = () => {
-    const { studentStatus } = useStudentStatus();
-    const myPayments = studentStatus.data?.payments;
-    const rootUrl = `${baseUrl}/dashboard/student/history/student-payments`;
-    const acceptanceUrl = `${rootUrl}/acceptance`;
-    const tuitionUrl = `${rootUrl}/tuition`;
+    const { label, status, isOwing, payUrl } = useSessionFee();
 
     return {
-        admissionPaymentStatus: myPayments?.application_payment_status,
-        acceptanceFeePaymentStatus: myPayments?.acceptance_fee_payment_status,
-        tuitionFeePaymentStatus: myPayments?.tuition_payment_status,
-        hasOutstandingPayments: [
-            myPayments?.application_payment_status,
-            myPayments?.acceptance_fee_payment_status,
-            myPayments?.tuition_payment_status,
-        ].some(status => status === 'PART_PAID' || status === 'UNPAID'),
-        unpaidFees: myPayments
-            ? Object.entries(myPayments)
-                .filter(([, value]) => value !== "FULLY_PAID")
-                .map(([key]) => {
-                    const link = (key === "acceptance_fee_payment_status") ? acceptanceUrl : (key === "tuition_payment_status") ? tuitionUrl : "";
-                    return ({
-                        label: UniversalformatFieldName(key),
-                        url: `${link}`
-                    })
-                })
+        admissionPaymentStatus: status,
+        hasOutstandingPayments: isOwing,
+        unpaidFees: isOwing
+            ? [{
+                label,
+                url: `${baseUrl}${payUrl}`,
+            }]
             : [],
     };
-}; //src\app\(dashboard) \dashboard\student\history\student - payments\tuition
+};
 
 export const useStudentApplicationStatus = () => {
     const { studentStatus } = useStudentStatus();

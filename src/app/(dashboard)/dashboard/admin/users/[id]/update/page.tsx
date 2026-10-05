@@ -2,7 +2,8 @@
 
 import React, { use } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { User, Book, CreditCard } from "lucide-react"
+import { Book02Icon, CreditCardIcon, UserIcon } from "@hugeicons/core-free-icons";
+import { Icon } from "@/components/ui/icon";
 import { Progress } from "@/components/ui/progress"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import ContentLoader from "@/components/ui/content-loader"
@@ -90,17 +91,17 @@ export default function UpdateStudentRecordPage({ params }: PagePropsWithId) {
                         <CardContent className="pt-6">
                             <div className="space-y-4">
                                 <div className="flex items-center gap-2">
-                                    <User className="h-4 w-4 text-site-b" />
+                                    <Icon icon={UserIcon} className="h-4 w-4 text-site-b" />
                                     <span className="text-gray-600">Department:</span>
                                     <span className="font-medium">{student.department}</span>
                                 </div>
                                 <div className="flex items-center gap-2">
-                                    <Book className="h-4 w-4 text-site-b" />
+                                    <Icon icon={Book02Icon} className="h-4 w-4 text-site-b" />
                                     <span className="text-gray-600">Level:</span>
                                     <span className="font-medium">{student.level}</span>
                                 </div>
                                 <div className="flex items-center gap-2">
-                                    <CreditCard className="h-4 w-4 text-site-b-light" />
+                                    <Icon icon={CreditCardIcon} className="h-4 w-4 text-site-b-light" />
                                     <span className="text-gray-600">Admission Year:</span>
                                     <span className="font-medium">{student.admissionYear}</span>
                                 </div>

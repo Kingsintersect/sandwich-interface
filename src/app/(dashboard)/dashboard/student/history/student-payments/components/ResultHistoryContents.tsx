@@ -2,7 +2,8 @@
 import { useState, useEffect } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { generateGPASummary, processGradeReport } from "@/lib/gpa.utils";
-import { Download } from "lucide-react";
+import { Download01Icon } from "@hugeicons/core-free-icons";
+import { Icon } from "@/components/ui/icon";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
@@ -13,6 +14,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { fetchStudentScores } from "@/app/actions/student.results";
+import { useAcademicSessions, useCurrentSemester, useCurrentSession } from '@/hooks/useAccademics';
 import { useAuth } from "@/contexts/AuthContext";
 import { ReportFooter } from "../../../grade-report/components/ReportFooter";
 import { generateResultPdf } from "@/lib/generateResultPdf";
@@ -72,23 +74,25 @@ type ResultItem = {
 };
 
 export default function StudentResultView() {
-  const [selectedSemester, setSelectedSemester] = useState<string>("");
   const [selectedSession, setSelectedSession] = useState<string>("");
   const { access_token } = useAuth();
 
-  function getCurrentAcademicYear(): string {
-    const now = new Date();
-    const year = now.getFullYear();
-    const month = now.getMonth();
-    return month >= 8 ? `${year}/${year + 1}` : `${year - 1}/${year}`;
-  }
+  // Sandwich runs vacation sessions, not semesters, so the student is never
+  // asked to pick one - we use whichever semester the backend has marked
+  // ACTIVE, because fetchStudentScores still requires that argument.
+  const { data: activeSemester } = useCurrentSemester();
+  const { data: sessions } = useAcademicSessions();
+  const { data: currentSession } = useCurrentSession();
 
-  const availableSessions = [
-    getCurrentAcademicYear(),
-    "2023/2024",
-    "2022/2023",
-    "2021/2022",
-  ];
+  const selectedSemester = activeSemester?.name ?? "";
+  const availableSessions = (sessions ?? []).map((item) => item.name);
+
+  // Default to the active session once it arrives
+  useEffect(() => {
+    if (!selectedSession && currentSession?.name) {
+      setSelectedSession(currentSession.name);
+    }
+  }, [currentSession, selectedSession]);
 
   const {
     mutate: fetchResults,
@@ -117,10 +121,6 @@ export default function StudentResultView() {
 
   const handleSessionChange = (value: string) => {
     setSelectedSession(value);
-  };
-
-  const handleSemesterChange = (value: string) => {
-    setSelectedSemester(value);
   };
 
   const resultsData =
@@ -222,7 +222,7 @@ export default function StudentResultView() {
               onValueChange={handleSessionChange}
             >
               <SelectTrigger className="w-[200px]">
-                <SelectValue placeholder="Select Academic Year" />
+                <SelectValue placeholder="Select session" />
               </SelectTrigger>
               <SelectContent>
                 {availableSessions.map((session) => (
@@ -232,23 +232,12 @@ export default function StudentResultView() {
                 ))}
               </SelectContent>
             </Select>
-
-            <Tabs
-              value={selectedSemester}
-              onValueChange={handleSemesterChange}
-              className="w-[200px]"
-            >
-              <TabsList>
-                <TabsTrigger value="Ist Semester">First Semester</TabsTrigger>
-                <TabsTrigger value="2nd Semester">Second Semester</TabsTrigger>
-              </TabsList>
-            </Tabs>
           </div>
         </div>
 
         {selectedSemester && selectedSession && (
           <Button onClick={handleDownload} className="bg-transparent hover:bg-inherit" disabled={isPending}>
-            <Download className="mr-2 h-4 w-4" />
+            <Icon icon={Download01Icon} className="mr-2 h-4 w-4" />
             Download Result
           </Button>
         )}
@@ -258,7 +247,7 @@ export default function StudentResultView() {
       {(!selectedSemester || !selectedSession) && (
         <div className="flex items-center justify-center h-64 bg-gray-50 rounded-lg">
           <div className="text-center text-gray-500">
-            Please select an academic year and semester to view results
+            Select a session to view your results
           </div>
         </div>
       )}
@@ -395,10 +384,7 @@ export default function StudentResultView() {
                   />
                 </div>
               </div>
-              <ReportFooter
-                semester={selectedSemester === "Ist Semester" ? "First" : "Second"}
-                academicYear={selectedSession}
-              />
+              <ReportFooter academicYear={selectedSession} />
             </div>
           </div>
         )}

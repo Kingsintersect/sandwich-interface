@@ -19,6 +19,9 @@ const protectedRoutes = [
 	"/admission/program-requierments",
 	"/admission/payments/verify-acceptance",
 	"/admission/payments/verify-tuition",
+	// The returning fee is paid by a signed-in student, so unlike
+	// verify-admission this callback is not public.
+	"/admission/payments/verify-return-fee",
 ];
 const staticPaths = ["/_next", "/favicon.ico", "/images", /\.(png|jpg|jpeg|gif|svg)$/];
 

@@ -61,6 +61,18 @@ const academicsApi = {
 
 }
 
+export const useAcademicSessions = () => {
+    return useQuery({
+        queryKey: ['academic-info-allSessions'],
+        queryFn: academicsApi.getAcademicSessions,
+        staleTime: Infinity,
+        gcTime: Infinity,
+        refetchOnWindowFocus: false,
+        refetchOnMount: false,
+        retry: 3,
+    });
+};
+
 export const useCurrentSession = () => {
     return useQuery({
         queryKey: ['academic-info-currentSession'],

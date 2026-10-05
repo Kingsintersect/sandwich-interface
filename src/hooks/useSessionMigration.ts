@@ -2,164 +2,131 @@
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
-type MigrationLogEntry = {
-    id: number;
-    message: string;
-    type: 'info' | 'success' | 'error';
-    timestamp: string;
+import {
+	ActivateAcademicSession,
+	CreateAcademicSession,
+	GetAllAcademicSessions,
+	type AcademicSession,
+} from "@/app/actions/server.admin";
+import { useAuth } from "@/contexts/AuthContext";
+
+export type MigrationLogEntry = {
+	id: number;
+	message: string;
+	type: "info" | "success" | "error";
+	timestamp: string;
 };
-// type ConfirmDialogState = {
-//     open: boolean;
-//     type: string;
-//     details: {
-//         from?: string;
-//         to?: string;
-//     };
-// };
 
-// API Services
-const migrationAPI = {
-    getCurrentSession: async () => {
-        // Simulate API call
-        await new Promise(resolve => setTimeout(resolve, 500));
-        return {
-            academicYear: '2023/2024',
-            semester: 'First Semester',
-            totalStudents: 1247,
-            activeStudents: 1198
-        };
-    },
+export type SessionSummary = {
+	academicYear: string;
+};
 
-    getNextSession: async () => {
-        await new Promise(resolve => setTimeout(resolve, 300));
-        return {
-            academicYear: '2024/2025',
-            semester: 'First Semester'
-        };
-    },
+const SESSIONS_KEY = ["academic-sessions"];
 
-    getNextSemester: async (currentSession) => {
-        await new Promise(resolve => setTimeout(resolve, 300));
-        return {
-            academicYear: currentSession.academicYear,
-            semester: currentSession.semester === 'First Semester' ? 'Second Semester' : 'First Semester'
-        };
-    },
+/** Oldest session first, so "the next one" is well defined. */
+const byId = (rows: AcademicSession[]) => [...rows].sort((a, b) => a.id - b.id);
 
-    migrateSession: async ({ toSession, onProgress }) => {
-        const steps = [
-            'Validating student records...',
-            'Backing up current session data...',
-            'Creating new session records...',
-            'Migrating student enrollments...',
-            'Updating course registrations...',
-            'Validating migrated data...',
-            'Migration completed successfully!'
-        ];
+const readRows = (response: unknown): AcademicSession[] => {
+	const data = (response as { success?: { data?: unknown } } | null)?.success?.data;
+	return Array.isArray(data) ? (data as AcademicSession[]) : [];
+};
 
-        const logs: MigrationLogEntry[] = [];
+/** Every academic session on record, oldest first. */
+export const useAcademicSessions = () => {
+	const { access_token } = useAuth();
 
-        for (let i = 0; i < steps.length; i++) {
-            await new Promise(resolve => setTimeout(resolve, 1000));
-            const progress = ((i + 1) / steps.length) * 100;
-            const logEntry: MigrationLogEntry = {
-                id: Date.now() + i,
-                message: steps[i],
-                type: i === steps.length - 1 ? 'success' : 'info',
-                timestamp: new Date().toLocaleTimeString()
-            };
-
-            logs.push(logEntry);
-            onProgress?.(progress, logEntry);
-        }
-
-        return {
-            success: true,
-            logs,
-            migratedStudents: 1198,
-            newSession: toSession
-        };
-    }
+	return useQuery<AcademicSession[]>({
+		queryKey: [...SESSIONS_KEY, access_token],
+		queryFn: async () => byId(readRows(await GetAllAcademicSessions(access_token ?? ""))),
+		enabled: !!access_token,
+		staleTime: 60 * 1000,
+	});
 };
 
 export const useCurrentSession = () => {
-    return useQuery({
-        queryKey: ['currentSession'],
-        queryFn: migrationAPI.getCurrentSession,
-        staleTime: 5 * 60 * 1000, // 5 minutes
-    });
+	const { data, ...rest } = useAcademicSessions();
+	const active = data?.find((s) => s.status === "ACTIVE");
+	return { ...rest, data: active ? ({ academicYear: active.name } as SessionSummary) : null };
 };
 
 export const useNextSession = () => {
-    return useQuery({
-        queryKey: ['nextSession'],
-        queryFn: migrationAPI.getNextSession,
-        staleTime: 5 * 60 * 1000,
-    });
+	const { data, ...rest } = useAcademicSessions();
+	const rows = data ?? [];
+	const activeIndex = rows.findIndex((s) => s.status === "ACTIVE");
+	const next = activeIndex >= 0 ? rows[activeIndex + 1] : undefined;
+	return { ...rest, data: next ? ({ academicYear: next.name } as SessionSummary) : null };
 };
 
-export const useNextSemester = (currentSession) => {
-    return useQuery({
-        queryKey: ['nextSemester', currentSession?.academicYear, currentSession?.semester],
-        queryFn: () => migrationAPI.getNextSemester(currentSession),
-        enabled: !!currentSession,
-        staleTime: 5 * 60 * 1000,
-    });
+/** POST /admin/add-session */
+export const useCreateSession = () => {
+	const { access_token } = useAuth();
+	const queryClient = useQueryClient();
+
+	return useMutation({
+		mutationFn: async (name: string) => {
+			const res = await CreateAcademicSession(access_token ?? "", { name });
+			if (res?.error) {
+				throw new Error(res.error.message ?? "Could not create the session");
+			}
+			return res?.success;
+		},
+		onSuccess: () => {
+			queryClient.invalidateQueries({ queryKey: SESSIONS_KEY });
+		},
+	});
 };
 
-export const useMigration = () => {
-    const queryClient = useQueryClient();
+/**
+ * PATCH /admin/modify-session - the session whose id is sent becomes ACTIVE,
+ * which is what rolling the programme into a new session amounts to.
+ */
+export const useActivateSession = () => {
+	const { access_token } = useAuth();
+	const queryClient = useQueryClient();
 
-    return useMutation({
-        mutationFn: migrationAPI.migrateSession,
-        onSuccess: () => {
-            // Invalidate and refetch session data after successful migration
-            queryClient.invalidateQueries({ queryKey: ['currentSession'] });
-            queryClient.invalidateQueries({ queryKey: ['nextSession'] });
-            queryClient.invalidateQueries({ queryKey: ['nextSemester'] });
-        },
-    });
+	return useMutation({
+		mutationFn: async (id: number) => {
+			const res = await ActivateAcademicSession(access_token ?? "", { id });
+			if (res?.error) {
+				throw new Error(res.error.message ?? "Could not activate the session");
+			}
+			return res?.success;
+		},
+		onSuccess: () => {
+			queryClient.invalidateQueries({ queryKey: SESSIONS_KEY });
+		},
+	});
 };
 
-// Custom Hook for Migration State Management
+/** Local UI state for the confirmation dialog and the activity log. */
 export const useMigrationState = () => {
-    const [migrationProgress, setMigrationProgress] = useState(0);
-    const [migrationLogs, setMigrationLogs] = useState<{ id: number; message: string; type: string; timestamp: string }[]>([]);
-    const [confirmDialog, setConfirmDialog] = useState({
-        open: false,
-        type: '',
-        details: {}
-    });
+	const [migrationLogs, setMigrationLogs] = useState<MigrationLogEntry[]>([]);
+	const [confirmDialog, setConfirmDialog] = useState({
+		open: false,
+		type: "",
+		details: {} as { from?: string; to?: string; id?: number },
+	});
 
-    const addLog = (logEntry) => {
-        setMigrationLogs(prev => [...prev, logEntry]);
-    };
+	const addLog = (message: string, type: MigrationLogEntry["type"] = "info") => {
+		setMigrationLogs((prev) => [
+			...prev,
+			{ id: Date.now() + prev.length, message, type, timestamp: new Date().toLocaleTimeString() },
+		]);
+	};
 
-    const updateProgress = (progress) => {
-        setMigrationProgress(progress);
-    };
+	const openConfirmDialog = (
+		type: string,
+		details: { from?: string; to?: string; id?: number }
+	) => setConfirmDialog({ open: true, type, details });
 
-    const resetMigration = () => {
-        setMigrationProgress(0);
-        setMigrationLogs([]);
-    };
+	const closeConfirmDialog = () =>
+		setConfirmDialog({ open: false, type: "", details: {} });
 
-    const openConfirmDialog = (type, details) => {
-        setConfirmDialog({ open: true, type, details });
-    };
-
-    const closeConfirmDialog = () => {
-        setConfirmDialog({ open: false, type: '', details: {} });
-    };
-
-    return {
-        migrationProgress,
-        migrationLogs,
-        confirmDialog,
-        addLog,
-        updateProgress,
-        resetMigration,
-        openConfirmDialog,
-        closeConfirmDialog
-    };
+	return {
+		migrationLogs,
+		confirmDialog,
+		addLog,
+		openConfirmDialog,
+		closeConfirmDialog,
+	};
 };

@@ -8,7 +8,8 @@ import {
     CardHeader,
     CardTitle,
 } from "@/components/ui/card";
-import { Award, TrendingUp } from "lucide-react";
+import { Award01Icon, ChartUpIcon } from "@hugeicons/core-free-icons";
+import { Icon } from "@/components/ui/icon";
 import {
     Bar,
     BarChart,
@@ -21,40 +22,42 @@ import {
     YAxis,
     Tooltip as RechartsTooltip,
 } from "recharts";
-import { StudentScore } from "../page";
+import { toNumber, type ResultRow } from "@/hooks/useResults";
 
+// Brand chart tokens rather than raw tailwind hexes, so these follow the theme
+// (including dark mode) like every other chart.
 const gradeColorMap = {
-    A: "#3b82f6", // blue-500
-    B: "#10b981", // green-500
-    C: "#f59e0b", // amber-500
-    D: "#ef4444", // red-500
-    F: "#6b7280", // gray-500
+    A: "var(--chart-1)",
+    B: "var(--chart-3)",
+    C: "var(--chart-4)",
+    D: "var(--chart-2)",
+    F: "var(--muted-foreground)",
 };
-type ScoreAnalytics = {
-    scores: StudentScore[];
+type ScoreAnalyticsProps = {
+    /** The rows currently shown by the filters, so the charts follow them. */
+    scores: ResultRow[];
 };
-export const ScoreAnalytics = ({ scores }: ScoreAnalytics) => {
+export const ScoreAnalytics = ({ scores }: ScoreAnalyticsProps) => {
     const analytics = useMemo(() => {
         if (!scores?.length) return null;
 
         // Grade Distribution
-        const gradeDistribution = scores.reduce((acc, student) => {
-            const grade = student.letter_grade || "F";
+        const gradeDistribution = scores.reduce((acc, row) => {
+            const grade = (row.grade || "F").toUpperCase();
             acc[grade] = (acc[grade] || 0) + 1;
             return acc;
         }, {} as Record<string, number>);
 
         // Average Score
         const averageScore =
-            scores.reduce((sum, student) => sum + (student.final_grade || 0), 0) /
-            scores.length;
+            scores.reduce((sum, row) => sum + toNumber(row.score), 0) / scores.length;
 
         // Grade bar data
         const barData = Object.entries(gradeDistribution).map(
             ([grade, count]) => ({
                 name: `Grade ${grade}`,
                 value: count,
-                fill: gradeColorMap[grade as keyof typeof gradeColorMap] || "#000",
+                fill: gradeColorMap[grade as keyof typeof gradeColorMap] ?? "var(--muted-foreground)",
             })
         );
 
@@ -65,7 +68,8 @@ export const ScoreAnalytics = ({ scores }: ScoreAnalytics) => {
             averageScore,
             pieData,
             barData,
-            totalStudents: scores.length,
+            totalResults: scores.length,
+            totalStudents: new Set(scores.map((r) => r.user_id)).size,
         };
     }, [scores]);
 
@@ -76,7 +80,7 @@ export const ScoreAnalytics = ({ scores }: ScoreAnalytics) => {
             <Card>
                 <CardHeader>
                     <CardTitle className="flex items-center gap-2">
-                        <TrendingUp className="h-5 w-5" />
+                        <Icon icon={ChartUpIcon} className="h-5 w-5" />
                         Grade Breakdown
                     </CardTitle>
                     <CardDescription>Student count per grade</CardDescription>
@@ -101,7 +105,7 @@ export const ScoreAnalytics = ({ scores }: ScoreAnalytics) => {
             <Card>
                 <CardHeader>
                     <CardTitle className="flex items-center gap-2">
-                        <Award className="h-5 w-5" />
+                        <Icon icon={Award01Icon} className="h-5 w-5" />
                         Performance Summary
                     </CardTitle>
                     <CardDescription>Overall class performance</CardDescription>
@@ -117,9 +121,9 @@ export const ScoreAnalytics = ({ scores }: ScoreAnalytics) => {
                             </div>
                         </div>
                         <div className="text-center">
-                            <div className="text-2xl font-bold">{analytics.totalStudents}</div>
+                            <div className="text-2xl font-bold">{analytics.totalResults}</div>
                             <div className="text-sm text-muted-foreground">
-                                Total Students
+                                Results
                             </div>
                         </div>
                     </div>

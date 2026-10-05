@@ -1,10 +1,11 @@
-import { Loader2 } from 'lucide-react'
+import { Loading03Icon } from "@hugeicons/core-free-icons";
+import { Icon } from "@/components/ui/icon";
 import React from 'react'
 
 const ContentLoader = ({ message }: { message?: string }) => {
     return (
         <div className="flex justify-center items-center h-64">
-            <Loader2 className="h-8 w-8 animate-spin text-orange-500" />
+            <Icon icon={Loading03Icon} className="h-8 w-8 animate-spin text-orange-500" />
             <span className="ml-2 text-cyan-800">{(message) ? message : "Loading your data..."}</span>
         </div>
     )

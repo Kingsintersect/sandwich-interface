@@ -1,7 +1,8 @@
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { PlusIcon } from "lucide-react";
+import { PlusSignIcon } from "@hugeicons/core-free-icons";
+import { Icon } from "@/components/ui/icon";
 
 interface CreateUserCardProps {
     basePath: string;
@@ -20,7 +21,7 @@ export const CreateUserCard = ({ basePath }: CreateUserCardProps) => {
             <CardFooter className="flex justify-end">
                 <Button asChild className="bg-site-b-dark hover:bg-site-b">
                     <Link href={`${basePath}/create/new`}>
-                        <PlusIcon /> Add New User
+                        <Icon icon={PlusSignIcon} /> Add New User
                     </Link>
                 </Button>
             </CardFooter>

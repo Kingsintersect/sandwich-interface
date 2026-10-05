@@ -1,4 +1,5 @@
 "use client";
+import { Notebook01Icon, PencilEdit02Icon } from "@hugeicons/core-free-icons";
 
 import { DataTable } from "@/components/ui/data-table"
 import { ColumnDef } from "@tanstack/react-table"
@@ -6,7 +7,6 @@ import { Badge } from "@/components/ui/badge"
 import { useDataTable } from '@/hooks/useDataTable'
 import { getAdmittedApplicants } from "@/app/actions/applications";
 import { ActionMenu } from "@/components/ui/datatable/ActionMenu";
-import { EditIcon, NotebookTabs } from "lucide-react";
 import { baseUrl } from "@/config";
 import { UserInterface } from "@/config/Types";
 
@@ -25,10 +25,10 @@ export type StudentTableColumnsType = {
 }
 export const AdmittedStudentDataTable = () => {
     type StatusKey = "FULLY_PAID" | "PART_PAID" | "NOT_PAID";
-    const statusStyles = {
-        FULLY_PAID: "bg-green-100 text-green-700 border-green-400",
-        PART_PAID: "bg-yellow-100 text-yellow-800 border-yellow-400",
-        NOT_PAID: "bg-red-100 text-red-700 border-red-400",
+    const statusStyles: Record<StatusKey, string> = {
+        FULLY_PAID: "bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-950/50 dark:text-emerald-300",
+        PART_PAID: "bg-ember-50 text-ember-700 border-ember-200 dark:bg-ember-900/40 dark:text-ember-300",
+        NOT_PAID: "bg-red-50 text-red-700 border-red-200 dark:bg-red-950/50 dark:text-red-300",
     };
     const {
         data = [],
@@ -76,30 +76,25 @@ export const AdmittedStudentDataTable = () => {
             cell: ({ row }) => `${row.getValue("email")}`,
         },
         {
-            accessorKey: "acceptance_fee_payment_status",
-            header: "Acceptance Fee Status",
+            accessorKey: "academic_session",
+            header: "Session",
             cell: ({ row }) => {
-                const statusKey = row.getValue("acceptance_fee_payment_status");
+                const session = row.getValue("academic_session") as string | null;
+                return session
+                    ? <span className="font-medium tabular-nums">{session}</span>
+                    : <span className="text-muted-foreground">&mdash;</span>;
+            },
+        },
+        {
+            accessorKey: "application_payment_status",
+            header: "Application Fee",
+            cell: ({ row }) => {
+                const statusKey = row.getValue("application_payment_status") as StatusKey;
                 const statusText = statusKey === "FULLY_PAID"
                     ? "FULLY PAID" : statusKey === "PART_PAID"
                         ? "PART PAID" : "NOT PAID";
                 return (
-                    <Badge className={`rounded-lg ${statusStyles[statusKey as StatusKey]}`} variant={row.getValue("acceptance_fee_payment_status") === "PAID" ? "default" : "destructive"}>
-                        {statusText}
-                    </Badge>
-                )
-            },
-        },
-        {
-            accessorKey: "tuition_payment_status",
-            header: "Tuition Fee Status",
-            cell: ({ row }) => {
-                const statusKey = row.getValue("tuition_payment_status");
-                const statusText = statusKey === "FULLY_PAID"
-                    ? "FULLY PAID" : statusKey === "PART_PAID"
-                        ? "PART PAID" : "NOT PAID";;
-                return (
-                    <Badge className={`rounded-lg ${statusStyles[statusKey as StatusKey]}`} variant={statusKey === "PAID" ? "default" : "destructive"}>
+                    <Badge className={`rounded-lg ${statusStyles[statusKey] ?? statusStyles.NOT_PAID}`}>
                         {statusText}
                     </Badge>
                 )
@@ -118,8 +113,8 @@ export const AdmittedStudentDataTable = () => {
                         row={student}
                         onCopy={(id) => navigator.clipboard.writeText(id ?? "")}
                         menu={[
-                            { title: "Review Application", url: `${baseUrl}/dashboard/update-application-form?id=${student.id}`, icon: NotebookTabs },
-                            { title: "Update Record", url: `${basePath}/${student.id}`, icon: EditIcon },
+                            { title: "Review Application", url: `${baseUrl}/dashboard/update-application-form?id=${student.id}`, icon: Notebook01Icon },
+                            { title: "Update Record", url: `${basePath}/${student.id}`, icon: PencilEdit02Icon },
                         ]}
                     />
                 );

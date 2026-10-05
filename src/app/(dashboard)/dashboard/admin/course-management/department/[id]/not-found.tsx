@@ -1,10 +1,11 @@
 import Link from 'next/link';
-import { LucideScanFace } from 'lucide-react';
+import { FaceIdIcon } from "@hugeicons/core-free-icons";
+import { Icon } from "@/components/ui/icon";
 
 export default function NotFound() {
     return (
         <main className="flex h-full flex-col items-center justify-center gap-2">
-            <LucideScanFace className="w-10 text-gray-400" />
+            <Icon icon={FaceIdIcon} className="w-10 text-gray-400" />
             <h2 className="text-xl font-semibold">404 Not Found</h2>
             <p>Could not find the requested invoice.</p>
             <Link

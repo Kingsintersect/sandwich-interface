@@ -1,7 +1,8 @@
 "use client";
 
 import React from 'react';
-import { DollarSign, ClipboardCheck, Calendar } from "lucide-react";
+import { Calendar03Icon, CheckmarkBadge01Icon, DollarCircleIcon } from "@hugeicons/core-free-icons";
+import { Icon } from "@/components/ui/icon";
 import { useTuitionPayment } from '@/contexts/TuitionPaymentContext';
 import { useAuth } from '@/contexts/AuthContext';
 
@@ -70,7 +71,7 @@ const TuitionPaymentModal = () => {
 
 						<div className="bg-blue-50 p-4 rounded-lg mb-6">
 							<div className="flex items-start">
-								<ClipboardCheck className="text-[#014670] mt-1 flex-shrink-0 h-5 w-5" />
+								<Icon icon={CheckmarkBadge01Icon} className="text-[#014670] mt-1 flex-shrink-0 h-5 w-5" />
 								<div className="ml-3">
 									<h4 className="text-[#014670] font-medium">Payment Details</h4>
 									<div className="mt-2 space-y-1 text-sm">
@@ -112,10 +113,10 @@ const TuitionPaymentModal = () => {
 						>
 							<TabsList className="w-full justify-center space-x-4 mb-6">
 								<TabsTrigger value="full" className="flex items-center gap-2">
-									<DollarSign className="h-5 w-5" /> Full Payment
+									<Icon icon={DollarCircleIcon} className="h-5 w-5" /> Full Payment
 								</TabsTrigger>
 								<TabsTrigger value="installment" className="flex items-center gap-2">
-									<Calendar className="h-5 w-5" /> Installment Payment
+									<Icon icon={Calendar03Icon} className="h-5 w-5" /> Installment Payment
 								</TabsTrigger>
 							</TabsList>
 
@@ -130,7 +131,7 @@ const TuitionPaymentModal = () => {
 
 									<div className="bg-green-50 p-4 rounded-lg mb-6">
 										<div className="flex items-start">
-											<ClipboardCheck className="text-green-600 mt-1 flex-shrink-0 h-5 w-5" />
+											<Icon icon={CheckmarkBadge01Icon} className="text-green-600 mt-1 flex-shrink-0 h-5 w-5" />
 											<div className="ml-3">
 												<h4 className="text-green-700 font-medium">Full Payment Benefits</h4>
 												<ul className="mt-2 space-y-1 text-sm text-green-700">
@@ -167,7 +168,7 @@ const TuitionPaymentModal = () => {
 
 									<div className="bg-blue-50 p-4 rounded-lg mb-6">
 										<div className="flex items-start">
-											<ClipboardCheck className="text-[#014670] mt-1 flex-shrink-0 h-5 w-5" />
+											<Icon icon={CheckmarkBadge01Icon} className="text-[#014670] mt-1 flex-shrink-0 h-5 w-5" />
 											<div className="ml-3">
 												<h4 className="text-[#014670] font-medium">Installment Payment Guidelines</h4>
 												<ul className="mt-2 space-y-1 text-sm text-[#014670]">

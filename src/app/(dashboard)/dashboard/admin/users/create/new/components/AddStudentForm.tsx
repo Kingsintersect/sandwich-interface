@@ -1,7 +1,8 @@
 "use client";
 
 import React from "react";
-import { Loader2 } from "lucide-react";
+import { Loading03Icon } from "@hugeicons/core-free-icons";
+import { Icon } from "@/components/ui/icon";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Form } from "@/components/ui/form";
@@ -78,7 +79,7 @@ export default function AddStudentForm() {
                                 >
                                     {isLoading ? (
                                         <>
-                                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                            <Icon icon={Loading03Icon} className="mr-2 h-4 w-4 animate-spin" />
                                             Saving...
                                         </>
                                     ) : (

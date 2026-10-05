@@ -1,5 +1,6 @@
 import { Column, ColumnDef } from "@tanstack/react-table"
-import { ArrowDown, ArrowUp, ChevronsUpDown, EyeOff } from "lucide-react";
+import { ArrowDown01Icon, ArrowUp01Icon, UnfoldMoreIcon, ViewOffIcon } from "@hugeicons/core-free-icons";
+import { Icon } from "@/components/ui/icon";
 import { Checkbox } from "@/components/ui/checkbox";
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
@@ -37,26 +38,26 @@ export function DataTableColumnHeader<TData, TValue>({
           >
             <span>{title}</span>
             {column.getIsSorted() === "desc" ? (
-              <ArrowDown />
+              <Icon icon={ArrowDown01Icon} />
             ) : column.getIsSorted() === "asc" ? (
-              <ArrowUp />
+              <Icon icon={ArrowUp01Icon} />
             ) : (
-              <ChevronsUpDown />
+              <Icon icon={UnfoldMoreIcon} />
             )}
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="start">
           <DropdownMenuItem onClick={() => column.toggleSorting(false)}>
-            <ArrowUp className="h-3.5 w-3.5 text-muted-foreground/70" />
+            <Icon icon={ArrowUp01Icon} className="h-3.5 w-3.5 text-muted-foreground/70" />
             Asc
           </DropdownMenuItem>
           <DropdownMenuItem onClick={() => column.toggleSorting(true)}>
-            <ArrowDown className="h-3.5 w-3.5 text-muted-foreground/70" />
+            <Icon icon={ArrowDown01Icon} className="h-3.5 w-3.5 text-muted-foreground/70" />
             Desc
           </DropdownMenuItem>
           <DropdownMenuSeparator />
           <DropdownMenuItem onClick={() => column.toggleVisibility(false)}>
-            <EyeOff className="h-3.5 w-3.5 text-muted-foreground/70" />
+            <Icon icon={ViewOffIcon} className="h-3.5 w-3.5 text-muted-foreground/70" />
             Hide
           </DropdownMenuItem>
         </DropdownMenuContent>

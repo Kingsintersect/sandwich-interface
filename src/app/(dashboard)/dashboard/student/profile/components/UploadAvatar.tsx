@@ -2,68 +2,92 @@
 
 import Image from "next/image";
 import { useState } from "react";
-import { Camera, Upload } from "lucide-react";
+import { Camera01Icon, Loading03Icon } from "@hugeicons/core-free-icons";
+import { UploadPassport } from "@/app/actions/student";
+import { notify } from "@/contexts/ToastProvider";
+import { Icon } from "@/components/ui/icon";
+import { cn } from "@/lib/utils";
 
 interface UploadAvatarProps {
    imageUrl: string;
+   name?: string;
+   onUploaded?: (url: string) => void;
 }
 
-const UploadAvatar = ({ imageUrl }: UploadAvatarProps) => {
+/**
+ * Previously this rendered a hard-coded image and only ever created a local
+ * object URL, so a "saved" photo vanished on reload. It now posts through the
+ * same UploadPassport action the application form uses.
+ */
+const UploadAvatar = ({ imageUrl, name, onUploaded }: UploadAvatarProps) => {
    const [avatar, setAvatar] = useState(imageUrl);
-   const [isHovering, setIsHovering] = useState(false);
+   const [uploading, setUploading] = useState(false);
 
-   const handleUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+   const handleUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
       const file = event.target.files?.[0];
-      if (file) {
-         const imageUrl = URL.createObjectURL(file);
-         setAvatar(imageUrl); // You should upload it to the server
+      if (!file) return;
+
+      const preview = URL.createObjectURL(file);
+      setAvatar(preview);
+      setUploading(true);
+
+      try {
+         const { success, error } = await UploadPassport({ passport: file });
+         if (success?.image_url) {
+            setAvatar(success.image_url);
+            onUploaded?.(success.image_url);
+            notify({ message: "Photo updated", variant: "success", timeout: 4000 });
+         } else {
+            throw error ?? new Error("Upload failed");
+         }
+      } catch {
+         setAvatar(imageUrl); // roll back to what the server still has
+         notify({
+            message: "Could not upload your photo. Please try again.",
+            variant: "error",
+            timeout: 5000,
+         });
+      } finally {
+         setUploading(false);
+         URL.revokeObjectURL(preview);
       }
    };
 
    return (
-      <div className="relative">
-         {/* Cover Image */}
-         <div className="relative h-32 w-full rounded-xl overflow-hidden mb-16">
-            <Image
-               src="/random/rand1.jpg"
-               alt="Profile Banner"
-               fill
-               style={{ objectFit: "cover" }}
-               className="transition-transform hover:scale-105 duration-500"
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
-
-            <label className="absolute bottom-3 right-3 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm text-gray-800 dark:text-white p-2 rounded-lg cursor-pointer hover:bg-white dark:hover:bg-gray-800 transition-all shadow-md flex items-center gap-2 text-sm font-medium">
-               <Camera className="h-4 w-4" />
-               Change Cover
-               <input type="file" className="hidden" accept="image/*" />
-            </label>
-         </div>
-
-         {/* Profile Avatar */}
-         <div
-            className="absolute left-1/2 top-16 -translate-x-1/2 w-24 h-24"
-            onMouseEnter={() => setIsHovering(true)}
-            onMouseLeave={() => setIsHovering(false)}
-         >
-            <div className="relative w-full h-full">
-               <div className={`absolute inset-0 rounded-full ${isHovering ? 'ring-4 ring-blue-500 ring-offset-2' : 'ring-4 ring-white dark:ring-gray-800'} transition-all duration-300`}>
-                  <Image
-                     src="/random/profile-avatar.jpg"
-                     alt="UserInterface Avatar"
-                     fill
-                     className="rounded-full object-cover"
-                  />
-               </div>
-
-               <label className={`absolute inset-0 flex items-center justify-center rounded-full cursor-pointer transition-all duration-300 ${isHovering ? 'bg-black/60' : 'bg-transparent'}`}>
-                  <div className={`transform transition-opacity duration-300 ${isHovering ? 'opacity-100' : 'opacity-0'} text-white flex flex-col items-center`}>
-                     <Upload className="h-6 w-6" />
-                     <span className="text-xs font-medium mt-1">Upload</span>
-                  </div>
-                  <input type="file" className="hidden" accept="image/*" onChange={handleUpload} />
-               </label>
+      <div className="flex flex-col items-center">
+         <div className="group relative size-28">
+            <div className="relative size-full overflow-hidden rounded-2xl border border-border">
+               <Image
+                  src={avatar}
+                  alt={name ? `${name}'s photo` : "Profile photo"}
+                  fill
+                  sizes="112px"
+                  className="object-cover"
+               />
             </div>
+
+            <label
+               className={cn(
+                  "absolute inset-0 flex cursor-pointer flex-col items-center justify-center gap-1 rounded-2xl bg-ocean-950/70 text-white opacity-0 backdrop-blur-sm transition-opacity",
+                  "group-hover:opacity-100 focus-within:opacity-100",
+                  uploading && "opacity-100"
+               )}
+            >
+               <Icon
+                  icon={uploading ? Loading03Icon : Camera01Icon}
+                  className={cn("size-5", uploading && "animate-spin")}
+               />
+               <span className="text-[10px] font-semibold uppercase tracking-[0.1em]">
+                  {uploading ? "Saving" : "Change"}
+               </span>
+               <input
+                  type="file"
+                  className="sr-only"
+                  accept="image/*"
+                  disabled={uploading}
+                  onChange={handleUpload}
+               />
+            </label>
          </div>
       </div>
    );

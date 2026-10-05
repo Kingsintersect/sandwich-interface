@@ -1,156 +1,126 @@
 "use client";
 
+import dynamic from 'next/dynamic';
+import { useMemo } from "react";
+import { Award01Icon, Book02Icon } from "@hugeicons/core-free-icons";
 import StudentBanner from "./componenets/StudentBanner";
+import SessionEnrolment from "./componenets/SessionEnrolment";
+import SessionFeeNotice from "./componenets/SessionFeeNotice";
 import { AdmissionStatus, StatusCheckCard } from "./componenets/Status";
-// import ProtectedRoute from "@/components/ProtectedRoute";
 import { useAuth } from "@/contexts/AuthContext";
 import { Roles } from "@/config";
-import { CalendarWidget } from "../components/calendar-widget";
 import { CourseProgress } from "../components/course-progress";
-import { UpcomingAssignments } from "../components/upcoming-assignments";
-import dynamic from 'next/dynamic';
-import { StatusType } from "@/config/Types";
+import { RecentAssessments } from "../components/recent-assessments";
+import { StatCard } from "../components/StatCard";
+import { Icon } from "@/components/ui/icon";
+import {
+   collectAssessments,
+   summariseAcademics,
+   useStudentGradeReport,
+} from "@/hooks/useStudentAcademics";
+import { useCurrentSession } from "@/hooks/useAccademics";
+import { resolveStudentLevel } from "@/lib/academics.utils";
+import { useSessionFee } from "@/hooks/useSessionFee";
 
 const ProtectedRoute = dynamic(() => import('@/components/ProtectedRoute'), { ssr: false });
 
 const StudentHome = () => {
    const { user } = useAuth();
    const student = user;
-   const today = new Date();
 
-   const events = [
-      {
-         id: "1",
-         title: "Advanced Calculus Lecture",
-         time: "9:00 AM",
-         type: "class" as const,
-      },
-      {
-         id: "2",
-         title: "Term Paper Submission",
-         time: "11:00 AM",
-         type: "assignment" as const,
-      },
-      {
-         id: "3",
-         title: "Study Group Meeting",
-         time: "2:30 PM",
-         type: "meeting" as const,
-      },
-      {
-         id: "4",
-         title: "Physics Mid-term Exam",
-         time: "4:00 PM",
-         type: "exam" as const,
-      },
-   ];
+   const { data: report, isLoading, isError } = useStudentGradeReport();
+   const { data: session } = useCurrentSession();
+   const studentSession = (student?.academic_session as string) || session?.name;
+   const level = resolveStudentLevel(student);
+   const sessionFee = useSessionFee();
 
-   const courses = [
-      {
-         id: "1",
-         name: "Advanced Calculus",
-         code: "MATH 301",
-         progress: 75,
-         instructor: "Dr. Smith",
-      },
-      {
-         id: "2",
-         name: "Physics II",
-         code: "PHYS 202",
-         progress: 60,
-         instructor: "Dr. Johnson",
-      },
-      {
-         id: "3",
-         name: "Introduction to AI",
-         code: "CS 415",
-         progress: 85,
-         instructor: "Prof. Williams",
-      },
-      {
-         id: "4",
-         name: "Modern Literature",
-         code: "LIT 205",
-         progress: 45,
-         instructor: "Dr. Davis",
-      },
-   ];
+   const courses = useMemo(() => report?.courses ?? [], [report]);
 
-   const assignments = [
-      {
-         id: "1",
-         title: "Term Paper: Quantum Mechanics",
-         course: "PHYS 202",
-         dueDate: "Today",
-         status: "in-progress" as const,
-      },
-      {
-         id: "2",
-         title: "Problem Set 5",
-         course: "MATH 301",
-         dueDate: "Tomorrow",
-         status: "not-started" as const,
-      },
-      {
-         id: "3",
-         title: "Literary Analysis Essay",
-         course: "LIT 205",
-         dueDate: "May 10",
-         status: "not-started" as const,
-      },
-      {
-         id: "4",
-         title: "AI Project Proposal",
-         course: "CS 415",
-         dueDate: "May 12",
-         status: "completed" as const,
-      },
-   ];
+   const stats = useMemo(() => summariseAcademics(courses), [courses]);
+   const assessments = useMemo(() => collectAssessments(courses), [courses]);
+
+   const progressCourses = useMemo(
+      () =>
+         courses.map((course) => {
+            const score = Number(course.finalgrade);
+            return {
+               id: course.course_id,
+               name: course.course_name,
+               code: course.course_code,
+               score: Number.isFinite(score) && score > 0 ? score : null,
+               grade: course.grade,
+               creditLoad: course.credit_load,
+            };
+         }),
+      [courses]
+   );
 
    return (
       <ProtectedRoute allowedRoles={[Roles.STUDENT]}>
          {student && (
-            <div className=" pb-10">
-               <div className=" text-gray-600 space-y-7">
-                  {/* Welcome Banner */}
-                  <StudentBanner student={student} />
-                  {/* Status Cards */}
-                  <div className="grid sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-5 py-10">
-                     <StatusCheckCard
-                        admission={student.admission_status}
-                        url="/admission/application/payment"
-                        dataStatus={student.application_payment_status as StatusType}
-                        title={"APPLICATION FEE"}
-                     />
+            <div className="space-y-8 pb-10">
+               {/* Welcome Banner */}
+               <StudentBanner student={student} />
 
-                     <AdmissionStatus
-                        admissionStatus={student.admission_status}
-                     />
+               {/* The student's own session, not the programme-wide active one:
+                   those diverge until the student enrols into the new session. */}
+               {studentSession && (
+                  <p className="text-sm text-muted-foreground">
+                     Your session:{" "}
+                     <span className="font-semibold text-ocean-800 dark:text-foreground">
+                        {studentSession}
+                     </span>
+                     {level && (
+                        <>
+                           {" · "}
+                           <span className="font-semibold text-ocean-800 dark:text-foreground">
+                              {level}
+                           </span>
+                        </>
+                     )}
+                  </p>
+               )}
 
-                     <StatusCheckCard
-                        admission={student.admission_status}
-                        url="/dashboard/history/student-payments/acceptance"
-                        dataStatus={student.acceptance_fee_payment_status as StatusType}
-                        title={"ACCEPTANCE FEE"}
-                     />
+               <SessionFeeNotice />
 
-                     <StatusCheckCard
-                        admission={student.admission_status}
-                        url="/dashboard/history/student-payments/tuition"
-                        dataStatus={student.tuition_payment_status as StatusType}
-                        title={"TUITION FEE"}
-                     />
-                  </div>
-                  {/* Content Grid */}
-                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                     <div className="space-y-6">
-                        <CalendarWidget date={today} events={events} />
-                        <CourseProgress courses={courses} />
-                     </div>
-                     <div>
-                        <UpcomingAssignments assignments={assignments} />
-                     </div>
-                  </div>
+               {/* One fee applies per student: a first-session student pays the
+                   application fee, a returning one pays the session fee. */}
+               <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+                  <StatusCheckCard
+                     admission={student.admission_status}
+                     url={sessionFee.payUrl}
+                     dataStatus={sessionFee.status}
+                     title={sessionFee.label}
+                  />
+
+                  <AdmissionStatus admissionStatus={student.admission_status} />
+
+                  <StatCard
+                     title="Current GPA"
+                     value={isLoading ? "—" : String(stats.gpa)}
+                     icon={<Icon icon={Award01Icon} className="size-6" />}
+                  />
+                  <StatCard
+                     title="Registered courses"
+                     value={isLoading ? "—" : String(stats.courseCount)}
+                     icon={<Icon icon={Book02Icon} className="size-6" />}
+                  />
+               </div>
+
+               <SessionEnrolment />
+
+               {/* Content Grid */}
+               <div className="grid grid-cols-1 items-start gap-6 lg:grid-cols-2">
+                  <CourseProgress
+                     courses={progressCourses}
+                     isLoading={isLoading}
+                     isError={isError}
+                  />
+                  <RecentAssessments
+                     assessments={assessments}
+                     isLoading={isLoading}
+                     isError={isError}
+                  />
                </div>
             </div>
          )}

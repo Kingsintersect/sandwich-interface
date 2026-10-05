@@ -4,8 +4,9 @@ import { Roles } from '@/config';
 import { loginSessionKey } from '@/lib/definitions';
 import { verifySession } from '@/lib/server.utils';
 import { SectionCards } from '@/components/section-cards';
-import { BarChartMultitple } from '@/components/ui/bar-chart-multiple';
-import { ChartAreaInteractive } from '@/components/ui/chart-area-interactive';
+import { AdmissionPipelineChart } from '@/components/admin/AdmissionPipelineChart';
+import { ApplicationsTrendChart } from '@/components/admin/ApplicationsTrendChart';
+import { buildPipeline, buildTrend, extractRows, extractTotal } from '@/lib/admin.analytics';
 
 const AdminDashboard = async () => {
    const session = await verifySession(loginSessionKey);
@@ -15,33 +16,56 @@ const AdminDashboard = async () => {
       GetAppliedStudentList(session.access_token),
       GetUnappliedStudentList(session.access_token),
    ]);
-   const totalAdmitted = approvedAdmission?.success?.data?.length ?? 0;
-   const totalRejected = rejectedAdmission?.success?.data?.length ?? 0;
-   const totalApplied = appliedStudents?.success?.data?.length ?? 0;
-   const totalUnapplied = unappliedStudents?.success?.data?.length ?? 0;
-   const totalStudents = totalAdmitted + totalRejected + totalApplied + totalUnapplied
+
+   // These endpoints don't agree on a shape - some return a bare array, others
+   // wrap the rows - so unwrap defensively rather than indexing `.data`.
+   const admittedRows = extractRows(approvedAdmission?.success);
+   const appliedRows = extractRows(appliedStudents?.success);
+
+   const totalAdmitted = extractTotal(approvedAdmission?.success);
+   const totalRejected = extractTotal(rejectedAdmission?.success);
+   const totalApplied = extractTotal(appliedStudents?.success);
+   const totalUnapplied = extractTotal(unappliedStudents?.success);
+   const totalStudents = totalAdmitted + totalRejected + totalApplied + totalUnapplied;
+
+   // Both charts read from the same lists the cards count, so nothing on this
+   // page is generated or sampled.
+   const pipeline = buildPipeline({
+      unapplied: totalUnapplied,
+      applied: totalApplied,
+      admitted: totalAdmitted,
+      rejected: totalRejected,
+   });
+   const trend = buildTrend(appliedRows, admittedRows);
 
    return (
       <ProtectedRoute allowedRoles={[Roles.ADMIN, Roles.MANAGER]}>
-         <div className="flex flex-1 flex-col">
-            <div className="@container/main flex flex-1 flex-col gap-2">
-               <div className="flex flex-col gap-4 py-4 md:gap-6 md:py-6">
-                  <SectionCards
-                     studentStat={{
-                        totalStudents: totalStudents,
-                        totalAdmitted: totalAdmitted,
-                        totalRejected: totalRejected,
-                        totalUnapplied: totalUnapplied
-                     }}
-                  />
-                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                     <div className="col-span-1">
-                        <BarChartMultitple />
-                     </div>
-                     <div className="col-span-2">
-                        <ChartAreaInteractive />
-                     </div>
-                  </div>
+         <div className="flex flex-1 flex-col gap-6 py-4 md:py-6">
+            <div className="px-4 lg:px-6">
+               <h1 className="text-2xl font-bold tracking-tight text-ocean-900 dark:text-foreground">
+                  Overview
+               </h1>
+               <p className="mt-1.5 text-sm text-muted-foreground">
+                  Admissions activity across the Sandwich Programme.
+               </p>
+            </div>
+
+            <SectionCards
+               studentStat={{
+                  totalStudents,
+                  totalAdmitted,
+                  totalApplied,
+                  totalRejected,
+                  totalUnapplied,
+               }}
+            />
+
+            <div className="grid grid-cols-1 gap-5 px-4 lg:grid-cols-5 lg:px-6">
+               <div className="lg:col-span-2">
+                  <AdmissionPipelineChart data={pipeline} />
+               </div>
+               <div className="lg:col-span-3">
+                  <ApplicationsTrendChart data={trend} />
                </div>
             </div>
          </div>

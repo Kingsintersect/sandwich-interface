@@ -1,12 +1,6 @@
 "use client"
 
-import {
-  // Folder,
-  // Forward,
-  // MoreHorizontal,
-  // Trash2,
-  type LucideIcon,
-} from "lucide-react"
+import { Icon, type IconSvgElement } from "@/components/ui/icon"
 
 // import {
 //   DropdownMenu,
@@ -32,7 +26,7 @@ export function NavProjects({
   projects: {
     title: string
     url: string
-    icon: LucideIcon
+    icon: IconSvgElement
     display: boolean
   }[]
 }) {
@@ -48,7 +42,7 @@ export function NavProjects({
             <SidebarMenuItem key={item.title} className="space-y-2">
               <SidebarMenuButton asChild>
                 <Link href={item.url}>
-                  <item.icon />
+                  <Icon icon={item.icon} className="size-4.5" />
                   <span>{item.title}</span>
                 </Link>
               </SidebarMenuButton>

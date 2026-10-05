@@ -1,7 +1,8 @@
 import React, { useCallback } from 'react';
 import { useDropzone } from 'react-dropzone';
 import { parseExcelOrCSV } from './FileService';
-import { CloudUploadIcon } from 'lucide-react';
+import { CloudUploadIcon } from "@hugeicons/core-free-icons";
+import { Icon } from "@/components/ui/icon";
 import { UserData } from '@/hooks/useCreateUsers';
 
 interface FileUploaderProps {
@@ -47,7 +48,7 @@ const FileUploader: React.FC<FileUploaderProps> = ({ onFileDataReceived, disable
         >
             <input {...getInputProps()} />
             <div className="flex flex-col items-center justify-center space-y-4">
-                <CloudUploadIcon className="h-16 w-16 text-gray-400" />
+                <Icon icon={CloudUploadIcon} className="h-16 w-16 text-gray-400" />
                 <div className="space-y-2">
                     <h3 className="text-lg font-medium">
                         {disabled ? 'Please select program and course first' : 'Drag & drop your file here'}

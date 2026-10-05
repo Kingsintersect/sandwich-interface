@@ -3,7 +3,8 @@
 import React from "react"
 import { FeeToggleCard } from "./FeeToggleCard"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
-import { Info } from "lucide-react"
+import { InformationCircleIcon } from "@hugeicons/core-free-icons";
+import { Icon } from "@/components/ui/icon";
 import { UpdateRole } from "./UpdateRole"
 import { ACCEPTANCE_FEE } from "@/config"
 import { UserInterface } from "@/config/Types"
@@ -22,7 +23,7 @@ export default function StatusManagement({ studentData }: StatusManagementProps)
     return (
         <div className="container mx-auto max-w-4xl">
             <Alert className="mb-6 bg-orange-50 border-orange-200">
-                <Info className="h-5 w-5 text-orange-600" />
+                <Icon icon={InformationCircleIcon} className="h-5 w-5 text-orange-600" />
                 <AlertTitle className="text-orange-800">Important</AlertTitle>
                 <AlertDescription className="text-orange-700">
                     Updating fee status will automatically update the student's financial records and send a notification to the bursar's office.

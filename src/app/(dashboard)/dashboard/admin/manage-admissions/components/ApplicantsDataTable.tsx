@@ -1,4 +1,5 @@
 "use client";
+import { Notebook01Icon, PencilEdit02Icon } from "@hugeicons/core-free-icons";
 
 import { DataTable } from "@/components/ui/data-table"
 import { ColumnDef } from "@tanstack/react-table"
@@ -7,7 +8,6 @@ import { useDataTable } from '@/hooks/useDataTable'
 import { getAdmissionApplicants } from "@/app/actions/applications";
 import { baseUrl } from "@/config";
 import { ActionMenu } from "@/components/ui/datatable/ActionMenu";
-import { NotebookTabs } from "lucide-react";
 import { UserInterface } from "@/config/Types";
 
 const basePath = `${baseUrl}/dashboard/update-application-form`;
@@ -124,7 +124,7 @@ export const ApplicantsDataTable = () => {
                         row={student}
                         onCopy={(id) => navigator.clipboard.writeText(id ?? "")}
                         menu={[
-                            { title: "Review Application", url: `${basePath}?id=${student.id}`, icon: NotebookTabs },
+                            { title: "Review Application", url: `${basePath}?id=${student.id}`, icon: Notebook01Icon },
                         ]}
                     />
                 );

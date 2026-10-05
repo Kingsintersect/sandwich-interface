@@ -2,7 +2,8 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress"
-import { Edit } from "lucide-react";
+import { PencilEdit02Icon } from "@hugeicons/core-free-icons";
+import { Icon } from "@/components/ui/icon";
 import { statusColors } from "../update.types";
 
 export function PaymentDetailCard({ title, paymentData, onAddPayment }) {
@@ -74,7 +75,7 @@ export function PaymentDetailCard({ title, paymentData, onAddPayment }) {
             </CardContent>
             <CardFooter className="flex justify-end bg-gray-50 border-t border-cyan-100">
                 <Button variant="ghost" size="sm" className="text-cyan-700 hover:text-cyan-800 hover:bg-cyan-50">
-                    <Edit className="h-4 w-4 mr-1" />
+                    <Icon icon={PencilEdit02Icon} className="h-4 w-4 mr-1" />
                     Edit Details
                 </Button>
             </CardFooter>

@@ -1,6 +1,7 @@
 "use client";
 
-import { FileText, X } from "lucide-react";
+import { Cancel01Icon, Note01Icon } from "@hugeicons/core-free-icons";
+import { Icon } from "@/components/ui/icon";
 import { Button } from "@/components/ui/button";
 
 type FilePreviewProps = {
@@ -17,7 +18,7 @@ export default function FilePreview({ file, recordCount, onRemove }: FilePreview
             <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-3">
                     <div className="bg-blue-100 p-3 rounded-lg">
-                        <FileText size={24} className="text-site-b-dark" />
+                        <Icon icon={Note01Icon} size={24} className="text-site-b-dark" />
                     </div>
                     <div>
                         <p className="font-medium text-gray-800">{file.name}</p>
@@ -33,7 +34,7 @@ export default function FilePreview({ file, recordCount, onRemove }: FilePreview
                     onClick={onRemove}
                     className="hover:bg-red-100 hover:text-red-600"
                 >
-                    <X size={18} />
+                    <Icon icon={Cancel01Icon} size={18} />
                 </Button>
             </div>
         </div>

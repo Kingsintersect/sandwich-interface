@@ -2,52 +2,62 @@
 import React from 'react';
 import Image from 'next/image';
 import { useAuth } from '@/contexts/AuthContext';
+import { resolveStudentLevel } from '@/lib/academics.utils';
 
 export const StudentInfo = React.memo(() => {
     const { user } = useAuth();
-    const { first_name, last_name, pictureRef, reg_number, email, department_id } = user || {};
-    const fullname = first_name + " " + last_name;
-    const department = department_id;
-    const enrollmentYear = 2025;
-    const profileImage = pictureRef ?? "/avatars/avatar-man.jpg";
+    const { first_name, last_name, pictureRef, passport, reg_number, email, program, level } = user || {};
+
+    const fullname = [first_name, last_name].filter(Boolean).join(" ") || "—";
+    const profileImage = pictureRef || passport || "/avatars/avatar-man.jpg";
+
+    // Previously this showed department_id (a raw id) as "Program" and derived
+    // the year from a hard-coded enrolmentYear of 2025.
+    const fields = [
+        { label: "Registration number", value: reg_number },
+        { label: "Programme", value: program as string },
+        { label: "Email", value: email },
+        { label: "Level", value: resolveStudentLevel(user) },
+    ];
 
     return (
-        <div className="p-6 border-b">
-            <div className="flex items-center gap-7">
-                <div className="space-y-3 w-1/4 flex flex-col items-center justify-center">
-                    {profileImage && (
-                        <div className="relative w-24 h-24 rounded-full mr-6 border-2 border-gray-200">
-                            <Image
-                                src={profileImage}
-                                alt={fullname}
-                                fill
-                                sizes="96px"
-                                priority
-                                className="object-cover rounded-full"
-                            />
-                        </div>
-                    )}
-                    <h2 className="text-lg text-[#750303] uppercase text-center font-bold">{fullname}</h2>
-                </div>
-                <div className='w-full'>
-                    <div className="grid grid-cols-1 gap-1 sm:grid-cols-2 sm:gap-4 mt-2">
-                        <div>
-                            <p className="text-teal-600 font-bold">Reg Number:</p>
-                            <p className="text-wrap">{reg_number}</p>
-                        </div>
-                        <div>
-                            <p className="text-teal-600 font-bold">Program:</p>
-                            <p className="text-wrap">{department}</p>
-                        </div>
-                        <div>
-                            <p className="text-teal-600 font-bold">Email:</p>
-                            <p className="text-wrap">{email}</p>
-                        </div>
-                        <div>
-                            <p className="text-teal-600 font-bold">Year:</p>
-                            <p>{new Date().getFullYear() - enrollmentYear + 1}th Year</p>
-                        </div>
+        <div className="border-b border-border px-7 py-6">
+            <div className="flex flex-col gap-6 sm:flex-row sm:items-center">
+                <div className="flex items-center gap-4">
+                    <div className="relative size-20 shrink-0 overflow-hidden rounded-2xl border border-border">
+                        <Image
+                            src={profileImage}
+                            alt={fullname}
+                            fill
+                            sizes="80px"
+                            priority
+                            className="object-cover"
+                        />
                     </div>
+                    <div className="sm:hidden">
+                        <h2 className="text-lg font-bold text-ocean-900 dark:text-foreground">
+                            {fullname}
+                        </h2>
+                    </div>
+                </div>
+
+                <div className="min-w-0 flex-1">
+                    <h2 className="hidden text-lg font-bold text-ocean-900 sm:block dark:text-foreground">
+                        {fullname}
+                    </h2>
+
+                    <dl className="mt-3 grid grid-cols-1 gap-x-8 gap-y-3 sm:grid-cols-2">
+                        {fields.map((field) => (
+                            <div key={field.label} className="min-w-0">
+                                <dt className="text-[11px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">
+                                    {field.label}
+                                </dt>
+                                <dd className="mt-0.5 truncate text-sm font-medium text-ocean-900 dark:text-foreground">
+                                    {field.value || "Not assigned"}
+                                </dd>
+                            </div>
+                        ))}
+                    </dl>
                 </div>
             </div>
         </div>

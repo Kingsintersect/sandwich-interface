@@ -2,7 +2,8 @@
 import React from 'react';
 import Image from 'next/image';
 import AppPayAcceptanceFeeModal from './AppPayAcceptancFeeModal'
-import { CheckCircle } from "lucide-react";
+import { CheckmarkCircle02Icon } from "@hugeicons/core-free-icons";
+import { Icon } from "@/components/ui/icon";
 import { useAuth } from '@/contexts/AuthContext';
 import { Card } from '@/components/ui/card';
 import { ACCEPTANCE_FEE } from "@/config"
@@ -38,7 +39,7 @@ const AcceptancePayment = () => {
                   :
                   <Card className="w-full sm:w-3/4 md:w-3/5 lg:w-5/7 flex-1">
                      <h5 className="flex flex-col justify-between items-center mb-5 space-y-5">
-                        <CheckCircle className="h-14 w-14 text-green-400 dark:text-green-200" />
+                        <Icon icon={CheckmarkCircle02Icon} className="h-14 w-14 text-green-400 dark:text-green-200" />
                         <div className="text-cyan-700 text-xl sm:text-2xl md:text-4xl font-bold">Acceptance Fee Paid</div>
                      </h5>
                      <div className="relative w-full h-52 bg-green-500/25 rounded-md my-5">

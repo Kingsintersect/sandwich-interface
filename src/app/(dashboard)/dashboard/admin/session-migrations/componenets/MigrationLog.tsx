@@ -1,26 +1,49 @@
-import { CheckCircle, XCircle } from "lucide-react";
+"use client";
 
-export const MigrationLog = ({ logs }) => {
+import { CancelCircleIcon, CheckmarkCircle02Icon, InformationCircleIcon } from "@hugeicons/core-free-icons";
+import { Icon } from "@/components/ui/icon";
+import { cn } from "@/lib/utils";
+import type { MigrationLogEntry } from "@/hooks/useSessionMigration";
+
+export const MigrationLog = ({ logs }: { logs: MigrationLogEntry[] }) => {
     if (logs.length === 0) return null;
 
     return (
-        <div className="bg-white rounded-lg shadow-sm border p-6">
-            <h3 className="font-semibold text-gray-900 mb-4">Migration Log</h3>
-            <div className="space-y-2 max-h-64 overflow-y-auto">
+        <section className="overflow-hidden rounded-2xl border border-border bg-card shadow-soft">
+            <div className="border-b border-border px-6 py-5">
+                <h3 className="font-semibold text-ocean-900 dark:text-foreground">Activity</h3>
+            </div>
+
+            <ul className="max-h-64 divide-y divide-border overflow-y-auto">
                 {logs.map((log) => (
-                    <div key={log.id} className="flex items-center space-x-3 text-sm">
-                        <span className="text-gray-500 font-mono">{log.timestamp}</span>
-                        {log.type === 'success' && <CheckCircle className="w-4 h-4 text-green-500" />}
-                        {log.type === 'error' && <XCircle className="w-4 h-4 text-red-500" />}
-                        {log.type === 'info' && <div className="w-4 h-4 rounded-full bg-blue-500"></div>}
-                        <span className={`${log.type === 'success' ? 'text-green-700' :
-                            log.type === 'error' ? 'text-red-700' : 'text-gray-700'
-                            }`}>
+                    <li key={log.id} className="flex items-start gap-3 px-6 py-3 text-sm">
+                        <span className="shrink-0 pt-0.5">
+                            {log.type === 'success' && (
+                                <Icon icon={CheckmarkCircle02Icon} className="size-4 text-emerald-600 dark:text-emerald-400" />
+                            )}
+                            {log.type === 'error' && (
+                                <Icon icon={CancelCircleIcon} className="size-4 text-destructive" />
+                            )}
+                            {log.type === 'info' && (
+                                <Icon icon={InformationCircleIcon} className="size-4 text-ocean-500" />
+                            )}
+                        </span>
+                        <span
+                            className={cn(
+                                "min-w-0 flex-1",
+                                log.type === 'success' && "text-emerald-700 dark:text-emerald-300",
+                                log.type === 'error' && "text-destructive",
+                                log.type === 'info' && "text-foreground/80"
+                            )}
+                        >
                             {log.message}
                         </span>
-                    </div>
+                        <time className="shrink-0 font-mono text-xs text-muted-foreground">
+                            {log.timestamp}
+                        </time>
+                    </li>
                 ))}
-            </div>
-        </div>
+            </ul>
+        </section>
     );
 };

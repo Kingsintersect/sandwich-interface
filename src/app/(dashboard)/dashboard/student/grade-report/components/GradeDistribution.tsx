@@ -1,75 +1,70 @@
 "use client";
 import React from 'react';
-import { BarChart3 } from 'lucide-react';
 import { GPACourse } from '@/lib/gpa.utils';
 
 type GradeDistributionProps = {
     courses: GPACourse[];
 };
 
+const gradeData = [
+    { grade: 'A', name: 'Excellent (70-100%)', bar: 'bg-emerald-500' },
+    { grade: 'B', name: 'Very good (60-69%)', bar: 'bg-ocean-500' },
+    { grade: 'C', name: 'Good (50-59%)', bar: 'bg-ocean-400' },
+    { grade: 'D', name: 'Fair (45-49%)', bar: 'bg-ember-500' },
+    { grade: 'E', name: 'Pass (40-44%)', bar: 'bg-amber-500' },
+    { grade: 'F', name: 'Fail (0-39%)', bar: 'bg-red-500' },
+];
+
 export const GradeDistribution = React.memo(({ courses }: GradeDistributionProps) => {
-    const gradeAnalysis = React.useMemo(() => {
-        const gradeData = [
-            { grade: 'A', name: 'Excellent (70-100%)', color: 'bg-green-500', textColor: 'text-green-600' },
-            { grade: 'B', name: 'Very Good (60-69%)', color: 'bg-blue-500', textColor: 'text-blue-600' },
-            { grade: 'C', name: 'Good (50-59%)', color: 'bg-yellow-500', textColor: 'text-yellow-600' },
-            { grade: 'D', name: 'Fair (45-49%)', color: 'bg-orange-500', textColor: 'text-orange-600' },
-            { grade: 'E', name: 'Pass (40-44%)', color: 'bg-gray-500', textColor: 'text-gray-600' },
-            { grade: 'F', name: 'Fail (0-39%)', color: 'bg-red-500', textColor: 'text-red-600' },
-        ];
+    const gradeAnalysis = React.useMemo(
+        () =>
+            gradeData.map((gradeInfo) => {
+                const count = courses.filter(
+                    (course) => course.grade?.toUpperCase() === gradeInfo.grade
+                ).length;
+                const percentage = courses.length > 0 ? (count / courses.length) * 100 : 0;
+                return { ...gradeInfo, count, percentage: Math.round(percentage) };
+            }),
+        [courses]
+    );
 
-        return gradeData.map(gradeInfo => {
-            const count = courses.filter(course =>
-                course.grade.toUpperCase() === gradeInfo.grade
-            ).length;
-            const percentage = courses.length > 0 ? (count / courses.length) * 100 : 0;
-
-            return {
-                ...gradeInfo,
-                count,
-                percentage: Math.round(percentage)
-            };
-        });
-    }, [courses]);
-
-    const maxCount = Math.max(...gradeAnalysis.map(g => g.count), 1);
+    const maxCount = Math.max(...gradeAnalysis.map((g) => g.count), 1);
 
     return (
-        <div className="bg-white p-6 rounded-lg shadow-sm border">
-            <div className="flex items-center gap-2 mb-4">
-                <BarChart3 className="h-5 w-5 text-blue-600" />
-                <h4 className="font-semibold text-gray-800">Grade Distribution Analysis</h4>
-            </div>
+        <div className="rounded-2xl border border-border bg-card p-6 shadow-soft">
+            <h4 className="text-[11px] font-semibold uppercase tracking-[0.18em] text-ember-600">
+                Grade distribution
+            </h4>
 
-            <div className="space-y-3">
-                {gradeAnalysis.map(({ grade, name, color, textColor, count, percentage }) => (
-                    <div key={grade} className="flex items-center space-x-3">
-                        <div className="w-8 text-center">
-                            <span className="font-bold text-gray-700">{grade}</span>
-                        </div>
-                        <div className="flex-1">
-                            <div className="flex items-center justify-between mb-1">
-                                <span className="text-sm text-gray-600">{name}</span>
-                                <span className={`text-sm font-medium ${textColor}`}>
+            <div className="mt-5 space-y-3.5">
+                {gradeAnalysis.map(({ grade, name, bar, count, percentage }) => (
+                    <div key={grade} className="flex items-center gap-3">
+                        <span className="w-5 shrink-0 text-center text-sm font-bold text-ocean-900 dark:text-foreground">
+                            {grade}
+                        </span>
+                        <div className="min-w-0 flex-1">
+                            <div className="mb-1.5 flex items-center justify-between gap-3">
+                                <span className="truncate text-xs text-muted-foreground">{name}</span>
+                                <span className="shrink-0 text-xs font-semibold tabular-nums text-ocean-800 dark:text-foreground">
                                     {count} ({percentage}%)
                                 </span>
                             </div>
-                            <div className="w-full bg-gray-200 rounded-full h-2">
+                            <div className="h-1.5 w-full overflow-hidden rounded-full bg-muted">
                                 <div
-                                    className={`h-2 rounded-full transition-all duration-500 ${color}`}
+                                    className={`h-full rounded-full transition-all duration-700 ease-out ${bar}`}
                                     style={{ width: `${(count / maxCount) * 100}%` }}
-                                ></div>
+                                />
                             </div>
                         </div>
                     </div>
                 ))}
             </div>
 
-            <div className="mt-4 pt-4 border-t border-gray-200">
-                <div className="flex justify-between text-sm text-gray-600">
-                    <span>Total Courses:</span>
-                    <span className="font-medium">{courses.length}</span>
-                </div>
+            <div className="mt-5 flex justify-between border-t border-border pt-4 text-xs">
+                <span className="text-muted-foreground">Total courses</span>
+                <span className="font-semibold tabular-nums text-ocean-900 dark:text-foreground">
+                    {courses.length}
+                </span>
             </div>
         </div>
     );

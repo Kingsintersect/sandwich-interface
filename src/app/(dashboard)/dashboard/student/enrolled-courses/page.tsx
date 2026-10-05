@@ -29,7 +29,7 @@ const EnrolledCoursesPage = () => {
       : "#";
 
    return (
-      <div className="text-gray-600">
+      <div className="pb-10">
          <PageHeader student={user} />
          <EnrolledCourseList
             url={lmsLink}

@@ -7,7 +7,8 @@ import { useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
-import { ArrowRightIcon, Loader2 } from "lucide-react";
+import { ArrowRight01Icon, Loading03Icon } from "@hugeicons/core-free-icons";
+import { Icon } from "@/components/ui/icon";
 import { InputFormField, TextareaFormField } from '@/components/ui/inputs/FormFields';
 import { Button } from '@/components/ui/button';
 import { extractErrorMessages } from '@/lib/errorsHandler';
@@ -90,8 +91,8 @@ const UpdateCourse = ({ access_token, course }: { access_token: string, course: 
                   Save New Department
                   {
                      (isLoading)
-                        ? (<Loader2 className="animate-spin" />)
-                        : (<ArrowRightIcon className="ml-2 h-5 w-5" />)
+                        ? (<Icon icon={Loading03Icon} className="animate-spin" />)
+                        : (<Icon icon={ArrowRight01Icon} className="ml-2 h-5 w-5" />)
                   }
                </Button>
             </div>

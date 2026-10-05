@@ -1,6 +1,7 @@
 "use client";
 
-import { Loader2, Upload } from "lucide-react";
+import { Loading03Icon, Upload01Icon } from "@hugeicons/core-free-icons";
+import { Icon } from "@/components/ui/icon";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
@@ -29,12 +30,12 @@ export default function SubmitButton({
         >
             {isUploading ? (
                 <>
-                    <Loader2 size={20} className="animate-spin" />
+                    <Icon icon={Loading03Icon} size={20} className="animate-spin" />
                     <span>Processing...</span>
                 </>
             ) : (
                 <>
-                    <Upload size={20} />
+                    <Icon icon={Upload01Icon} size={20} />
                     <span>Upload {recordCount > 0 ? `${recordCount} ` : ''}Users</span>
                 </>
             )}

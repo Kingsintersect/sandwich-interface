@@ -173,3 +173,22 @@ export async function GetStudentPaymentHistory(
 	})) as any;
 	return response;
 }
+
+/**
+ * Enrols the signed-in student into another academic session.
+ * POST /account/upgrade-session  { session_id }
+ */
+export async function UpgradeStudentSession(
+	access_token: string,
+	data: { session_id: number }
+) {
+	const response = (await apiCallerBeta({
+		url: `${remoteApiUrl}/account/upgrade-session`,
+		method: "POST",
+		data,
+		headers: {
+			Authorization: `Bearer ${access_token}`,
+		},
+	})) as any;
+	return response;
+}

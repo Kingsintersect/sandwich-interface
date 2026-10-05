@@ -7,7 +7,9 @@ import {
     AccordionTrigger,
 } from "@/components/ui/accordion";
 import { FieldErrors, Path, PathValue, UseFormGetValues, UseFormSetValue, UseFormWatch } from "react-hook-form";
-// import { ProgramRequirementsLink } from "./requirements/ProgramRequirementsModal";
+import { CheckmarkCircle02Icon, GraduationScrollIcon } from "@hugeicons/core-free-icons";
+import { Icon } from "@/components/ui/icon";
+import { cn } from "@/lib/utils";
 
 
 type genericObjectType = Record<string, unknown>;
@@ -42,31 +44,60 @@ export default function ProgramAccordion<T extends genericObjectType>({
     };
 
     return (
-        <Accordion type="multiple" className={`pl-${level * 4}`}>
+        <Accordion
+            type="multiple"
+            // Indent by inline style: `pl-${level * 4}` is a dynamic class name,
+            // so Tailwind never generates it and nesting read as flat.
+            style={level > 0 ? { paddingLeft: "0.75rem" } : undefined}
+            className={cn(level > 0 && "border-l border-border")}
+        >
             {Array.isArray(nodes) && nodes.map((node, index) => {
                 const id = `${level}-${index}-${node.name}`;
+                const isSelected = selected === node.name;
 
                 return (
-                    <AccordionItem key={id} value={id}>
-                        <AccordionTrigger className="text-left">{node.name}</AccordionTrigger>
+                    <AccordionItem key={id} value={id} className="border-border">
+                        <AccordionTrigger
+                            className={cn(
+                                "text-left text-sm font-medium hover:no-underline",
+                                level === 0
+                                    ? "font-semibold text-ocean-900 dark:text-foreground"
+                                    : "text-foreground/80"
+                            )}
+                        >
+                            {node.name}
+                        </AccordionTrigger>
                         <AccordionContent>
-                            <div
-                                className={`pl-4 py-1 cursor-pointer rounded ${selected === node.name ? "bg-primary text-white" : "hover:bg-muted"
-                                    }`}
+                            {/* Choosing the node itself - a parent is a valid choice */}
+                            <button
+                                type="button"
                                 onClick={() => handleProgramSelect(node)}
+                                aria-pressed={isSelected}
+                                className={cn(
+                                    "flex w-full items-center gap-2.5 rounded-lg px-3 py-2.5 text-left text-sm transition-colors",
+                                    isSelected
+                                        ? "ember-surface font-semibold text-white"
+                                        : "text-muted-foreground hover:bg-accent hover:text-ocean-700"
+                                )}
                             >
-                                🎓 {node.name}
-                            </div>
+                                <Icon
+                                    icon={isSelected ? CheckmarkCircle02Icon : GraduationScrollIcon}
+                                    className="size-4"
+                                />
+                                {node.name}
+                            </button>
 
                             {Array.isArray(node.children) && node.children.length > 0 && (
-                                <ProgramAccordion<T>
-                                    nodes={node.children}
-                                    level={level + 1}
-                                    setValue={setValue}
-                                    fieldKey={fieldKey}
-                                    fieldIdKey={fieldIdKey}
-                                    watch={watch}
-                                />
+                                <div className="mt-1">
+                                    <ProgramAccordion<T>
+                                        nodes={node.children}
+                                        level={level + 1}
+                                        setValue={setValue}
+                                        fieldKey={fieldKey}
+                                        fieldIdKey={fieldIdKey}
+                                        watch={watch}
+                                    />
+                                </div>
                             )}
                         </AccordionContent>
                     </AccordionItem>
@@ -101,37 +132,49 @@ export const ProgramAccordionDisplay = <T extends genericObjectType>({
     const programValue = getValues(fieldKey as Path<T>)
 
     return (
-        <div className="max-w-3xl mx-auto p-4">
-            {heading && <h1 className="text-2xl font-bold mb-0 text-site-b-dark">{heading}</h1>}
-            {subHeading && <p className="italic text-blue-500 mb-4">{subHeading}</p>}
+        <div className="w-full">
+            {heading && (
+                <h2 className="text-lg font-semibold text-ocean-900 dark:text-foreground">
+                    {heading}
+                </h2>
+            )}
+            {subHeading && (
+                <p className="mb-5 text-sm text-muted-foreground">{subHeading}</p>
+            )}
 
-            {/* <ProgramRequirementsLink
-                className="ml-20 text-xs text-orange-600  animate-bounce"
-                downloadUrl="/documents/PROGRAMME_AND_REQUIREMENTS.docx"
-            /> */}
-
-            <ProgramAccordion
-                nodes={programs}
-                setValue={setValue}
-                watch={watch}
-                fieldKey={fieldKey}
-                fieldIdKey={fieldIdKey}
-            />
+            <div className="overflow-hidden rounded-2xl border border-border bg-card px-4 shadow-soft">
+                <ProgramAccordion
+                    nodes={programs}
+                    setValue={setValue}
+                    watch={watch}
+                    fieldKey={fieldKey}
+                    fieldIdKey={fieldIdKey}
+                />
+            </div>
 
             {errors.program && (
-                <p className="text-red-500 text-sm mb-2">
+                <p className="mt-3 text-sm text-destructive">
                     {String(errors.program.message)}
                 </p>
             )}
             {errors.program_id && (
-                <p className="text-red-500 text-sm">
+                <p className="mt-1 text-sm text-destructive">
                     {String(errors.program_id.message)}
                 </p>
             )}
 
             {programValue && (
-                <div className="mt-6 text-green-700 font-semibold border-t pt-4">
-                    ✅ You selected: <span className="text-primary">{String(programValue)}</span>
+                <div className="mt-5 flex items-start gap-2.5 rounded-xl border border-ocean-100 bg-ocean-50 px-4 py-3.5 text-sm dark:border-border dark:bg-ocean-900/40">
+                    <Icon
+                        icon={CheckmarkCircle02Icon}
+                        className="mt-0.5 size-4.5 text-ember-600"
+                    />
+                    <span className="text-muted-foreground">
+                        Selected programme:{" "}
+                        <span className="font-semibold text-ocean-800 dark:text-foreground">
+                            {String(programValue)}
+                        </span>
+                    </span>
                 </div>
             )}
         </div>

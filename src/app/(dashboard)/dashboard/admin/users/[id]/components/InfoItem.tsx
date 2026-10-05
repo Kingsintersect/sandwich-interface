@@ -1,4 +1,5 @@
-import { ArrowRightIcon } from 'lucide-react'
+import { ArrowRight01Icon } from "@hugeicons/core-free-icons";
+import { Icon } from "@/components/ui/icon";
 import React from 'react'
 
 const InfoItem = ({ label, value }) => {
@@ -6,7 +7,7 @@ const InfoItem = ({ label, value }) => {
         <li className="py-1 sm:py-1">
             <div className="flex items-center space-x-4">
                 <div className="shrink-0">
-                    <ArrowRightIcon width={20} color='green' />
+                    <Icon icon={ArrowRight01Icon} width={20} color='green' />
                 </div>
                 <div className="min-w-0 flex-1">
                     <div className="flex justify-between">

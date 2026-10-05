@@ -2,11 +2,11 @@
 
 import React from 'react';
 import Image from 'next/image';
-import { CheckCircle, CreditCard } from "lucide-react";
+import { CheckmarkCircle02Icon, CreditCardIcon, Coins01Icon } from "@hugeicons/core-free-icons";
+import { Icon } from "@/components/ui/icon";
 import { motion } from 'framer-motion';
 import { useTuitionPayment } from '@/contexts/TuitionPaymentContext';
 import { useAuth } from '@/contexts/AuthContext';
-import { HandCoins } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { baseUrl } from '@/config';
@@ -36,12 +36,12 @@ const TuitionStatusCard = ({ student }: { student: UserInterface }) => {
 						{isPaid ? 'Tuition Fee Paid' : hasPartialPayment ? 'Outstanding Tuition Fee' : 'Tuition Fee'}
 					</h2>
 					{isPaid ? (
-						<CheckCircle className="h-10 w-10 text-white" />
+						<Icon icon={CheckmarkCircle02Icon} className="h-10 w-10 text-white" />
 					) : (
 						<div className="flex flex-col items-end justify-end text-yellow-200">
 							{(user?.tuition_amount_paid) && (<p><span className="font-medium">Amount Paid:</span> ₦{Number(user?.tuition_amount_paid || 0).toLocaleString()}</p>)}
 
-							<CreditCard className="h-10 w-10 text-white" />
+							<Icon icon={CreditCardIcon} className="h-10 w-10 text-white" />
 						</div>
 					)}
 				</div>
@@ -72,7 +72,7 @@ const TuitionStatusCard = ({ student }: { student: UserInterface }) => {
 							<div className='absolute z-20 inset-0 w-full h-full flex items-center justify-center'>
 								<div className="py-7 px-4 bg-red-50 dark:bg-red-800/50 rounded-xl text-center">
 									<div className="inline-flex justify-center items-center w-16 h-16 bg-red-100 dark:bg-red-700 rounded-full mb-2">
-										<HandCoins className="h-8 w-8 text-red-500 dark:text-red-400" />
+										<Icon icon={Coins01Icon} className="h-8 w-8 text-red-500 dark:text-red-400" />
 									</div>
 									<h3 className="text-xl font-medium text-red-700 dark:text-red-300 mb-2">Acceptance Yet To Be Paid...</h3>
 									<Button variant={"destructive"} asChild className='animate-bounce'>

@@ -904,3 +904,132 @@ export async function DeleteSingleSubjectGrade(
 		},
 	};
 }
+
+/* ------------------------------------------------------------------ */
+/* Academic sessions                                                    */
+/* ------------------------------------------------------------------ */
+
+export type AcademicSession = {
+	id: number;
+	name: string;
+	status: "ACTIVE" | "INACTIVE";
+	created_at?: string | null;
+	updated_at?: string | null;
+};
+
+export async function GetAllAcademicSessions(access_token: string) {
+	const response = (await apiCallerBeta({
+		url: `${remoteApiUrl}/admin/all-sessions`,
+		method: "GET",
+		headers: {
+			Authorization: `Bearer ${access_token}`,
+		},
+	})) as any;
+	return response;
+}
+
+export async function CreateAcademicSession(
+	access_token: string,
+	data: { name: string }
+) {
+	const response = (await apiCallerBeta({
+		url: `${remoteApiUrl}/admin/add-session`,
+		method: "POST",
+		data,
+		headers: {
+			Authorization: `Bearer ${access_token}`,
+		},
+	})) as any;
+	return response;
+}
+
+/**
+ * Promotes a session to ACTIVE. The API takes only the id - whichever session
+ * is modified becomes the active one, so this doubles as the session rollover.
+ */
+export async function ActivateAcademicSession(
+	access_token: string,
+	data: { id: number }
+) {
+	const response = (await apiCallerBeta({
+		url: `${remoteApiUrl}/admin/modify-session`,
+		method: "PATCH",
+		data,
+		headers: {
+			Authorization: `Bearer ${access_token}`,
+		},
+	})) as any;
+	return response;
+}
+
+/* ------------------------------------------------------------------ */
+/* Results                                                              */
+/* ------------------------------------------------------------------ */
+
+export type ResultStudent = {
+	id: number;
+	first_name: string | null;
+	last_name: string | null;
+	other_name: string | null;
+	username: string | null;
+	email: string | null;
+	reg_number: string | null;
+	/** Numeric level, e.g. "100". */
+	academic_level: string | null;
+	academic_session: string | null;
+	/** LMS short code, e.g. "SOC-ECO-100-1SM". */
+	level: string | null;
+};
+
+export type ResultRow = {
+	id: number;
+	user_id: number;
+	course_id: number;
+	/** The result's own course fields. The nested `course` object can disagree
+	 *  with these, so the top-level pair is the one that is displayed. */
+	course_code: string | null;
+	course_title: string | null;
+	credit_load: number | null;
+	quality_point: string | number | null;
+	level: string | null;
+	session: string | null;
+	semester: string | null;
+	assignment: string | number | null;
+	quiz: string | number | null;
+	exam: string | number | null;
+	bonus_points_applied: string | number | null;
+	score: string | number | null;
+	grade: string | null;
+	remarks: string | null;
+	status: string | null;
+	date_of_result: string | null;
+	user?: ResultStudent | null;
+};
+
+export type ResultFilters = {
+	session?: string;
+	level?: string;
+	course_code?: string;
+	status?: string;
+	search?: string;
+};
+
+export async function GetAllResults(
+	access_token: string,
+	filters: ResultFilters = {}
+) {
+	const query = new URLSearchParams();
+	for (const [key, value] of Object.entries(filters)) {
+		if (value && value !== "ALL") query.set(key, value);
+	}
+	const qs = query.toString();
+
+	const response = (await apiCallerBeta({
+		url: `${remoteApiUrl}/admin/all-results${qs ? `?${qs}` : ""}`,
+		method: "GET",
+		headers: {
+			Authorization: `Bearer ${access_token}`,
+		},
+	})) as any;
+	return response;
+}

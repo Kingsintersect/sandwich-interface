@@ -2,7 +2,8 @@ import GrantStudentAdmissionModal from '@/components/application/GrantStudentAdm
 import RejectStudentAdmissionModal from '@/components/application/RejectStudentAdmissionModal';
 import { Card } from '@/components/ui/card';
 import { AdmissionStatusType } from '@/config/Types';
-import { CheckCircle, XCircle } from 'lucide-react';
+import { CancelCircleIcon, CheckmarkCircle02Icon } from "@hugeicons/core-free-icons";
+import { Icon } from "@/components/ui/icon";
 import React from 'react'
 
 interface AdmissionActionButtonsProps {
@@ -27,7 +28,7 @@ const AdmissionActionButtons = ({ id, status, facultyId, departmentId }: Admissi
             <Card className="p-7">
                 <div className="flex items-center justify-around">
                     <div className="text-3xl font-semibold text-gray-700">ADMISSION DENIED</div>
-                    <XCircle className="h-14 w-14 text-red-400 dark:text-red-200" />
+                    <Icon icon={CancelCircleIcon} className="h-14 w-14 text-red-400 dark:text-red-200" />
                 </div>
             </Card>
         );
@@ -36,7 +37,7 @@ const AdmissionActionButtons = ({ id, status, facultyId, departmentId }: Admissi
             <Card className="p-7">
                 <div className="flex items-center justify-around">
                     <div className="text-3xl font-semibold text-gray-700">ADMISSION GRANTED</div>
-                    <CheckCircle className="h-14 w-14 text-green-400 dark:text-green-200" />
+                    <Icon icon={CheckmarkCircle02Icon} className="h-14 w-14 text-green-400 dark:text-green-200" />
                 </div>
             </Card>
         );

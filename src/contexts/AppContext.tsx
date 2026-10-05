@@ -72,6 +72,7 @@ export const AppProvider: React.FC<Props> = ({ children }) => {
          deleted_at: null,
          role: Roles.STUDENT,
          level: null,
+         academic_level: null,
          tuition_amount_paid: 0,
          academic_session: null
       },

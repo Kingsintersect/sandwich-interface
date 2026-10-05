@@ -1,128 +1,45 @@
 "use client";
 import Search from '@/components/ui/inputs/Search';
-import { baseUrl } from '@/config';
-import { Loader2 } from 'lucide-react';
 import React, { useEffect, useMemo, useState } from 'react'
 import { Card } from "@/components/ui/card"
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select"
 import { DataTable } from '@/components/ui/datatable/DataTable';
-import { StudentsPaymentTable } from './StudentPaymentsTable';
+import { StudentsPaymentTable, type PaymentTableColumnType } from './StudentPaymentsTable';
 import { filterData } from '@/lib/utils';
 import { useAuth } from '@/contexts/AuthContext';
 import { GetStudentPaymentHistory } from '@/app/actions/student';
-import Link from 'next/link';
-import { Button } from '@/components/ui/button';
 
-type Payment = {
-  id: string;
-  type: 'tuition' | 'acceptance';
-  status: 'paid' | 'pending' | 'failed';
-  session: string;
-  amount: string;
-  date: string;
-  reference: string;
-};
+export type Payment = PaymentTableColumnType;
 
 export const dynamic = "force-dynamic";
 
-const PaymentStatusCard = ({
-  type,
-  latestPayment
-}: {
-  type: 'tuition' | 'acceptance';
-  latestPayment?: Payment
-}) => {
-  const title = type === 'tuition' ? 'Tuition Fee' : 'Acceptance Fee';
-  const paymentLink = type === 'tuition' ? '/dashboard/history/student-payments/tuition' : '/dashboard/history/student-payments/acceptance';
-
-  return (
-    <Card className="p-4 h-full">
-      <div className="flex flex-col h-full">
-        <h3 className="font-semibold text-xl mb-2">{title} Status</h3>
-
-        {latestPayment ? (
-          <>
-            <div className="space-y-2 mb-2">
-              <p className="text-md text-gray-400 ">Academic Session: <span className='text-gray-100'>{latestPayment.session}</span> </p>
-              {/* <p className="font-medium inline">{latestPayment.session}</p> */}
-            </div>
-
-            <div className="space-y-2 mb-4">
-              <p className="text-md text-gray-400">Status: <span className={`font-medium w-[30%] text-lg rounded-md ${latestPayment.status === 'paid' ? 'text-green-600' :
-                latestPayment.status === 'pending' ? 'text-yellow-600' :
-                  'text-red-600'
-                }`}>
-                {latestPayment.status.charAt(0).toUpperCase() + latestPayment.status.slice(1)}
-              </span></p>
-              {/* <span className={`font-medium w-[30%] text-lg rounded-md ${
-                latestPayment.status === 'paid' ? 'text-green-600' : 
-                latestPayment.status === 'pending' ? 'text-yellow-600' : 
-                'text-red-600'
-              }`}>
-                {latestPayment.status.charAt(0).toUpperCase() + latestPayment.status.slice(1)}
-              </span> */}
-            </div>
-
-            {latestPayment.status !== 'paid' && (
-              <div className="mt-auto">
-                <Button asChild variant="default">
-                  <Link href={paymentLink}>
-                    Pay {title}
-                  </Link>
-                </Button>
-              </div>
-            )}
-          </>
-        ) : (
-          <div className="flex flex-col h-full justify-between">
-            <p className="text-gray-500">No {title.toLowerCase()} record found</p>
-            <Button asChild variant="default" className="mt-4">
-              <Link href={paymentLink}>
-                Pay {title}
-              </Link>
-            </Button>
-          </div>
-        )}
-      </div>
-    </Card>
-  );
-};
-
 const StudentsPaymentPage = () => {
-  const [filter, setFilter] = useState("ALL");
   const [paymentHistory, setPaymentHistory] = useState<Payment[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const { access_token } = useAuth();
-  const basePath = `${baseUrl}/dashboard/student/history/student-payments`;
+  const { access_token, user } = useAuth();
 
-  const getAcademicSession = (dateString: string): string => {
-    const date = new Date(dateString);
-    const year = date.getFullYear();
-    const month = date.getMonth() + 1;
+  // The session used to be guessed from the payment date. It is a real column
+  // (academic_session), so read it and fall back to the student's own session
+  // rather than inventing one.
+  const resolveSession = (payment: Record<string, unknown>): string => {
+    const fromPayment = payment.academic_session ?? payment.session;
+    if (typeof fromPayment === "string" && fromPayment.trim()) return fromPayment;
 
-    if (month >= 1 && month <= 8) {
-      return `${year - 1}/${year}`;
-    }
-    return `${year}/${year + 1}`;
+    const fromStudent = user?.academic_session;
+    if (typeof fromStudent === "string" && fromStudent.trim()) return fromStudent;
+
+    return "—";
   };
 
-  const transformPaymentData = (apiData: any[]): Payment[] => {
-    return apiData.map(payment => ({
-      id: payment.id.toString(),
-      type: payment.payment_type.includes('Tuition') ? 'tuition' : 'acceptance',
-      status: payment.status.toLowerCase() as 'paid' | 'pending' | 'failed',
-      session: getAcademicSession(payment.created_at),
-      amount: payment.amount.toString(),
-      date: payment.created_at,
-      reference: payment.reference,
+  const transformPaymentData = (apiData: Record<string, unknown>[]): Payment[] => {
+    return (Array.isArray(apiData) ? apiData : []).map(payment => ({
+      id: String(payment.id ?? ""),
+      status: String(payment.status ?? "").toLowerCase() as Payment["status"],
+      session: resolveSession(payment),
+      amount: String(payment.amount ?? ""),
+      date: String(payment.created_at ?? ""),
+      reference: String(payment.reference ?? ""),
     }));
   };
 
@@ -141,7 +58,7 @@ const StudentsPaymentPage = () => {
       } else if (error) {
         setError(error.message || "Failed to fetch payment history");
       }
-    } catch (err) {
+    } catch {
       setError("An unexpected error occurred.");
     } finally {
       setLoading(false);
@@ -152,93 +69,57 @@ const StudentsPaymentPage = () => {
     if (access_token) {
       fetchPaymentHistory(access_token).catch(console.error);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [access_token]);
-
-  const latestTuitionPayment = paymentHistory.find(p => p.type === 'tuition');
-  const latestAcceptancePayment = paymentHistory.find(p => p.type === 'acceptance');
-  const hasPaidAcceptanceFee = paymentHistory.some(
-    p => p.type === 'acceptance' && p.status === 'paid'
-  );
 
   const filteredData = useMemo(() => {
     return filterData(
       paymentHistory,
-      "type",
-      filter,
-      ["session", "reference", "type"],
+      "status",
+      "ALL",
+      ["session", "reference", "status"],
       searchQuery
     );
-  }, [filter, searchQuery, paymentHistory]);
+  }, [searchQuery, paymentHistory]);
 
   return (
-    <div>
-      <div className="bg-green-50 border border-green-200 rounded-lg p-4">
-        <h3 className="font-semibold text-green-900 mb-2">Payment History</h3>
-        <p className="text-green-800 text-sm">
-          Overview of all your Payment Histories are available below.
+    <div className="pb-10">
+      <div>
+        <h1 className="text-2xl font-bold tracking-tight text-ocean-900 dark:text-foreground">
+          Payment history
+        </h1>
+        <p className="mt-2 text-sm text-muted-foreground">
+          Every application fee payment on your record, newest first.
         </p>
       </div>
 
-      {/* Improved cards layout */}
-      {/* <div className='flex flex-col sm:flex-row gap-4 mt-6'>
-        <div className={`${hasPaidAcceptanceFee ? 'w-full sm:w-1/2' : 'w-full sm:w-1/2'}`}>
-          <PaymentStatusCard 
-            type="tuition" 
-            latestPayment={latestTuitionPayment} 
+      {error && (
+        <p className="mt-5 rounded-xl border border-destructive/30 bg-destructive/5 px-4 py-3 text-sm text-destructive">
+          {error}
+        </p>
+      )}
+
+      <Card className="mt-6 rounded-2xl border-border p-5 shadow-soft sm:p-7">
+        <div className="mb-7 space-y-6">
+          <div className="max-w-md">
+            <Search
+              name={'search'}
+              placeholder='Search by session or reference...'
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="p-3 rounded w-full"
+            />
+          </div>
+
+          <DataTable
+            columns={StudentsPaymentTable}
+            data={filteredData}
+            isLoading={loading}
           />
-        </div>
-        
-        {!hasPaidAcceptanceFee && (
-          <div className="w-full sm:w-1/2">
-            <PaymentStatusCard 
-              type="acceptance" 
-              latestPayment={latestAcceptancePayment} 
-            />
-          </div>
-        )} 
-      </div> */}
-
-      <Card className="mt-7 p-4 sm:p-10">
-        <div className="font-normal text-gray-700 dark:text-gray-400 space-y-6 sm:space-y-10 mb-7">
-          <div className="grid sm:grid-cols-2 gap-3 md:gap-10">
-            <div className="search">
-              <Search
-                name={'search'}
-                placeholder='Search by session or reference...'
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="p-3 rounded w-full"
-              />
-            </div>
-            <div className="search flex justify-end gap-5">
-              <Select
-                onValueChange={(value: string) => setFilter(value)}
-                defaultValue={filter}
-              >
-                <SelectTrigger className='w-full sm:w-[280px]'>
-                  <SelectValue placeholder="Filter payment type" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="ALL">All Payments</SelectItem>
-                  <SelectItem value="tuition">Tuition Fee</SelectItem>
-                  <SelectItem value="acceptance">Acceptance Fee</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1">
-            <DataTable
-              columns={StudentsPaymentTable}
-              data={filteredData}
-              isLoading={loading}
-            // noDataMessage={error || "No payment records found"}
-            />
-          </div>
         </div>
       </Card>
     </div>
   )
 }
 
-export default StudentsPaymentPage;
+export default StudentsPaymentPage

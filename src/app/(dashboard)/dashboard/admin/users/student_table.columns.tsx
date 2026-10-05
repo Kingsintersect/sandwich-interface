@@ -1,10 +1,12 @@
 "use client"
+import { Notebook01Icon, PencilEdit02Icon } from "@hugeicons/core-free-icons";
 
 import { ColumnDef } from "@tanstack/react-table";
 import { DataTableCheckboxColumn, DataTableColumnHeader } from "@/components/ui/datatable/DataTableColumnHeader";
 import { ActionMenu } from "@/components/ui/datatable/ActionMenu";
 import { baseUrl } from "@/config";
-import { CheckCircleIcon, NotebookTabs, EditIcon, XCircle } from "lucide-react";
+import { CancelCircleIcon, CheckmarkCircle02Icon } from "@hugeicons/core-free-icons";
+import { Icon } from "@/components/ui/icon";
 import { AdmissionStatusType } from "@/config/Types";
 
 // This type is used to define the shape of our data.
@@ -72,11 +74,11 @@ export const student_columns: ColumnDef<Partial<StudentTableColumnsType>>[] = [
 
             return student.is_applied === 1 ? (
                 <span className="text-green-700 font-semibold">
-                    <CheckCircleIcon width={25} height={25} />
+                    <Icon icon={CheckmarkCircle02Icon} width={25} height={25} />
                 </span>
             ) : (
                 <span className="text-red-700 font-semibold">
-                    <XCircle width={25} height={25} />
+                    <Icon icon={CancelCircleIcon} width={25} height={25} />
                 </span>
             );
         },
@@ -107,8 +109,8 @@ export const student_columns: ColumnDef<Partial<StudentTableColumnsType>>[] = [
             row={row.original as StudentTableColumnsType}
             onCopy={(id) => navigator.clipboard.writeText(id ?? "")}
             menu={[
-                { title: "Review Application", url: `${basePath}/${row.original.id}`, icon: NotebookTabs },
-                { title: "Update Record", url: `${basePath}/${row.original.id}/update`, icon: EditIcon },
+                { title: "Review Application", url: `${basePath}/${row.original.id}`, icon: Notebook01Icon },
+                { title: "Update Record", url: `${basePath}/${row.original.id}/update`, icon: PencilEdit02Icon },
             ]}
         />,
     },

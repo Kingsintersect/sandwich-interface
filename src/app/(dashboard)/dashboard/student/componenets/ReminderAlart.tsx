@@ -1,7 +1,8 @@
 "use client";
 
 import React, { useState, useRef, useEffect, useCallback } from 'react';
-import { X, AlertCircle, GripVertical } from 'lucide-react';
+import { Alert02Icon, Cancel01Icon, DragDropVerticalIcon } from "@hugeicons/core-free-icons";
+import { Icon } from "@/components/ui/icon";
 import { useAdmissionStatus, useStudentApplicationStatus, useStudentPaymentStatus } from '@/contexts/StudentStatusContext';
 import Link from 'next/link';
 import { useAuth } from '@/contexts/AuthContext';
@@ -177,8 +178,8 @@ export const DraggableTranscriptReminder: React.FC<DraggableTranscriptReminderPr
                 onMouseDown={handleMouseDown}
             >
                 <div className="flex items-center gap-2">
-                    <GripVertical className="w-4 h-4 opacity-70" />
-                    <AlertCircle className="w-4 h-4" />
+                    <Icon icon={DragDropVerticalIcon} className="w-4 h-4 opacity-70" />
+                    <Icon icon={Alert02Icon} className="w-4 h-4" />
                     <span className="font-medium text-sm">Required Actions</span>
                 </div>
                 <div className="flex items-center gap-1">
@@ -194,7 +195,7 @@ export const DraggableTranscriptReminder: React.FC<DraggableTranscriptReminderPr
                         className="p-3 hover:bg-white/20 rounded transition-colors"
                         title="Close"
                     >
-                        <X className="w-4 h-4" />
+                        <Icon icon={Cancel01Icon} className="w-4 h-4" />
                     </button>
                 </div>
             </div>
@@ -204,7 +205,7 @@ export const DraggableTranscriptReminder: React.FC<DraggableTranscriptReminderPr
                 <div className="p-4">
                     <Alert className="border-orange-200 bg-orange-50">
                         <div className="flex">
-                            <AlertCircle className="h-4 w-4 text-orange-600 mt-0.5 mr-3 flex-shrink-0" />
+                            <Icon icon={Alert02Icon} className="h-4 w-4 text-orange-600 mt-0.5 mr-3 flex-shrink-0" />
                             <AlertDescription className="text-orange-800">
                                 <div className="space-y-3">
                                     <p className="font-medium">

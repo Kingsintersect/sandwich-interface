@@ -1,13 +1,12 @@
 "use client";
+import { Note01Icon } from "@hugeicons/core-free-icons";
 import { ColumnDef } from "@tanstack/react-table";
 import { DataTableCheckboxColumn, DataTableColumnHeader } from "@/components/ui/datatable/DataTableColumnHeader";
 import { ActionMenu } from "@/components/ui/datatable/ActionMenu";
-import { FileText } from 'lucide-react';
 // import { baseUrl } from "@/config";
 
 export type PaymentTableColumnType = {
   id: string;
-  type: 'tuition' | 'acceptance';
   status: 'paid' | 'pending' | 'failed';
   session: string;
   amount: string;
@@ -17,20 +16,6 @@ export type PaymentTableColumnType = {
 
 export const StudentsPaymentTable: ColumnDef<PaymentTableColumnType>[] = [
   DataTableCheckboxColumn<PaymentTableColumnType>(),
-  {
-    accessorKey: "type",
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="PAYMENT TYPE" />
-    ),
-    cell: ({ row }) => {
-      const type = row.getValue("type") as string;
-      return (
-        <span className="capitalize">
-          {type === 'tuition' ? 'Tuition Fee' : 'Acceptance Fee'}
-        </span>
-      );
-    },
-  },
   {
     accessorKey: "amount",
     header: ({ column }) => (
@@ -106,7 +91,7 @@ export const StudentsPaymentTable: ColumnDef<PaymentTableColumnType>[] = [
         menu={[
           {
             title: "Generate Invoice",
-            icon: FileText,
+            icon: Note01Icon,
             // onClick will be handled in ActionMenu component
           },
         ]}

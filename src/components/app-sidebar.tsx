@@ -1,19 +1,10 @@
 "use client"
 
 import * as React from "react"
-import {
-  AudioWaveform,
-  Command,
-  Frame,
-  GalleryVerticalEnd,
-  Map,
-  PieChart,
-} from "lucide-react"
 
 import { NavMain } from "@/components/nav-main"
-// import { NavProjects } from "@/components/nav-projects"
 import { NavUser } from "@/components/nav-user"
-import { TeamSwitcher } from "@/components/team-switcher"
+import { SidebarBrand } from "@/components/sidebar-brand"
 import {
   Sidebar,
   SidebarContent,
@@ -21,47 +12,9 @@ import {
   SidebarHeader,
   SidebarRail,
 } from "@/components/ui/sidebar"
-import { AdminNavMain, Roles, SITE_NAME, StudentNavMain, TeacherNavMain } from "@/config"
+import { AdminNavMain, Roles, StudentNavMain, TeacherNavMain } from "@/config"
 import { AuthUser } from "@/types/user"
 import { NavProjects } from "./nav-projects"
-
-// This is sample data.
-const data = {
-  teams: [
-    {
-      name: `${SITE_NAME}`,
-      logo: GalleryVerticalEnd,
-      plan: "Online Learning",
-    },
-    {
-      name: `${SITE_NAME}`,
-      logo: AudioWaveform,
-      plan: "Open Distant Learning",
-    },
-    {
-      name: `${SITE_NAME}`,
-      logo: Command,
-      plan: "Distant Learning",
-    },
-  ],
-  projects: [
-    {
-      name: "Design Engineering",
-      url: "#",
-      icon: Frame,
-    },
-    {
-      name: "Sales & Marketing",
-      url: "#",
-      icon: PieChart,
-    },
-    {
-      name: "Travel",
-      url: "#",
-      icon: Map,
-    },
-  ],
-}
 
 interface AppSidebarProps extends React.ComponentProps<typeof Sidebar> {
   user: AuthUser | null;
@@ -85,14 +38,14 @@ export function AppSidebar({ user, ...props }: AppSidebarProps) {
 
   return (
     <Sidebar collapsible="icon" {...props}>
-      <SidebarHeader>
-        <TeamSwitcher teams={data.teams} />
+      <SidebarHeader className="border-b border-sidebar-border pb-2">
+        <SidebarBrand />
       </SidebarHeader>
       <SidebarContent className="pl-3">
         <NavMain items={navMain.compound} />
         {navMain.flat && <NavProjects projects={navMain.flat} />}
       </SidebarContent>
-      <SidebarFooter>
+      <SidebarFooter className="border-t border-sidebar-border">
         <NavUser user={userData} />
       </SidebarFooter>
       <SidebarRail />

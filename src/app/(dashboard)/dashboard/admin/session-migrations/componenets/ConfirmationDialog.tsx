@@ -1,70 +1,68 @@
-import { AlertTriangle } from "lucide-react";
+"use client";
+
+import { AlertDiamondIcon } from "@hugeicons/core-free-icons";
+import { Icon } from "@/components/ui/icon";
+import { Button } from "@/components/ui/button";
 
 export const ConfirmationDialog = ({
     isOpen,
     onClose,
     onConfirm,
-    migrationDetails,
-    activeStudents
+    from,
+    to,
+    isPending = false,
+}: {
+    isOpen: boolean;
+    onClose: () => void;
+    onConfirm: () => void;
+    from?: string;
+    to?: string;
+    isPending?: boolean;
 }) => {
     if (!isOpen) return null;
 
     return (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
-            <div className="bg-white rounded-lg max-w-md w-full p-6">
-                <div className="flex items-center mb-4">
-                    <AlertTriangle className="w-6 h-6 text-amber-500 mr-3" />
-                    <h3 className="text-lg font-semibold text-gray-900">Confirm Migration</h3>
-                </div>
-
-                <div className="mb-6">
-                    <p className="text-gray-600 mb-4">
-                        Are you sure you want to migrate all student records?
-                    </p>
-
-                    <div className="bg-gray-50 rounded-lg p-4 space-y-2">
-                        <div className="flex justify-between">
-                            <span className="text-gray-600">Migration Type:</span>
-                            <span className="font-medium">{migrationDetails.type}</span>
-                        </div>
-                        {migrationDetails.details.from && (
-                            <div className="flex justify-between">
-                                <span className="text-gray-600">From:</span>
-                                <span className="font-medium">{migrationDetails.details.from}</span>
-                            </div>
-                        )}
-                        {migrationDetails.details.to && (
-                            <div className="flex justify-between">
-                                <span className="text-gray-600">To:</span>
-                                <span className="font-medium text-green-600">{migrationDetails.details.to}</span>
-                            </div>
-                        )}
-                        <div className="flex justify-between">
-                            <span className="text-gray-600">Students Affected:</span>
-                            <span className="font-medium">{activeStudents}</span>
-                        </div>
-                    </div>
-
-                    <div className="mt-4 p-3 bg-amber-50 border border-amber-200 rounded-lg">
-                        <p className="text-amber-800 text-sm">
-                            <strong>Warning:</strong> This action cannot be undone. Please ensure you have a recent backup.
+        <div
+            role="dialog"
+            aria-modal="true"
+            className="fixed inset-0 z-50 flex items-center justify-center bg-ocean-950/60 p-4 backdrop-blur-sm"
+        >
+            <div className="w-full max-w-md rounded-2xl border border-border bg-card p-6 shadow-float">
+                <div className="flex items-start gap-3">
+                    <span className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-amber-50 text-amber-600 dark:bg-amber-950/50 dark:text-amber-400">
+                        <Icon icon={AlertDiamondIcon} className="size-5" />
+                    </span>
+                    <div>
+                        <h3 className="font-semibold text-ocean-900 dark:text-foreground">
+                            Change the active session?
+                        </h3>
+                        <p className="mt-1.5 text-sm leading-relaxed text-muted-foreground">
+                            This sets the session the whole programme runs on. Every
+                            screen that reads the current session will follow it.
                         </p>
                     </div>
                 </div>
 
-                <div className="flex space-x-3">
-                    <button
-                        onClick={onClose}
-                        className="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 py-2 px-4 rounded-lg font-medium"
-                    >
+                <dl className="mt-5 space-y-2 rounded-xl border border-border bg-muted/40 px-4 py-3 text-sm">
+                    <div className="flex items-center justify-between gap-3">
+                        <dt className="text-muted-foreground">Currently active</dt>
+                        <dd className="font-semibold text-ocean-900 dark:text-foreground">
+                            {from || "None"}
+                        </dd>
+                    </div>
+                    <div className="flex items-center justify-between gap-3">
+                        <dt className="text-muted-foreground">Becomes active</dt>
+                        <dd className="font-semibold text-ember-600">{to || "—"}</dd>
+                    </div>
+                </dl>
+
+                <div className="mt-6 flex justify-end gap-2.5">
+                    <Button variant="outline" className="rounded-full" onClick={onClose} disabled={isPending}>
                         Cancel
-                    </button>
-                    <button
-                        onClick={onConfirm}
-                        className="flex-1 bg-red-600 hover:bg-red-700 text-white py-2 px-4 rounded-lg font-medium"
-                    >
-                        Confirm Migration
-                    </button>
+                    </Button>
+                    <Button className="rounded-full" onClick={onConfirm} disabled={isPending}>
+                        {isPending ? "Activating..." : "Yes, activate"}
+                    </Button>
                 </div>
             </div>
         </div>
