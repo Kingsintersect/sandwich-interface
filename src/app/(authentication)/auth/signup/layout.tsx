@@ -1,5 +1,5 @@
 import { SITE_NAME } from '@/config';
-import { Metadata, NextPage } from 'next';
+import { Metadata } from 'next';
 import Link from 'next/link';
 import React, { ReactNode } from 'react'
 import AuthShell from '../component/AuthShell';
@@ -13,7 +13,7 @@ type LayoutProps = {
    children: ReactNode
 }
 
-const Layout: NextPage<LayoutProps> = ({ children }: LayoutProps) => {
+const Layout = ({ children }: LayoutProps) => {
    return (
       <AuthShell
          wide
