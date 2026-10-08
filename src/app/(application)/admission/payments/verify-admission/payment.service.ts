@@ -40,7 +40,7 @@ export class PaymentService {
      * where the backend put it.
      */
     static async verifyReturnFeePayment(data: PaymentVerificationRequest): Promise<PaymentVerificationResponse> {
-        const response = await fetch(`${remoteApiUrl}/verify-return-fee-payment?transRef=${data.transRef}`, {
+        const response = await fetch(`${remoteApiUrl}/account/verify-return-fee-payment?transRef=${data.transRef}`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
